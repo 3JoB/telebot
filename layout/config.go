@@ -4,8 +4,8 @@ import (
 	"strconv"
 	"time"
 
+	tele "github.com/3JoB/telebot"
 	"github.com/spf13/viper"
-	tele "telebot"
 )
 
 // Config represents typed map interface related to the "config" section in layout.

@@ -8,12 +8,10 @@ import (
 	"strings"
 	"testing"
 
-	//"github.com/goccy/go-json"
 	json "github.com/bytedance/sonic"
-
-	"github.com/stretchr/testify/require"
-
+	// "github.com/goccy/go-json"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 // testPayload implements json.Marshaler

@@ -5,8 +5,8 @@ import (
 	"testing"
 	"time"
 
+	tele "github.com/3JoB/telebot"
 	"github.com/stretchr/testify/assert"
-	tele "telebot"
 )
 
 func TestLayout(t *testing.T) {

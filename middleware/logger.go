@@ -1,10 +1,11 @@
 package middleware
 
 import (
-	"github.com/goccy/go-json"
 	"log"
 
-	tele "telebot"
+	"github.com/goccy/go-json"
+
+	tele "github.com/3JoB/telebot"
 )
 
 // Logger returns a middleware that logs incoming updates.
