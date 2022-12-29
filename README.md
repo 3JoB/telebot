@@ -1,6 +1,13 @@
 # Telebot
 >"I never knew creating Telegram bots could be so _sexy_!"
 
+This is a fork of https://github.com/tucnak/telebot that replaces encoding/json with bytedance/sonic. This library requires minimum go1.19
+
+
+It adds a new util.go from the Web as a conversion between []Byte and String
+
+
+
 [![GoDoc](https://godoc.org/gopkg.in/telebot.v3?status.svg)](https://godoc.org/gopkg.in/telebot.v3)
 [![GitHub Actions](https://github.com/tucnak/telebot/actions/workflows/go.yml/badge.svg)](https://github.com/tucnak/telebot/actions)
 [![codecov.io](https://codecov.io/gh/tucnak/telebot/coverage.svg?branch=v3)](https://codecov.io/gh/tucnak/telebot)
