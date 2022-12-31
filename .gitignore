@@ -32,4 +32,3 @@ coverage.txt
 .terraform*
 terraform*
 /examples/awslambdaechobot/awslambdaechobot
-log.go
