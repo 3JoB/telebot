@@ -8,13 +8,13 @@ It adds a new util.go from the Web as a conversion between []Byte and String
 
 
 
-[![GoDoc](https://godoc.org/gopkg.in/telebot.v3?status.svg)](https://godoc.org/gopkg.in/telebot.v3)
+[![GoDoc](https://godoc.org/github.com/3JoB/telebot?status.svg)](https://godoc.org/github.com/3JoB/telebot)
 [![GitHub Actions](https://github.com/tucnak/telebot/actions/workflows/go.yml/badge.svg)](https://github.com/tucnak/telebot/actions)
 [![codecov.io](https://codecov.io/gh/tucnak/telebot/coverage.svg?branch=v3)](https://codecov.io/gh/tucnak/telebot)
 [![Discuss on Telegram](https://img.shields.io/badge/telegram-discuss-0088cc.svg)](https://t.me/go_telebot)
 
 ```bash
-go get -u gopkg.in/telebot.v3
+go get -u github.com/3JoB/telebot
 ```
 
 * [Overview](#overview)
@@ -59,7 +59,7 @@ import (
 	"os"
 	"time"
 
-	tele "gopkg.in/telebot.v3"
+	tele "github.com/3JoB/telebot"
 )
 
 func main() {
@@ -75,7 +75,8 @@ func main() {
 	}
 
 	b.Handle("/hello", func(c tele.Context) error {
-		return c.Send("Hello!")
+		c.Send("Hello!")
+		return nil
 	})
 
 	b.Start()
@@ -87,7 +88,7 @@ Simple, innit? Telebot's routing system takes care of delivering updates
 to their endpoints, so in order to get to handle any meaningful event,
 all you got to do is just plug your function into one of the Telebot-provided
 endpoints. You can find the full list
-[here](https://godoc.org/gopkg.in/telebot.v3#pkg-constants).
+[here](https://godoc.org/github.com/3JoB/telebot#pkg-constants).
 
 There are dozens of supported endpoints (see package consts). Let me know
 if you'd like to see some endpoint or endpoint ideas implemented. This system
@@ -143,7 +144,7 @@ Telebot has a simple and recognizable way to set up middleware — chained funct
 Import a `middleware` package to get some basic out-of-box middleware
 implementations:
 ```go
-import "gopkg.in/telebot.v3/middleware"
+import "github.com/3JoB/telebot/middleware"
 ```
 
 ```go
@@ -299,7 +300,7 @@ b.Send(user, "text", tele.Silent, tele.NoPreview)
 ```
 
 Full list of supported option-flags you can find
-[here](https://pkg.go.dev/gopkg.in/telebot.v3#Option).
+[here](https://pkg.go.dev/github.com/3JoB/telebot#Option).
 
 ## Editable
 If you want to edit some existing message, you don't really need to store the
@@ -474,22 +475,12 @@ of `QueryResponse`.
 # Contributing
 
 1. Fork it
-2. Clone v3: `git clone -b v3 https://github.com/tucnak/telebot`
+2. Clone v3: `git clone -b github.com/3JoB/telebot`
 3. Create your feature branch: `git checkout -b v3-feature`
 4. Make changes and add them: `git add .`
 5. Commit: `git commit -m "add some feature"`
 6. Push: `git push origin v3-feature`
 7. Pull request
-
-# Donate
-
-I do coding for fun, but I also try to search for interesting solutions and
-optimize them as much as possible.
-If you feel like it's a good piece of software, I wouldn't mind a tip!
-
-Litecoin: `ltc1qskt5ltrtyg7esfjm0ftx6jnacwffhpzpqmerus`
-
-Ethereum: `0xB78A2Ac1D83a0aD0b993046F9fDEfC5e619efCAB`
 
 # License
 

@@ -250,6 +250,9 @@ type Message struct {
 
 	// Inline keyboard attached to the message.
 	ReplyMarkup *ReplyMarkup `json:"reply_markup,omitempty"`
+
+	// True, if the message media is covered by a spoiler animation
+	IsMediaSpoiler bool `json:"has_media_spoiler"`
 }
 
 // MessageEntity object represents "special" parts of text messages,

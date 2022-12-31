@@ -6,6 +6,8 @@ require (
 	github.com/bytedance/sonic v1.6.0
 	github.com/goccy/go-json v0.10.0
 	github.com/goccy/go-yaml v1.9.8
+	github.com/natefinch/lumberjack v2.0.0+incompatible
+	github.com/sirupsen/logrus v1.9.0
 	github.com/spf13/viper v1.14.0
 	github.com/stretchr/testify v1.8.1
 	golang.org/x/text v0.5.0
@@ -35,6 +37,7 @@ require (
 	golang.org/x/sys v0.0.0-20220908164124-27713097b956 // indirect
 	golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
+	gopkg.in/natefinch/lumberjack.v2 v2.0.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
