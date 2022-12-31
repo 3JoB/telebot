@@ -4,7 +4,7 @@
 This is a fork of https://github.com/tucnak/telebot that replaces encoding/json with bytedance/sonic. This library requires minimum go1.19
 
 
-It adds a new util.go from the Web as a conversion between []Byte and String
+It adds a new util.go from the https://github.com/mina86/unsafeConvert as a conversion between []Byte and String
 
 
 

@@ -19,8 +19,9 @@
 package telebot
 
 import (
-	"reflect"
 	"unsafe"
+
+	"github.com/goccy/go-reflect"
 )
 
 // String converts a slice of bytes into a string without performing a copy.
