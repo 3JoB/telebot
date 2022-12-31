@@ -7,10 +7,10 @@ import (
 	"strings"
 	"text/template"
 
-	tele "github.com/3JoB/telebot"
-
 	"github.com/goccy/go-yaml"
 	"github.com/spf13/viper"
+
+	tele "github.com/3JoB/telebot"
 )
 
 type Settings struct {
@@ -29,7 +29,7 @@ type Settings struct {
 func (lt *Layout) UnmarshalYAML(data []byte) error {
 	var aux struct {
 		Settings *Settings
-		Config   map[string]interface{}
+		Config   map[string]any
 		Commands map[string]string
 		Buttons  yaml.MapSlice
 		Markups  yaml.MapSlice
@@ -92,7 +92,7 @@ func (lt *Layout) UnmarshalYAML(data []byte) error {
 		}
 
 		if !btn.IsReply && btn.Data != nil {
-			if a, ok := btn.Data.([]interface{}); ok {
+			if a, ok := btn.Data.([]any); ok {
 				s := make([]string, len(a))
 				for i, v := range a {
 					s[i] = fmt.Sprint(v)

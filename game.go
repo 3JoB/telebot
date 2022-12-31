@@ -3,8 +3,8 @@ package telebot
 import (
 	"strconv"
 
-	//"github.com/goccy/go-json"
 	"github.com/bytedance/sonic"
+	// "github.com/goccy/go-json"
 )
 
 // Game object represents a game.
@@ -17,7 +17,8 @@ type Game struct {
 	Photo       *Photo `json:"photo"`
 
 	// (Optional)
-	Text      string          `json:"text"`
+	Text string `json:"text"`
+
 	Entities  []MessageEntity `json:"text_entities"`
 	Animation *Animation      `json:"animation"`
 }

@@ -18,7 +18,7 @@ func (dlt *DefaultLayout) Settings() tele.Settings {
 }
 
 // Text wraps localized layout function Text using your default locale.
-func (dlt *DefaultLayout) Text(k string, args ...interface{}) string {
+func (dlt *DefaultLayout) Text(k string, args ...any) string {
 	return dlt.lt.TextLocale(dlt.locale, k, args...)
 }
 
@@ -28,16 +28,16 @@ func (dlt *DefaultLayout) Callback(k string) tele.CallbackEndpoint {
 }
 
 // Button wraps localized layout function Button using your default locale.
-func (dlt *DefaultLayout) Button(k string, args ...interface{}) *tele.Btn {
+func (dlt *DefaultLayout) Button(k string, args ...any) *tele.Btn {
 	return dlt.lt.ButtonLocale(dlt.locale, k, args...)
 }
 
 // Markup wraps localized layout function Markup using your default locale.
-func (dlt *DefaultLayout) Markup(k string, args ...interface{}) *tele.ReplyMarkup {
+func (dlt *DefaultLayout) Markup(k string, args ...any) *tele.ReplyMarkup {
 	return dlt.lt.MarkupLocale(dlt.locale, k, args...)
 }
 
 // Result wraps localized layout function Result using your default locale.
-func (dlt *DefaultLayout) Result(k string, args ...interface{}) tele.Result {
+func (dlt *DefaultLayout) Result(k string, args ...any) tele.Result {
 	return dlt.lt.ResultLocale(dlt.locale, k, args...)
 }

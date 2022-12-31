@@ -1,6 +1,6 @@
 package telebot
 
-//import "github.com/goccy/go-json"
+// import "github.com/goccy/go-json"
 
 import "github.com/bytedance/sonic"
 
@@ -41,7 +41,7 @@ type CommandScope struct {
 }
 
 // Commands returns the current list of the bot's commands for the given scope and user language.
-func (b *Bot) Commands(opts ...interface{}) ([]Command, error) {
+func (b *Bot) Commands(opts ...any) ([]Command, error) {
 	params := extractCommandsParams(opts...)
 	data, err := b.Raw("getMyCommands", params)
 	if err != nil {
@@ -58,21 +58,21 @@ func (b *Bot) Commands(opts ...interface{}) ([]Command, error) {
 }
 
 // SetCommands changes the list of the bot's commands.
-func (b *Bot) SetCommands(opts ...interface{}) error {
+func (b *Bot) SetCommands(opts ...any) error {
 	params := extractCommandsParams(opts...)
 	_, err := b.Raw("setMyCommands", params)
 	return err
 }
 
 // DeleteCommands deletes the list of the bot's commands for the given scope and user language.
-func (b *Bot) DeleteCommands(opts ...interface{}) error {
+func (b *Bot) DeleteCommands(opts ...any) error {
 	params := extractCommandsParams(opts...)
 	_, err := b.Raw("deleteMyCommands", params)
 	return err
 }
 
 // extractCommandsParams extracts parameters for commands-related methods from the given options.
-func extractCommandsParams(opts ...interface{}) (params CommandParams) {
+func extractCommandsParams(opts ...any) (params CommandParams) {
 	for _, opt := range opts {
 		switch value := opt.(type) {
 		case []Command:

@@ -9,7 +9,7 @@ import (
 	tele "github.com/3JoB/telebot"
 )
 
-var b, _ = tele.NewBot(tele.Settings{Offline: true})
+//var b, _ = tele.NewBot(tele.Settings{Offline: true})
 
 func TestRecover(t *testing.T) {
 	onError := func(err error) {

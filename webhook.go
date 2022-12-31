@@ -2,6 +2,7 @@ package telebot
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -48,7 +49,8 @@ type Webhook struct {
 	SecretToken    string   `json:"secret_token"`
 
 	// (WebhookInfo)
-	HasCustomCert     bool   `json:"has_custom_certificate"`
+	HasCustomCert bool `json:"has_custom_certificate"`
+
 	PendingUpdates    int    `json:"pending_update_count"`
 	ErrorUnixtime     int64  `json:"last_error_date"`
 	ErrorMessage      string `json:"last_error_message"`
@@ -160,7 +162,7 @@ func (h *Webhook) waitForStop(stop chan struct{}) {
 // and writes them to the update channel.
 func (h *Webhook) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if h.SecretToken != "" && r.Header.Get("X-Telegram-Bot-Api-Secret-Token") != h.SecretToken {
-		h.bot.debug(fmt.Errorf("invalid secret token in request"))
+		h.bot.debug(errors.New("invalid secret token in request"))
 		return
 	}
 

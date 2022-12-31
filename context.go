@@ -86,39 +86,39 @@ type Context interface {
 
 	// Send sends a message to the current recipient.
 	// See Send from bot.go.
-	Send(what interface{}, opts ...interface{}) (*Message, error)
+	Send(what any, opts ...any) (*Message, error)
 
 	// SendAlbum sends an album to the current recipient.
 	// See SendAlbum from bot.go.
-	SendAlbum(a Album, opts ...interface{}) error
+	SendAlbum(a Album, opts ...any) error
 
 	// Reply replies to the current message.
 	// See Reply from bot.go.
-	Reply(what interface{}, opts ...interface{}) (*Message, error)
+	Reply(what any, opts ...any) (*Message, error)
 
 	// Forward forwards the given message to the current recipient.
 	// See Forward from bot.go.
-	Forward(msg Editable, opts ...interface{}) error
+	Forward(msg Editable, opts ...any) error
 
 	// ForwardTo forwards the current message to the given recipient.
 	// See Forward from bot.go
-	ForwardTo(to Recipient, opts ...interface{}) error
+	ForwardTo(to Recipient, opts ...any) error
 
 	// Edit edits the current message.
 	// See Edit from bot.go.
-	Edit(what interface{}, opts ...interface{}) error
+	Edit(what any, opts ...any) error
 
 	// EditCaption edits the caption of the current message.
 	// See EditCaption from bot.go.
-	EditCaption(caption string, opts ...interface{}) error
+	EditCaption(caption string, opts ...any) error
 
 	// EditOrSend edits the current message if the update is callback,
 	// otherwise the content is sent to the chat as a separate message.
-	EditOrSend(what interface{}, opts ...interface{}) error
+	EditOrSend(what any, opts ...any) error
 
 	// EditOrReply edits the current message if the update is callback,
 	// otherwise the content is replied as a separate message.
-	EditOrReply(what interface{}, opts ...interface{}) (*Message, error)
+	EditOrReply(what any, opts ...any) (*Message, error)
 
 	// Delete removes the current message.
 	// See Delete from bot.go.
@@ -135,7 +135,7 @@ type Context interface {
 
 	// Ship replies to the current shipping query.
 	// See Ship from bot.go.
-	Ship(what ...interface{}) error
+	Ship(what ...any) error
 
 	// Accept finalizes the current deal.
 	// See Accept from bot.go.
@@ -150,10 +150,10 @@ type Context interface {
 	Respond(resp ...*CallbackResponse) error
 
 	// Get retrieves data from the context.
-	Get(key string) interface{}
+	Get(key string) any
 
 	// Set saves data in the context.
-	Set(key string, val interface{})
+	Set(key string, val any)
 }
 
 // nativeContext is a native implementation of the Context interface.
@@ -162,7 +162,7 @@ type nativeContext struct {
 	b     *Bot
 	u     Update
 	lock  sync.RWMutex
-	store map[string]interface{}
+	store map[string]any
 }
 
 func (c *nativeContext) Bot() *Bot {
@@ -348,17 +348,17 @@ func (c *nativeContext) Args() []string {
 	return nil
 }
 
-func (c *nativeContext) Send(what interface{}, opts ...interface{}) (*Message, error) {
+func (c *nativeContext) Send(what any, opts ...any) (*Message, error) {
 	e, err := c.b.Send(c.Recipient(), what, opts...)
 	return e, err
 }
 
-func (c *nativeContext) SendAlbum(a Album, opts ...interface{}) error {
+func (c *nativeContext) SendAlbum(a Album, opts ...any) error {
 	_, err := c.b.SendAlbum(c.Recipient(), a, opts...)
 	return err
 }
 
-func (c *nativeContext) Reply(what interface{}, opts ...interface{}) (*Message, error) {
+func (c *nativeContext) Reply(what any, opts ...any) (*Message, error) {
 	msg := c.Message()
 	if msg == nil {
 		return nil, ErrBadContext
@@ -366,12 +366,12 @@ func (c *nativeContext) Reply(what interface{}, opts ...interface{}) (*Message, 
 	return c.b.Reply(msg, what, opts...)
 }
 
-func (c *nativeContext) Forward(msg Editable, opts ...interface{}) error {
+func (c *nativeContext) Forward(msg Editable, opts ...any) error {
 	_, err := c.b.Forward(c.Recipient(), msg, opts...)
 	return err
 }
 
-func (c *nativeContext) ForwardTo(to Recipient, opts ...interface{}) error {
+func (c *nativeContext) ForwardTo(to Recipient, opts ...any) error {
 	msg := c.Message()
 	if msg == nil {
 		return ErrBadContext
@@ -380,7 +380,7 @@ func (c *nativeContext) ForwardTo(to Recipient, opts ...interface{}) error {
 	return err
 }
 
-func (c *nativeContext) Edit(what interface{}, opts ...interface{}) error {
+func (c *nativeContext) Edit(what any, opts ...any) error {
 	if c.u.InlineResult != nil {
 		_, err := c.b.Edit(c.u.InlineResult, what, opts...)
 		return err
@@ -392,7 +392,7 @@ func (c *nativeContext) Edit(what interface{}, opts ...interface{}) error {
 	return ErrBadContext
 }
 
-func (c *nativeContext) EditCaption(caption string, opts ...interface{}) error {
+func (c *nativeContext) EditCaption(caption string, opts ...any) error {
 	if c.u.InlineResult != nil {
 		_, err := c.b.EditCaption(c.u.InlineResult, caption, opts...)
 		return err
@@ -404,7 +404,7 @@ func (c *nativeContext) EditCaption(caption string, opts ...interface{}) error {
 	return ErrBadContext
 }
 
-func (c *nativeContext) EditOrSend(what interface{}, opts ...interface{}) error {
+func (c *nativeContext) EditOrSend(what any, opts ...any) error {
 	err := c.Edit(what, opts...)
 	if err == ErrBadContext {
 		_, err := c.Send(what, opts...)
@@ -413,7 +413,7 @@ func (c *nativeContext) EditOrSend(what interface{}, opts ...interface{}) error 
 	return err
 }
 
-func (c *nativeContext) EditOrReply(what interface{}, opts ...interface{}) (*Message, error) {
+func (c *nativeContext) EditOrReply(what any, opts ...any) (*Message, error) {
 	err := c.Edit(what, opts...)
 	if err == ErrBadContext {
 		return c.Reply(what, opts...)
@@ -441,7 +441,7 @@ func (c *nativeContext) Notify(action ChatAction) error {
 	return c.b.Notify(c.Recipient(), action)
 }
 
-func (c *nativeContext) Ship(what ...interface{}) error {
+func (c *nativeContext) Ship(what ...any) error {
 	if c.u.ShippingQuery == nil {
 		return errors.New("telebot: context shipping query is nil")
 	}
@@ -469,17 +469,17 @@ func (c *nativeContext) Answer(resp *QueryResponse) error {
 	return c.b.Answer(c.u.Query, resp)
 }
 
-func (c *nativeContext) Set(key string, value interface{}) {
+func (c *nativeContext) Set(key string, value any) {
 	c.lock.Lock()
 	defer c.lock.Unlock()
 
 	if c.store == nil {
-		c.store = make(map[string]interface{})
+		c.store = make(map[string]any)
 	}
 	c.store[key] = value
 }
 
-func (c *nativeContext) Get(key string) interface{} {
+func (c *nativeContext) Get(key string) any {
 	c.lock.RLock()
 	defer c.lock.RUnlock()
 	return c.store[key]

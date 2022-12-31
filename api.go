@@ -23,7 +23,7 @@ import (
 // Raw lets you call any method of Bot API manually.
 // It also handles API errors, so you only need to unwrap
 // result field from json data.
-func (b *Bot) Raw(method string, payload interface{}) ([]byte, error) {
+func (b *Bot) Raw(method string, payload any) ([]byte, error) {
 	url := b.URL + "/bot" + b.Token + "/" + method
 
 	var buf bytes.Buffer
@@ -75,7 +75,7 @@ func (b *Bot) Raw(method string, payload interface{}) ([]byte, error) {
 }
 
 func (b *Bot) sendFiles(method string, files map[string]File, params map[string]string) ([]byte, error) {
-	rawFiles := make(map[string]interface{})
+	rawFiles := make(map[string]any)
 	for name, f := range files {
 		switch {
 		case f.InCloud():
@@ -143,7 +143,7 @@ func (b *Bot) sendFiles(method string, files map[string]File, params map[string]
 	return data, extractOk(data)
 }
 
-func addFileToWriter(writer *multipart.Writer, filename, field string, file interface{}) error {
+func addFileToWriter(writer *multipart.Writer, filename, field string, file any) error {
 	var reader io.Reader
 	if r, ok := file.(io.Reader); ok {
 		reader = r
@@ -251,10 +251,10 @@ func (b *Bot) getUpdates(offset, limit int, timeout time.Duration, allowed []str
 // in errors.go, it will be prefixed with `unknown` keyword.
 func extractOk(data []byte) error {
 	var e struct {
-		Ok          bool                   `json:"ok"`
-		Code        int                    `json:"error_code"`
-		Description string                 `json:"description"`
-		Parameters  map[string]interface{} `json:"parameters"`
+		Ok          bool           `json:"ok"`
+		Code        int            `json:"error_code"`
+		Description string         `json:"description"`
+		Parameters  map[string]any `json:"parameters"`
 	}
 	if decoder.NewStreamDecoder(bytes.NewReader(data)).Decode(&e) != nil {
 		return nil // FIXME
@@ -322,7 +322,7 @@ func extractMessage(data []byte) (*Message, error) {
 	return resp.Result, nil
 }
 
-func verbose(method string, payload interface{}, data []byte) {
+func verbose(method string, payload any, data []byte) {
 	body, _ := sonic.Marshal(payload)
 	body = bytes.ReplaceAll(body, Bytes(`\"`), Bytes(`"`))
 	body = bytes.ReplaceAll(body, Bytes(`"{`), Bytes(`{`))

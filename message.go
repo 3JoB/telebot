@@ -253,7 +253,8 @@ type Message struct {
 
 	// True, if the message media is covered by a spoiler animation
 	IsMediaSpoiler bool `json:"has_media_spoiler"`
-	IsTopicMessage     bool `json:"is_topic_message"`
+
+	IsTopicMessage bool `json:"is_topic_message"`
 }
 
 // MessageEntity object represents "special" parts of text messages,

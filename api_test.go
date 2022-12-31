@@ -76,17 +76,17 @@ func TestRaw(t *testing.T) {
 }
 
 func TestExtractOk(t *testing.T) {
-	data := []byte(`{"ok": true, "result": {}}`)
+	data := Bytes(`{"ok": true, "result": {}}`)
 	require.NoError(t, extractOk(data))
 
-	data = []byte(`{
+	data = Bytes(`{
 		"ok": false,
 		"error_code": 400,
 		"description": "Bad Request: reply message not found"
 	}`)
 	assert.EqualError(t, extractOk(data), ErrNotFoundToReply.Error())
 
-	data = []byte(`{
+	data = Bytes(`{
 		"ok": false,
 		"error_code": 429,
 		"description": "Too Many Requests: retry after 8",
@@ -97,7 +97,7 @@ func TestExtractOk(t *testing.T) {
 		RetryAfter: 8,
 	}, extractOk(data))
 
-	data = []byte(`{
+	data = Bytes(`{
 		"ok": false,
 		"error_code": 400,
 		"description": "Bad Request: group chat was upgraded to a supergroup chat",
@@ -110,11 +110,11 @@ func TestExtractOk(t *testing.T) {
 }
 
 func TestExtractMessage(t *testing.T) {
-	data := []byte(`{"ok":true,"result":true}`)
+	data := Bytes(`{"ok":true,"result":true}`)
 	_, err := extractMessage(data)
 	assert.Equal(t, ErrTrueResult, err)
 
-	data = []byte(`{"ok":true,"result":{"foo":"bar"}}`)
+	data = Bytes(`{"ok":true,"result":{"foo":"bar"}}`)
 	_, err = extractMessage(data)
 	require.NoError(t, err)
 }

@@ -4,8 +4,8 @@ import (
 	"math"
 	"strconv"
 
-	//"github.com/goccy/go-json"
 	"github.com/bytedance/sonic"
+	// "github.com/goccy/go-json"
 )
 
 // ShippingQuery contains information about an incoming shipping query.
@@ -152,17 +152,17 @@ type Price struct {
 
 // Currency contains information about supported currency for payments.
 type Currency struct {
-	Code         string      `json:"code"`
-	Title        string      `json:"title"`
-	Symbol       string      `json:"symbol"`
-	Native       string      `json:"native"`
-	ThousandsSep string      `json:"thousands_sep"`
-	DecimalSep   string      `json:"decimal_sep"`
-	SymbolLeft   bool        `json:"symbol_left"`
-	SpaceBetween bool        `json:"space_between"`
-	Exp          int         `json:"exp"`
-	MinAmount    interface{} `json:"min_amount"`
-	MaxAmount    interface{} `json:"max_amount"`
+	Code         string `json:"code"`
+	Title        string `json:"title"`
+	Symbol       string `json:"symbol"`
+	Native       string `json:"native"`
+	ThousandsSep string `json:"thousands_sep"`
+	DecimalSep   string `json:"decimal_sep"`
+	SymbolLeft   bool   `json:"symbol_left"`
+	SpaceBetween bool   `json:"space_between"`
+	Exp          int    `json:"exp"`
+	MinAmount    any    `json:"min_amount"`
+	MaxAmount    any    `json:"max_amount"`
 }
 
 func (c Currency) FromTotal(total int) float64 {

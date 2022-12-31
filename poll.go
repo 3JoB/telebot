@@ -24,7 +24,8 @@ type Poll struct {
 	VoterCount int          `json:"total_voter_count"`
 
 	// (Optional)
-	Closed          bool            `json:"is_closed,omitempty"`
+	Closed bool `json:"is_closed,omitempty"`
+
 	CorrectOption   int             `json:"correct_option_id,omitempty"`
 	MultipleAnswers bool            `json:"allows_multiple_answers,omitempty"`
 	Explanation     string          `json:"explanation,omitempty"`
@@ -35,7 +36,8 @@ type Poll struct {
 	Anonymous bool `json:"is_anonymous"`
 
 	// (Mutually exclusive)
-	OpenPeriod    int   `json:"open_period,omitempty"`
+	OpenPeriod int `json:"open_period,omitempty"`
+
 	CloseUnixdate int64 `json:"close_date,omitempty"`
 }
 

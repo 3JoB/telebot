@@ -8,13 +8,13 @@ import (
 
 func TestEmbedRights(t *testing.T) {
 	rights := NoRestrictions()
-	params := map[string]interface{}{
+	params := map[string]any{
 		"chat_id": "1",
 		"user_id": "2",
 	}
 	embedRights(params, rights)
 
-	expected := map[string]interface{}{
+	expected := map[string]any{
 		"is_anonymous":              false,
 		"chat_id":                   "1",
 		"user_id":                   "2",
