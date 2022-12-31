@@ -872,7 +872,7 @@ func (b *Bot) File(file *File) (io.ReadCloser, error) {
 	if err != nil {
 		return nil, wrapError(err)
 	}
-	req.Header.Set("User-Agent", "SSAR-Telebot/4.2")
+	req.Header.Set("User-Agent", "3JoB-telebot/3")
 
 	resp, err := b.client.Do(req)
 	if err != nil {

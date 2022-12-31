@@ -52,7 +52,7 @@ func (b *Bot) Raw(method string, payload any) ([]byte, error) {
 		return nil, wrapError(err)
 	}
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("User-Agent", "SSAR-TeleBot/4.2")
+	req.Header.Set("User-Agent", "3JoB-telebot/3")
 
 	resp, err := b.client.Do(req)
 	if err != nil {
@@ -127,7 +127,7 @@ func (b *Bot) sendFiles(method string, files map[string]File, params map[string]
 		pipeReader.CloseWithError(err)
 		return nil, err
 	}
-	resp.Header.Set("User-Agent", "SSAR-Telebot/4.2")
+	resp.Header.Set("User-Agent", "3JoB-telebot/3")
 	resp.Close = true
 	defer resp.Body.Close()
 
