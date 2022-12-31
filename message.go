@@ -253,6 +253,9 @@ type Message struct {
 
 	// True, if the message media is covered by a spoiler animation
 	IsMediaSpoiler bool `json:"has_media_spoiler"`
+
+	IsTopicMessage     bool `json:"is_topic_message"`
+	IsAutomaticForward bool `json:"is_automatic_forward"`
 }
 
 // MessageEntity object represents "special" parts of text messages,
@@ -368,7 +371,6 @@ func (m *Message) FromChannel() bool {
 // Service messages are automatically sent messages, which
 // typically occur on some global action. For instance, when
 // anyone leaves the chat or chat title changes.
-//
 func (m *Message) IsService() bool {
 	fact := false
 
@@ -389,7 +391,6 @@ func (m *Message) IsService() bool {
 //
 // It's safer than manually slicing Text because Telegram uses
 // UTF-16 indices whereas Go string are []byte.
-//
 func (m *Message) EntityText(e MessageEntity) string {
 	text := m.Text
 	if text == "" {

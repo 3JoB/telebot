@@ -4,8 +4,8 @@ import (
 	"strconv"
 	"time"
 
-	//"github.com/goccy/go-json"
 	"github.com/bytedance/sonic"
+	// "github.com/goccy/go-json"
 )
 
 // User object represents a Telegram user, bot.
@@ -21,7 +21,8 @@ type User struct {
 	AddedToMenu  bool   `json:"added_to_attachment_menu"`
 
 	// Returns only in getMe
-	CanJoinGroups   bool `json:"can_join_groups"`
+	CanJoinGroups bool `json:"can_join_groups"`
+
 	CanReadMessages bool `json:"can_read_all_group_messages"`
 	SupportsInline  bool `json:"supports_inline_queries"`
 }
@@ -46,7 +47,8 @@ type Chat struct {
 	Username  string `json:"username"`
 
 	// Returns only in getChat
-	Bio              string        `json:"bio,omitempty"`
+	Bio string `json:"bio,omitempty"`
+
 	Photo            *ChatPhoto    `json:"photo,omitempty"`
 	Description      string        `json:"description,omitempty"`
 	InviteLink       string        `json:"invite_link,omitempty"`
@@ -60,6 +62,7 @@ type Chat struct {
 	Private          bool          `json:"has_private_forwards,omitempty"`
 	Protected        bool          `json:"has_protected_content,omitempty"`
 	NoVoiceAndVideo  bool          `json:"has_restricted_voice_and_video_messages"`
+	HasHiddenMembers bool          `json:"has_hidden_members,omitempty"`
 }
 
 // Recipient returns chat ID (see Recipient interface).
@@ -87,11 +90,13 @@ type ChatLocation struct {
 // ChatPhoto object represents a chat photo.
 type ChatPhoto struct {
 	// File identifiers of small (160x160) chat photo
-	SmallFileID   string `json:"small_file_id"`
+	SmallFileID string `json:"small_file_id"`
+
 	SmallUniqueID string `json:"small_file_unique_id"`
 
 	// File identifiers of big (640x640) chat photo
-	BigFileID   string `json:"big_file_id"`
+	BigFileID string `json:"big_file_id"`
+
 	BigUniqueID string `json:"big_file_unique_id"`
 }
 
@@ -193,7 +198,7 @@ type ChatJoinRequest struct {
 	Bio string `json:"bio"`
 
 	// InviteLink is the chat invite link that was used by
-	//the user to send the join request, optional.
+	// the user to send the join request, optional.
 	InviteLink *ChatInviteLink `json:"invite_link"`
 }
 
@@ -424,7 +429,7 @@ func (b *Bot) SetGroupStickerSet(chat *Chat, setName string) error {
 
 // SetGroupPermissions sets default chat permissions for all members.
 func (b *Bot) SetGroupPermissions(chat *Chat, perms Rights) error {
-	params := map[string]interface{}{
+	params := map[string]any{
 		"chat_id":     chat.Recipient(),
 		"permissions": perms,
 	}
