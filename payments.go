@@ -4,7 +4,7 @@ import (
 	"math"
 	"strconv"
 
-	"github.com/bytedance/sonic"
+	"github.com/goccy/go-json"
 	// "github.com/goccy/go-json"
 )
 
@@ -129,7 +129,7 @@ func (i Invoice) params() map[string]string {
 		}
 	}
 	if len(i.Prices) > 0 {
-		data, _ := sonic.Marshal(i.Prices)
+		data, _ := json.Marshal(i.Prices)
 		params["prices"] = String(data)
 	}
 	if len(i.SuggestedTipAmounts) > 0 {
@@ -138,7 +138,7 @@ func (i Invoice) params() map[string]string {
 			amounts = append(amounts, strconv.Itoa(n))
 		}
 
-		data, _ := sonic.Marshal(amounts)
+		data, _ := json.Marshal(amounts)
 		params["suggested_tip_amounts"] = String(data)
 	}
 	return params
@@ -183,7 +183,7 @@ func (b *Bot) CreateInvoiceLink(i Invoice) (string, error) {
 	var resp struct {
 		Result string
 	}
-	if err := sonic.Unmarshal(data, &resp); err != nil {
+	if err := json.Unmarshal(data, &resp); err != nil {
 		return "", wrapError(err)
 	}
 	return resp.Result, nil

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/bytedance/sonic"
+	"github.com/goccy/go-json"
 	// "github.com/goccy/go-json"
 )
 
@@ -212,10 +212,10 @@ type ReplyButton struct {
 	WebApp   *WebApp  `json:"web_app,omitempty"`
 }
 
-// MarshalJSON implements sonic.Marshaler. It allows passing PollType as a
+// MarshalJSON implements json.Marshaler. It allows passing PollType as a
 // keyboard's poll type instead of KeyboardButtonPollType object.
 func (pt PollType) MarshalJSON() ([]byte, error) {
-	return sonic.Marshal(&struct {
+	return json.Marshal(&struct {
 		Type string `json:"type"`
 	}{
 		Type: string(pt),
@@ -239,21 +239,21 @@ type InlineButton struct {
 	WebApp          *WebApp `json:"web_app,omitempty"`
 }
 
-// MarshalJSON implements sonic.Marshaler interface.
+// MarshalJSON implements json.Marshaler interface.
 // It needed to avoid InlineQueryChat and Login or WebApp fields conflict.
 // If you have Login or WebApp field in your button, InlineQueryChat must be skipped.
 func (t *InlineButton) MarshalJSON() ([]byte, error) {
 	type IB InlineButton
 
 	if t.Login != nil || t.WebApp != nil {
-		return sonic.Marshal(struct {
+		return json.Marshal(struct {
 			IB
 			InlineQueryChat string `json:"switch_inline_query_current_chat,omitempty"`
 		}{
 			IB: IB(*t),
 		})
 	}
-	return sonic.Marshal(IB(*t))
+	return json.Marshal(IB(*t))
 }
 
 // With returns a copy of the button with data.

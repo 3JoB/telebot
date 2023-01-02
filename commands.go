@@ -1,8 +1,6 @@
 package telebot
 
-// import "github.com/goccy/go-json"
-
-import "github.com/bytedance/sonic"
+import "github.com/goccy/go-json"
 
 // Command represents a bot command.
 type Command struct {
@@ -51,7 +49,7 @@ func (b *Bot) Commands(opts ...any) ([]Command, error) {
 	var resp struct {
 		Result []Command
 	}
-	if err := sonic.Unmarshal(data, &resp); err != nil {
+	if err := json.Unmarshal(data, &resp); err != nil {
 		return nil, wrapError(err)
 	}
 	return resp.Result, nil

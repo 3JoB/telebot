@@ -12,8 +12,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/bytedance/sonic"
-	// "github.com/goccy/go-json"
+	"github.com/goccy/go-json"
 )
 
 // NewBot does try to build a Bot with token `token`, which
@@ -324,7 +323,7 @@ func (b *Bot) SendAlbum(to Recipient, a Album, opts ...any) ([]Message, error) {
 			im.ParseMode = sendOpts.ParseMode
 		}
 
-		data, _ = sonic.Marshal(im)
+		data, _ = json.Marshal(im)
 		media[i] = String(data)
 	}
 
@@ -342,7 +341,7 @@ func (b *Bot) SendAlbum(to Recipient, a Album, opts ...any) ([]Message, error) {
 	var resp struct {
 		Result []Message
 	}
-	if err := sonic.Unmarshal(data, &resp); err != nil {
+	if err := json.Unmarshal(data, &resp); err != nil {
 		return nil, wrapError(err)
 	}
 
@@ -521,7 +520,7 @@ func (b *Bot) EditReplyMarkup(msg Editable, markup *ReplyMarkup) (*Message, erro
 	}
 
 	processButtons(markup.InlineKeyboard)
-	data, _ := sonic.Marshal(markup)
+	data, _ := json.Marshal(markup)
 	params["reply_markup"] = String(data)
 
 	data, err := b.Raw("editMessageReplyMarkup", params)
@@ -632,7 +631,7 @@ func (b *Bot) EditMedia(msg Editable, media Inputtable, opts ...any) (*Message, 
 		files[thumbName] = *thumb.MediaFile()
 	}
 
-	data, _ := sonic.Marshal(im)
+	data, _ := json.Marshal(im)
 	params["media"] = String(data)
 
 	if chatID == 0 { // if inline message
@@ -725,7 +724,7 @@ func (b *Bot) Ship(query *ShippingQuery, what ...any) error {
 		}
 
 		params["ok"] = "true"
-		data, _ := sonic.Marshal(opts)
+		data, _ := json.Marshal(opts)
 		params["shipping_options"] = String(data)
 	}
 
@@ -803,7 +802,7 @@ func (b *Bot) AnswerWebApp(query *Query, r Result) (*WebAppMessage, error) {
 	var resp struct {
 		Result *WebAppMessage
 	}
-	if err := sonic.Unmarshal(data, &resp); err != nil {
+	if err := json.Unmarshal(data, &resp); err != nil {
 		return nil, wrapError(err)
 	}
 
@@ -828,7 +827,7 @@ func (b *Bot) FileByID(fileID string) (File, error) {
 	var resp struct {
 		Result File
 	}
-	if err := sonic.Unmarshal(data, &resp); err != nil {
+	if err := json.Unmarshal(data, &resp); err != nil {
 		return File{}, wrapError(err)
 	}
 	return resp.Result, nil
@@ -938,7 +937,7 @@ func (b *Bot) StopPoll(msg Editable, opts ...any) (*Poll, error) {
 	var resp struct {
 		Result *Poll
 	}
-	if err := sonic.Unmarshal(data, &resp); err != nil {
+	if err := json.Unmarshal(data, &resp); err != nil {
 		return nil, wrapError(err)
 	}
 	return resp.Result, nil
@@ -1020,7 +1019,7 @@ func (b *Bot) ChatByUsername(name string) (*Chat, error) {
 	var resp struct {
 		Result *Chat
 	}
-	if err := sonic.Unmarshal(data, &resp); err != nil {
+	if err := json.Unmarshal(data, &resp); err != nil {
 		return nil, wrapError(err)
 	}
 	if resp.Result.Type == ChatChannel && resp.Result.Username == "" {
@@ -1046,7 +1045,7 @@ func (b *Bot) ProfilePhotosOf(user *User) ([]Photo, error) {
 			Photos []Photo `json:"photos"`
 		}
 	}
-	if err := sonic.Unmarshal(data, &resp); err != nil {
+	if err := json.Unmarshal(data, &resp); err != nil {
 		return nil, wrapError(err)
 	}
 	return resp.Result.Photos, nil
@@ -1067,7 +1066,7 @@ func (b *Bot) ChatMemberOf(chat, user Recipient) (*ChatMember, error) {
 	var resp struct {
 		Result *ChatMember
 	}
-	if err := sonic.Unmarshal(data, &resp); err != nil {
+	if err := json.Unmarshal(data, &resp); err != nil {
 		return nil, wrapError(err)
 	}
 	return resp.Result, nil
@@ -1088,7 +1087,7 @@ func (b *Bot) MenuButton(chat *User) (*MenuButton, error) {
 	var resp struct {
 		Result *MenuButton
 	}
-	if err := sonic.Unmarshal(data, &resp); err != nil {
+	if err := json.Unmarshal(data, &resp); err != nil {
 		return nil, wrapError(err)
 	}
 	return resp.Result, nil
@@ -1127,7 +1126,7 @@ func (b *Bot) Logout() (bool, error) {
 	var resp struct {
 		Result bool `json:"result"`
 	}
-	if err := sonic.Unmarshal(data, &resp); err != nil {
+	if err := json.Unmarshal(data, &resp); err != nil {
 		return false, wrapError(err)
 	}
 
@@ -1144,7 +1143,7 @@ func (b *Bot) Close() (bool, error) {
 	var resp struct {
 		Result bool `json:"result"`
 	}
-	if err := sonic.Unmarshal(data, &resp); err != nil {
+	if err := json.Unmarshal(data, &resp); err != nil {
 		return false, wrapError(err)
 	}
 

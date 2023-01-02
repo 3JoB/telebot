@@ -3,8 +3,7 @@ package telebot
 import (
 	"strconv"
 
-	//"github.com/goccy/go-json"
-	"github.com/bytedance/sonic"
+	"github.com/goccy/go-json"
 )
 
 type StickerSetType = string
@@ -68,7 +67,7 @@ func (b *Bot) UploadSticker(to Recipient, png *File) (*File, error) {
 	var resp struct {
 		Result File
 	}
-	if err := sonic.Unmarshal(data, &resp); err != nil {
+	if err := json.Unmarshal(data, &resp); err != nil {
 		return nil, wrapError(err)
 	}
 	return &resp.Result, nil
@@ -84,7 +83,7 @@ func (b *Bot) StickerSet(name string) (*StickerSet, error) {
 	var resp struct {
 		Result *StickerSet
 	}
-	if err := sonic.Unmarshal(data, &resp); err != nil {
+	if err := json.Unmarshal(data, &resp); err != nil {
 		return nil, wrapError(err)
 	}
 	return resp.Result, nil
@@ -113,7 +112,7 @@ func (b *Bot) CreateStickerSet(to Recipient, s StickerSet) error {
 	}
 
 	if s.MaskPosition != nil {
-		data, _ := sonic.Marshal(&s.MaskPosition)
+		data, _ := json.Marshal(&s.MaskPosition)
 		params["mask_position"] = String(data)
 	}
 
@@ -139,7 +138,7 @@ func (b *Bot) AddSticker(to Recipient, s StickerSet) error {
 	}
 
 	if s.MaskPosition != nil {
-		data, _ := sonic.Marshal(&s.MaskPosition)
+		data, _ := json.Marshal(&s.MaskPosition)
 		params["mask_position"] = String(data)
 	}
 
@@ -192,7 +191,7 @@ func (b *Bot) SetStickerSetThumb(to Recipient, s StickerSet) error {
 
 // CustomEmojiStickers returns the information about custom emoji stickers by their ids.
 func (b *Bot) CustomEmojiStickers(ids []string) ([]Sticker, error) {
-	data, _ := sonic.Marshal(ids)
+	data, _ := json.Marshal(ids)
 
 	params := map[string]string{
 		"custom_emoji_ids": String(data),
@@ -206,7 +205,7 @@ func (b *Bot) CustomEmojiStickers(ids []string) ([]Sticker, error) {
 	var resp struct {
 		Result []Sticker
 	}
-	if err := sonic.Unmarshal(data, &resp); err != nil {
+	if err := json.Unmarshal(data, &resp); err != nil {
 		return nil, wrapError(err)
 	}
 	return resp.Result, nil

@@ -4,7 +4,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/bytedance/sonic"
+	"github.com/goccy/go-json"
 	// "github.com/goccy/go-json"
 )
 
@@ -183,7 +183,7 @@ func (b *Bot) AdminsOf(chat *Chat) ([]ChatMember, error) {
 	var resp struct {
 		Result []ChatMember
 	}
-	if err := sonic.Unmarshal(data, &resp); err != nil {
+	if err := json.Unmarshal(data, &resp); err != nil {
 		return nil, wrapError(err)
 	}
 	return resp.Result, nil
@@ -203,7 +203,7 @@ func (b *Bot) Len(chat *Chat) (int, error) {
 	var resp struct {
 		Result int
 	}
-	if err := sonic.Unmarshal(data, &resp); err != nil {
+	if err := json.Unmarshal(data, &resp); err != nil {
 		return 0, wrapError(err)
 	}
 	return resp.Result, nil
@@ -261,7 +261,7 @@ func (b *Bot) DefaultRights(forChannels bool) (*Rights, error) {
 	var resp struct {
 		Result *Rights
 	}
-	if err := sonic.Unmarshal(data, &resp); err != nil {
+	if err := json.Unmarshal(data, &resp); err != nil {
 		return nil, wrapError(err)
 	}
 	return resp.Result, nil
@@ -280,6 +280,6 @@ func (b *Bot) SetDefaultRights(rights Rights, forChannels bool) error {
 }
 
 func embedRights(p map[string]any, rights Rights) {
-	data, _ := sonic.Marshal(rights)
-	_ = sonic.Unmarshal(data, &p)
+	data, _ := json.Marshal(rights)
+	_ = json.Unmarshal(data, &p)
 }

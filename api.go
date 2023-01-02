@@ -12,9 +12,6 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/bytedance/sonic"
-	"github.com/bytedance/sonic/decoder"
-	"github.com/bytedance/sonic/encoder"
 	"github.com/goccy/go-json"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
@@ -27,7 +24,7 @@ func (b *Bot) Raw(method string, payload any) ([]byte, error) {
 	url := b.URL + "/bot" + b.Token + "/" + method
 
 	var buf bytes.Buffer
-	if err := encoder.NewStreamEncoder(&buf).Encode(payload); err != nil {
+	if err := json.NewEncoder(&buf).Encode(payload); err != nil {
 		return nil, err
 	}
 
@@ -212,7 +209,7 @@ func (b *Bot) getMe() (*User, error) {
 	var resp struct {
 		Result *User
 	}
-	if err := sonic.Unmarshal(data, &resp); err != nil {
+	if err := json.Unmarshal(data, &resp); err != nil {
 		return nil, wrapError(err)
 	}
 	return resp.Result, nil
@@ -228,7 +225,7 @@ func (b *Bot) getUpdates(offset, limit int, timeout time.Duration, allowed []str
 		params["limit"] = strconv.Itoa(limit)
 	}
 	if len(allowed) > 0 {
-		data, _ := sonic.Marshal(allowed)
+		data, _ := json.Marshal(allowed)
 		params["allowed_updates"] = String(data)
 	}
 
@@ -240,7 +237,7 @@ func (b *Bot) getUpdates(offset, limit int, timeout time.Duration, allowed []str
 	var resp struct {
 		Result []Update
 	}
-	if err := sonic.Unmarshal(data, &resp); err != nil {
+	if err := json.Unmarshal(data, &resp); err != nil {
 		return nil, wrapError(err)
 	}
 	return resp.Result, nil
@@ -256,12 +253,9 @@ func extractOk(data []byte) error {
 		Description string         `json:"description"`
 		Parameters  map[string]any `json:"parameters"`
 	}
-	if decoder.NewStreamDecoder(bytes.NewReader(data)).Decode(&e) != nil {
+	if json.NewDecoder(bytes.NewReader(data)).Decode(&e) != nil {
 		return nil // FIXME
 	}
-	/*if json.NewDecoder(bytes.NewReader(data)).Decode(&e) != nil {
-		return nil // FIXME
-	}*/
 	if e.Ok {
 		return nil
 	}
@@ -307,11 +301,11 @@ func extractMessage(data []byte) (*Message, error) {
 	var resp struct {
 		Result *Message
 	}
-	if err := sonic.Unmarshal(data, &resp); err != nil {
+	if err := json.Unmarshal(data, &resp); err != nil {
 		var resp struct {
 			Result bool
 		}
-		if err := sonic.Unmarshal(data, &resp); err != nil {
+		if err := json.Unmarshal(data, &resp); err != nil {
 			return nil, wrapError(err)
 		}
 		if resp.Result {
@@ -323,7 +317,7 @@ func extractMessage(data []byte) (*Message, error) {
 }
 
 func verbose(method string, payload any, data []byte) {
-	body, _ := sonic.Marshal(payload)
+	body, _ := json.Marshal(payload)
 	body = bytes.ReplaceAll(body, Bytes(`\"`), Bytes(`"`))
 	body = bytes.ReplaceAll(body, Bytes(`"{`), Bytes(`{`))
 	body = bytes.ReplaceAll(body, Bytes(`}"`), Bytes(`}`))

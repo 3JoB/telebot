@@ -3,7 +3,7 @@ package telebot
 import (
 	"strconv"
 
-	"github.com/bytedance/sonic"
+	"github.com/goccy/go-json"
 	// "github.com/goccy/go-json"
 )
 
@@ -65,7 +65,7 @@ func (b *Bot) GameScores(user Recipient, msg Editable) ([]GameHighScore, error) 
 	var resp struct {
 		Result []GameHighScore
 	}
-	if err := sonic.Unmarshal(data, &resp); err != nil {
+	if err := json.Unmarshal(data, &resp); err != nil {
 		return nil, err
 	}
 	return resp.Result, nil

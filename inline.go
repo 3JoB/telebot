@@ -3,7 +3,7 @@ package telebot
 import (
 	"fmt"
 
-	"github.com/bytedance/sonic"
+	"github.com/goccy/go-json"
 	// "github.com/goccy/go-json"
 )
 
@@ -104,7 +104,7 @@ func (results Results) MarshalJSON() ([]byte, error) {
 		}
 	}
 
-	return sonic.Marshal([]Result(results))
+	return json.Marshal([]Result(results))
 }
 
 func inferIQR(result Result) error {

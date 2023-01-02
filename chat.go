@@ -4,8 +4,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/bytedance/sonic"
-	// "github.com/goccy/go-json"
+	"github.com/goccy/go-json"
 )
 
 // User object represents a Telegram user, bot.
@@ -259,7 +258,7 @@ func (b *Bot) InviteLink(chat *Chat) (string, error) {
 	var resp struct {
 		Result string
 	}
-	if err := sonic.Unmarshal(data, &resp); err != nil {
+	if err := json.Unmarshal(data, &resp); err != nil {
 		return "", wrapError(err)
 	}
 	return resp.Result, nil
@@ -291,7 +290,7 @@ func (b *Bot) CreateInviteLink(chat Recipient, link *ChatInviteLink) (*ChatInvit
 	var resp struct {
 		Result ChatInviteLink `json:"result"`
 	}
-	if err := sonic.Unmarshal(data, &resp); err != nil {
+	if err := json.Unmarshal(data, &resp); err != nil {
 		return nil, wrapError(err)
 	}
 
@@ -325,7 +324,7 @@ func (b *Bot) EditInviteLink(chat Recipient, link *ChatInviteLink) (*ChatInviteL
 	var resp struct {
 		Result ChatInviteLink `json:"result"`
 	}
-	if err := sonic.Unmarshal(data, &resp); err != nil {
+	if err := json.Unmarshal(data, &resp); err != nil {
 		return nil, wrapError(err)
 	}
 
@@ -347,7 +346,7 @@ func (b *Bot) RevokeInviteLink(chat Recipient, link string) (*ChatInviteLink, er
 	var resp struct {
 		Result ChatInviteLink `json:"result"`
 	}
-	if err := sonic.Unmarshal(data, &resp); err != nil {
+	if err := json.Unmarshal(data, &resp); err != nil {
 		return nil, wrapError(err)
 	}
 

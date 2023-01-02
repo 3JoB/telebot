@@ -1,9 +1,8 @@
 package telebot
 
-import (
-	//"github.com/goccy/go-json"
-	"github.com/bytedance/sonic"
-)
+import "github.com/goccy/go-json"
+
+//"github.com/goccy/go-json"
 
 // Media is a generic type for all kinds of media that includes File.
 type Media interface {
@@ -86,12 +85,12 @@ func (p *Photo) UnmarshalJSON(data []byte) error {
 	var hq photoSize
 
 	if data[0] == '{' {
-		if err := sonic.Unmarshal(data, &hq); err != nil {
+		if err := json.Unmarshal(data, &hq); err != nil {
 			return err
 		}
 	} else {
 		var sizes []photoSize
-		if err := sonic.Unmarshal(data, &sizes); err != nil {
+		if err := json.Unmarshal(data, &sizes); err != nil {
 			return err
 		}
 

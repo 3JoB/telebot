@@ -8,7 +8,7 @@ import (
 	"sync"
 	"text/template"
 
-	"github.com/bytedance/sonic"
+	"github.com/goccy/go-json"
 	"github.com/goccy/go-yaml"
 
 	tele "github.com/3JoB/telebot"
@@ -509,7 +509,7 @@ func (lt *Layout) ResultLocale(locale, k string, args ...any) tele.Result {
 		}
 	case "location":
 		r = &tele.LocationResult{ResultBase: base.ResultBase}
-		if err := sonic.Unmarshal(data, &r); err != nil {
+		if err := json.Unmarshal(data, &r); err != nil {
 			log.Println("telebot/layout:", err)
 		}
 	case "mpeg4_gif":

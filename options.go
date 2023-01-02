@@ -3,8 +3,7 @@ package telebot
 import (
 	"strconv"
 
-	//"github.com/goccy/go-json"
-	"github.com/bytedance/sonic"
+	"github.com/goccy/go-json"
 )
 
 // Option is a shortcut flag type for certain message features
@@ -167,7 +166,7 @@ func (b *Bot) embedSendOptions(params map[string]string, opt *SendOptions) {
 
 	if len(opt.Entities) > 0 {
 		delete(params, "parse_mode")
-		entities, _ := sonic.Marshal(opt.Entities)
+		entities, _ := json.Marshal(opt.Entities)
 
 		if params["caption"] != "" {
 			params["caption_entities"] = String(entities)
@@ -182,7 +181,7 @@ func (b *Bot) embedSendOptions(params map[string]string, opt *SendOptions) {
 
 	if opt.ReplyMarkup != nil {
 		processButtons(opt.ReplyMarkup.InlineKeyboard)
-		replyMarkup, _ := sonic.Marshal(opt.ReplyMarkup)
+		replyMarkup, _ := json.Marshal(opt.ReplyMarkup)
 		params["reply_markup"] = String(replyMarkup)
 	}
 
