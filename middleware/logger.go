@@ -6,6 +6,7 @@ import (
 	"github.com/goccy/go-json"
 
 	tele "github.com/3JoB/telebot"
+	"github.com/3JoB/telebot/pkg"
 )
 
 // Logger returns a middleware that logs incoming updates.
@@ -21,7 +22,7 @@ func Logger(logger ...*log.Logger) tele.MiddlewareFunc {
 	return func(next tele.HandlerFunc) tele.HandlerFunc {
 		return func(c tele.Context) error {
 			data, _ := json.MarshalIndent(c.Update(), "", "  ")
-			l.Println(tele.String(data))
+			l.Println(pkg.String(data))
 			return next(c)
 		}
 	}

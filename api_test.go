@@ -8,6 +8,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/3JoB/telebot/pkg"
 	"github.com/goccy/go-json"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -75,17 +76,17 @@ func TestRaw(t *testing.T) {
 }
 
 func TestExtractOk(t *testing.T) {
-	data := Bytes(`{"ok": true, "result": {}}`)
+	data := pkg.Bytes(`{"ok": true, "result": {}}`)
 	require.NoError(t, extractOk(data))
 
-	data = Bytes(`{
+	data = pkg.Bytes(`{
 		"ok": false,
 		"error_code": 400,
 		"description": "Bad Request: reply message not found"
 	}`)
 	assert.EqualError(t, extractOk(data), ErrNotFoundToReply.Error())
 
-	data = Bytes(`{
+	data = pkg.Bytes(`{
 		"ok": false,
 		"error_code": 429,
 		"description": "Too Many Requests: retry after 8",
@@ -96,7 +97,7 @@ func TestExtractOk(t *testing.T) {
 		RetryAfter: 8,
 	}, extractOk(data))
 
-	data = Bytes(`{
+	data = pkg.Bytes(`{
 		"ok": false,
 		"error_code": 400,
 		"description": "Bad Request: group chat was upgraded to a supergroup chat",
@@ -109,11 +110,11 @@ func TestExtractOk(t *testing.T) {
 }
 
 func TestExtractMessage(t *testing.T) {
-	data := Bytes(`{"ok":true,"result":true}`)
+	data := pkg.Bytes(`{"ok":true,"result":true}`)
 	_, err := extractMessage(data)
 	assert.Equal(t, ErrTrueResult, err)
 
-	data = Bytes(`{"ok":true,"result":{"foo":"bar"}}`)
+	data = pkg.Bytes(`{"ok":true,"result":{"foo":"bar"}}`)
 	_, err = extractMessage(data)
 	require.NoError(t, err)
 }

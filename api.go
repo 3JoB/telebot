@@ -12,6 +12,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/3JoB/telebot/pkg"
 	"github.com/goccy/go-json"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
@@ -226,7 +227,7 @@ func (b *Bot) getUpdates(offset, limit int, timeout time.Duration, allowed []str
 	}
 	if len(allowed) > 0 {
 		data, _ := json.Marshal(allowed)
-		params["allowed_updates"] = String(data)
+		params["allowed_updates"] = pkg.String(data)
 	}
 
 	data, err := b.Raw("getUpdates", params)
@@ -318,9 +319,9 @@ func extractMessage(data []byte) (*Message, error) {
 
 func verbose(method string, payload any, data []byte) {
 	body, _ := json.Marshal(payload)
-	body = bytes.ReplaceAll(body, Bytes(`\"`), Bytes(`"`))
-	body = bytes.ReplaceAll(body, Bytes(`"{`), Bytes(`{`))
-	body = bytes.ReplaceAll(body, Bytes(`}"`), Bytes(`}`))
+	body = bytes.ReplaceAll(body, pkg.Bytes(`\"`), pkg.Bytes(`"`))
+	body = bytes.ReplaceAll(body, pkg.Bytes(`"{`), pkg.Bytes(`{`))
+	body = bytes.ReplaceAll(body, pkg.Bytes(`}"`), pkg.Bytes(`}`))
 
 	indent := func(b []byte) string {
 		var buf bytes.Buffer
