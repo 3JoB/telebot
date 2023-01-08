@@ -16,7 +16,7 @@
 // Package unsafeConvert provides functions for unsafely convert between
 // a string and a slice of bytes.  You probably shouldn’t use it unless you need
 // to squeeze extra performance from your performance-critical code path.
-package telebot
+package pkg
 
 import (
 	"unsafe"
