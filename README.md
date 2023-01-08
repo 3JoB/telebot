@@ -1,7 +1,7 @@
 # Telebot
 >"I never knew creating Telegram bots could be so _sexy_!"
 
-This is a fork of https://github.com/tucnak/telebot that replaces encoding/json with goccy/go-json. This library requires minimum go1.20
+This is a fork of https://github.com/tucnak/telebot that replaces encoding/json with goccy/go-json. This library requires minimum go1.19
 
 
 It adds a new util.go from the https://github.com/mina86/unsafeConvert as a conversion between []Byte and String
@@ -17,20 +17,21 @@ It adds a new util.go from the https://github.com/mina86/unsafeConvert as a conv
 go get -u github.com/3JoB/telebot
 ```
 
-* [Overview](#overview)
-* [Getting Started](#getting-started)
+- [Telebot](#telebot)
+- [Overview](#overview)
+- [Getting Started](#getting-started)
 	- [Context](#context)
 	- [Middleware](#middleware)
 	- [Poller](#poller)
 	- [Commands](#commands)
 	- [Files](#files)
 	- [Sendable](#sendable)
+		- [Send options](#send-options)
 	- [Editable](#editable)
 	- [Keyboards](#keyboards)
 	- [Inline mode](#inline-mode)
-* [Contributing](#contributing)
-* [Donate](#donate)
-* [License](#license)
+- [Contributing](#contributing)
+- [License](#license)
 
 # Overview
 Telebot is a bot framework for [Telegram Bot API](https://core.telegram.org/bots/api).

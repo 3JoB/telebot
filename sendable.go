@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 	"strconv"
 
+	"github.com/3JoB/telebot/pkg"
 	"github.com/goccy/go-json"
 )
 
@@ -358,7 +359,7 @@ func (p *Poll) Send(b *Bot, to Recipient, opt *SendOptions) (*Message, error) {
 	}
 
 	opts, _ := json.Marshal(options)
-	params["options"] = String(opts)
+	params["options"] = pkg.String(opts)
 
 	data, err := b.Raw("sendPoll", params)
 	if err != nil {

@@ -5,7 +5,7 @@ import (
 	"strconv"
 
 	"github.com/goccy/go-json"
-	// "github.com/goccy/go-json"
+	"github.com/3JoB/telebot/pkg"
 )
 
 // ShippingQuery contains information about an incoming shipping query.
@@ -130,7 +130,7 @@ func (i Invoice) params() map[string]string {
 	}
 	if len(i.Prices) > 0 {
 		data, _ := json.Marshal(i.Prices)
-		params["prices"] = String(data)
+		params["prices"] = pkg.String(data)
 	}
 	if len(i.SuggestedTipAmounts) > 0 {
 		var amounts []string
@@ -139,7 +139,7 @@ func (i Invoice) params() map[string]string {
 		}
 
 		data, _ := json.Marshal(amounts)
-		params["suggested_tip_amounts"] = String(data)
+		params["suggested_tip_amounts"] = pkg.String(data)
 	}
 	return params
 }

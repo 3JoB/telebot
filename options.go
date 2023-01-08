@@ -3,6 +3,7 @@ package telebot
 import (
 	"strconv"
 
+	"github.com/3JoB/telebot/pkg"
 	"github.com/goccy/go-json"
 )
 
@@ -169,9 +170,9 @@ func (b *Bot) embedSendOptions(params map[string]string, opt *SendOptions) {
 		entities, _ := json.Marshal(opt.Entities)
 
 		if params["caption"] != "" {
-			params["caption_entities"] = String(entities)
+			params["caption_entities"] = pkg.String(entities)
 		} else {
-			params["entities"] = String(entities)
+			params["entities"] = pkg.String(entities)
 		}
 	}
 
@@ -182,7 +183,7 @@ func (b *Bot) embedSendOptions(params map[string]string, opt *SendOptions) {
 	if opt.ReplyMarkup != nil {
 		processButtons(opt.ReplyMarkup.InlineKeyboard)
 		replyMarkup, _ := json.Marshal(opt.ReplyMarkup)
-		params["reply_markup"] = String(replyMarkup)
+		params["reply_markup"] = pkg.String(replyMarkup)
 	}
 
 	if opt.Protected {

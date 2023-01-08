@@ -3,6 +3,7 @@ package telebot
 import (
 	"strconv"
 
+	"github.com/3JoB/telebot/pkg"
 	"github.com/goccy/go-json"
 )
 
@@ -113,7 +114,7 @@ func (b *Bot) CreateStickerSet(to Recipient, s StickerSet) error {
 
 	if s.MaskPosition != nil {
 		data, _ := json.Marshal(&s.MaskPosition)
-		params["mask_position"] = String(data)
+		params["mask_position"] = pkg.String(data)
 	}
 
 	_, err := b.sendFiles("createNewStickerSet", files, params)
@@ -139,7 +140,7 @@ func (b *Bot) AddSticker(to Recipient, s StickerSet) error {
 
 	if s.MaskPosition != nil {
 		data, _ := json.Marshal(&s.MaskPosition)
-		params["mask_position"] = String(data)
+		params["mask_position"] = pkg.String(data)
 	}
 
 	_, err := b.sendFiles("addStickerToSet", files, params)
@@ -194,7 +195,7 @@ func (b *Bot) CustomEmojiStickers(ids []string) ([]Sticker, error) {
 	data, _ := json.Marshal(ids)
 
 	params := map[string]string{
-		"custom_emoji_ids": String(data),
+		"custom_emoji_ids": pkg.String(data),
 	}
 
 	data, err := b.Raw("getCustomEmojiStickers", params)
