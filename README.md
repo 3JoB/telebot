@@ -12,6 +12,7 @@ It adds a new util.go from the https://github.com/mina86/unsafeConvert as a conv
 [![GitHub Actions](https://github.com/tucnak/telebot/actions/workflows/go.yml/badge.svg)](https://github.com/tucnak/telebot/actions)
 [![codecov.io](https://codecov.io/gh/tucnak/telebot/coverage.svg?branch=v3)](https://codecov.io/gh/tucnak/telebot)
 [![Discuss on Telegram](https://img.shields.io/badge/telegram-discuss-0088cc.svg)](https://t.me/go_telebot)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2F3JoB%2Ftelebot.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2F3JoB%2Ftelebot?ref=badge_shield)
 
 ```bash
 go get -u github.com/3JoB/telebot
@@ -486,3 +487,6 @@ of `QueryResponse`.
 # License
 
 Telebot is distributed under MIT.
+
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2F3JoB%2Ftelebot.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2F3JoB%2Ftelebot?ref=badge_large)
