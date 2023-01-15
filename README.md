@@ -12,6 +12,7 @@ It adds a new util.go from the https://github.com/mina86/unsafeConvert as a conv
 [![GitHub Actions](https://github.com/3JoB/telebot/actions/workflows/go.yml/badge.svg)](https://github.com/3JoB/telebot/actions)
 [![Discuss on Telegram](https://img.shields.io/badge/telegram-discuss-0088cc.svg)](https://t.me/go_telebot)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2F3JoB%2Ftelebot.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2F3JoB%2Ftelebot?ref=badge_shield)
+[![Go Report Card](https://goreportcard.com/badge/github.com/3JoB/telebot)](https://goreportcard.com/report/github.com/3JoB/telebot)
 
 ```bash
 go get -u github.com/3JoB/telebot
