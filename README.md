@@ -9,9 +9,9 @@ It adds a new util.go from the https://github.com/mina86/unsafeConvert as a conv
 
 
 [![GoDoc](https://godoc.org/github.com/3JoB/telebot?status.svg)](https://godoc.org/github.com/3JoB/telebot)
-[![GitHub Actions](https://github.com/tucnak/telebot/actions/workflows/go.yml/badge.svg)](https://github.com/tucnak/telebot/actions)
-[![codecov.io](https://codecov.io/gh/tucnak/telebot/coverage.svg?branch=v3)](https://codecov.io/gh/tucnak/telebot)
+[![GitHub Actions](https://github.com/3JoB/telebot/actions/workflows/go.yml/badge.svg)](https://github.com/3JoB/telebot/actions)
 [![Discuss on Telegram](https://img.shields.io/badge/telegram-discuss-0088cc.svg)](https://t.me/go_telebot)
+[![Go Report Card](https://goreportcard.com/badge/github.com/3JoB/telebot)](https://goreportcard.com/report/github.com/3JoB/telebot)
 
 ```bash
 go get -u github.com/3JoB/telebot
