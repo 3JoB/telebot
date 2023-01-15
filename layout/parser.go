@@ -11,6 +11,7 @@ import (
 	"github.com/spf13/viper"
 
 	tele "github.com/3JoB/telebot"
+	"github.com/3JoB/telebot/pkg"
 )
 
 type Settings struct {
@@ -139,7 +140,7 @@ func (lt *Layout) UnmarshalYAML(data []byte) error {
 				return err
 			}
 
-			tmpl, err := template.New(k).Funcs(lt.funcs).Parse(tele.String(data))
+			tmpl, err := template.New(k).Funcs(lt.funcs).Parse(pkg.String(data))
 			if err != nil {
 				return err
 			}
@@ -189,7 +190,7 @@ func (lt *Layout) UnmarshalYAML(data []byte) error {
 				return err
 			}
 
-			tmpl, err := template.New(k).Funcs(lt.funcs).Parse(tele.String(data))
+			tmpl, err := template.New(k).Funcs(lt.funcs).Parse(pkg.String(data))
 			if err != nil {
 				return err
 			}
@@ -209,7 +210,7 @@ func (lt *Layout) UnmarshalYAML(data []byte) error {
 			return err
 		}
 
-		tmpl, err := template.New(k).Funcs(lt.funcs).Parse(tele.String(data))
+		tmpl, err := template.New(k).Funcs(lt.funcs).Parse(pkg.String(data))
 		if err != nil {
 			return err
 		}
