@@ -42,7 +42,6 @@ const DefaultApiURL = "https://api.telegram.org"
 //
 // For convenience, all Telebot-provided endpoints start with
 // an "alert" character \a.
-//
 const (
 	// Basic message handlers.
 	OnText              = "\atext"
@@ -132,4 +131,4 @@ const (
 
 // M is a shortcut for map[string]interface{}. Use it for passing
 // arguments to the layout functions.
-type M = map[string]interface{}
+type M = map[string]any

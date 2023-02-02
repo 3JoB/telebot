@@ -7,8 +7,9 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/3JoB/telebot/pkg"
 	"github.com/goccy/go-json"
+
+	"github.com/3JoB/telebot/pkg"
 )
 
 // A WebhookTLS specifies the path to a key and a cert so the poller can open

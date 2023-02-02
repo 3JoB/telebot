@@ -2,7 +2,7 @@ package telebot
 
 import "github.com/goccy/go-json"
 
-//"github.com/goccy/go-json"
+// "github.com/goccy/go-json"
 
 // Media is a generic type for all kinds of media that includes File.
 type Media interface {
@@ -28,6 +28,7 @@ type InputMedia struct {
 	Title                string   `json:"title,omitempty"`
 	Performer            string   `json:"performer,omitempty"`
 	Streaming            bool     `json:"supports_streaming,omitempty"`
+	HasSpoiler           bool     `json:"has_spoiler,omitempty"`
 	DisableTypeDetection bool     `json:"disable_content_type_detection,omitempty"`
 }
 
@@ -48,9 +49,10 @@ type Album []Inputtable
 type Photo struct {
 	File
 
-	Width   int    `json:"width"`
-	Height  int    `json:"height"`
-	Caption string `json:"caption,omitempty"`
+	Width      int    `json:"width"`
+	Height     int    `json:"height"`
+	Caption    string `json:"caption,omitempty"`
+	HasSpoiler bool   `json:"has_spoiler,omitempty"`
 }
 
 type photoSize struct {
@@ -71,8 +73,9 @@ func (p *Photo) MediaFile() *File {
 
 func (p *Photo) InputMedia() InputMedia {
 	return InputMedia{
-		Type:    p.MediaType(),
-		Caption: p.Caption,
+		Type:       p.MediaType(),
+		Caption:    p.Caption,
+		HasSpoiler: p.HasSpoiler,
 	}
 }
 
@@ -111,7 +114,8 @@ type Audio struct {
 	Duration int `json:"duration,omitempty"`
 
 	// (Optional)
-	Caption   string `json:"caption,omitempty"`
+	Caption string `json:"caption,omitempty"`
+
 	Thumbnail *Photo `json:"thumb,omitempty"`
 	Title     string `json:"title,omitempty"`
 	Performer string `json:"performer,omitempty"`
@@ -144,7 +148,8 @@ type Document struct {
 	File
 
 	// (Optional)
-	Thumbnail            *Photo `json:"thumb,omitempty"`
+	Thumbnail *Photo `json:"thumb,omitempty"`
+
 	Caption              string `json:"caption,omitempty"`
 	MIME                 string `json:"mime_type"`
 	FileName             string `json:"file_name,omitempty"`
@@ -177,11 +182,13 @@ type Video struct {
 	Duration int `json:"duration,omitempty"`
 
 	// (Optional)
-	Caption   string `json:"caption,omitempty"`
-	Thumbnail *Photo `json:"thumb,omitempty"`
-	Streaming bool   `json:"supports_streaming,omitempty"`
-	MIME      string `json:"mime_type,omitempty"`
-	FileName  string `json:"file_name,omitempty"`
+	Caption string `json:"caption,omitempty"`
+
+	Thumbnail  *Photo `json:"thumb,omitempty"`
+	Streaming  bool   `json:"supports_streaming,omitempty"`
+	MIME       string `json:"mime_type,omitempty"`
+	FileName   string `json:"file_name,omitempty"`
+	HasSpoiler bool   `json:"has_spoiler,omitempty"`
 }
 
 func (v *Video) MediaType() string {
@@ -195,12 +202,13 @@ func (v *Video) MediaFile() *File {
 
 func (v *Video) InputMedia() InputMedia {
 	return InputMedia{
-		Type:      v.MediaType(),
-		Caption:   v.Caption,
-		Width:     v.Width,
-		Height:    v.Height,
-		Duration:  v.Duration,
-		Streaming: v.Streaming,
+		Type:       v.MediaType(),
+		Caption:    v.Caption,
+		Width:      v.Width,
+		Height:     v.Height,
+		Duration:   v.Duration,
+		Streaming:  v.Streaming,
+		HasSpoiler: v.HasSpoiler,
 	}
 }
 
@@ -213,10 +221,12 @@ type Animation struct {
 	Duration int `json:"duration,omitempty"`
 
 	// (Optional)
-	Caption   string `json:"caption,omitempty"`
-	Thumbnail *Photo `json:"thumb,omitempty"`
-	MIME      string `json:"mime_type,omitempty"`
-	FileName  string `json:"file_name,omitempty"`
+	Caption string `json:"caption,omitempty"`
+
+	Thumbnail  *Photo `json:"thumb,omitempty"`
+	MIME       string `json:"mime_type,omitempty"`
+	FileName   string `json:"file_name,omitempty"`
+	HasSpoiler bool   `json:"has_spoiler,omitempty"`
 }
 
 func (a *Animation) MediaType() string {
@@ -230,11 +240,12 @@ func (a *Animation) MediaFile() *File {
 
 func (a *Animation) InputMedia() InputMedia {
 	return InputMedia{
-		Type:     a.MediaType(),
-		Caption:  a.Caption,
-		Width:    a.Width,
-		Height:   a.Height,
-		Duration: a.Duration,
+		Type:       a.MediaType(),
+		Caption:    a.Caption,
+		Width:      a.Width,
+		Height:     a.Height,
+		Duration:   a.Duration,
+		HasSpoiler: a.HasSpoiler,
 	}
 }
 
@@ -246,7 +257,8 @@ type Voice struct {
 
 	// (Optional)
 	Caption string `json:"caption,omitempty"`
-	MIME    string `json:"mime_type,omitempty"`
+
+	MIME string `json:"mime_type,omitempty"`
 }
 
 func (v *Voice) MediaType() string {
@@ -265,7 +277,8 @@ type VideoNote struct {
 
 	// (Optional)
 	Thumbnail *Photo `json:"thumb,omitempty"`
-	Length    int    `json:"length,omitempty"`
+
+	Length int `json:"length,omitempty"`
 }
 
 func (v *VideoNote) MediaType() string {
@@ -305,7 +318,8 @@ type Contact struct {
 
 	// (Optional)
 	LastName string `json:"last_name"`
-	UserID   int64  `json:"user_id,omitempty"`
+
+	UserID int64 `json:"user_id,omitempty"`
 }
 
 // Location object represents geographic position.
@@ -329,7 +343,8 @@ type Venue struct {
 	Address  string   `json:"address"`
 
 	// (Optional)
-	FoursquareID    string `json:"foursquare_id,omitempty"`
+	FoursquareID string `json:"foursquare_id,omitempty"`
+
 	FoursquareType  string `json:"foursquare_type,omitempty"`
 	GooglePlaceID   string `json:"google_place_id,omitempty"`
 	GooglePlaceType string `json:"google_place_type,omitempty"`

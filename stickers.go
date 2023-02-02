@@ -3,8 +3,9 @@ package telebot
 import (
 	"strconv"
 
-	"github.com/3JoB/telebot/pkg"
 	"github.com/goccy/go-json"
+
+	"github.com/3JoB/telebot/pkg"
 )
 
 type StickerSetType = string
@@ -162,7 +163,6 @@ func (b *Bot) SetStickerPosition(sticker string, position int) error {
 func (b *Bot) DeleteSticker(sticker string) error {
 	_, err := b.Raw("deleteStickerFromSet", map[string]string{"sticker": sticker})
 	return err
-
 }
 
 // SetStickerSetThumb sets a thumbnail of the sticker set.

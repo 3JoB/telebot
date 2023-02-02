@@ -12,10 +12,11 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/3JoB/telebot/pkg"
 	"github.com/goccy/go-json"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
+
+	"github.com/3JoB/telebot/pkg"
 )
 
 // Raw lets you call any method of Bot API manually.

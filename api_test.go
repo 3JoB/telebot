@@ -8,10 +8,11 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/3JoB/telebot/pkg"
 	"github.com/goccy/go-json"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	"github.com/3JoB/telebot/pkg"
 )
 
 // testPayload implements json.Marshaler

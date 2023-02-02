@@ -12,8 +12,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/3JoB/telebot/pkg"
 	"github.com/goccy/go-json"
+
+	"github.com/3JoB/telebot/pkg"
 )
 
 // NewBot does try to build a Bot with token `token`, which

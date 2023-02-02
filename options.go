@@ -3,8 +3,9 @@ package telebot
 import (
 	"strconv"
 
-	"github.com/3JoB/telebot/pkg"
 	"github.com/goccy/go-json"
+
+	"github.com/3JoB/telebot/pkg"
 )
 
 // Option is a shortcut flag type for certain message features
@@ -89,7 +90,7 @@ func (og *SendOptions) copy() *SendOptions {
 	return &cp
 }
 
-func extractOptions(how []interface{}) *SendOptions {
+func extractOptions(how []any) *SendOptions {
 	opts := &SendOptions{}
 
 	for _, prop := range how {
