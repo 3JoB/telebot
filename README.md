@@ -1,10 +1,15 @@
 # Telebot
 >"I never knew creating Telegram bots could be so _sexy_!"
 
+
+Use this branch if you want to try out the latest features.
+If you're after stability, then use the [original project](https://github.com/tucnak/telebot).
+
+
+If you need some examples, I'll put them in this [organization](https://github.com/gotelebot/).
+
+
 This is a fork of https://github.com/tucnak/telebot that replaces encoding/json with goccy/go-json. This library requires minimum go1.19
-
-
-It adds a new util.go from the https://github.com/mina86/unsafeConvert as a conversion between []Byte and String
 
 
 
