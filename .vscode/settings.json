@@ -3,6 +3,7 @@
         "privatechannel",
         "supergroup",
         "tele",
+        "telebot",
         "Unixtime"
     ]
 }

@@ -7,12 +7,12 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"regexp"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/goccy/go-json"
+	"github.com/grafana/regexp"
 
 	"github.com/3JoB/telebot/pkg"
 )

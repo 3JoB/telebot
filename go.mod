@@ -3,9 +3,11 @@ module github.com/3JoB/telebot
 go 1.19
 
 require (
+	github.com/3JoB/ulib v0.0.6
 	github.com/goccy/go-json v0.10.0
 	github.com/goccy/go-reflect v1.2.0
 	github.com/goccy/go-yaml v1.9.8
+	github.com/grafana/regexp v0.0.0-20221122212121-6b5c0a4cb7fd
 	github.com/spf13/viper v1.15.0
 	github.com/stretchr/testify v1.8.1
 	golang.org/x/text v0.6.0

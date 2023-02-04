@@ -48,9 +48,9 @@ type Chat struct {
 	// Won't be there for ChatPrivate.
 	Title string `json:"title"`
 
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
-	Username  string `json:"username"`
+	FirstName       string   `json:"first_name"`
+	LastName        string   `json:"last_name"`
+	Username        string   `json:"username"`
 	ActiveUsernames []string `json:"active_usernames"`
 
 	// Returns only in getChat
@@ -68,7 +68,7 @@ type Chat struct {
 	LinkedChatID     int64         `json:"linked_chat_id,omitempty"`
 	ChatLocation     *ChatLocation `json:"location,omitempty"`
 	Private          bool          `json:"has_private_forwards,omitempty"`
-	IsForum bool `json:"is_forum,omitempty"`
+	IsForum          bool          `json:"is_forum,omitempty"`
 	Protected        bool          `json:"has_protected_content,omitempty"`
 	NoVoiceAndVideo  bool          `json:"has_restricted_voice_and_video_messages"`
 	HasHiddenMembers bool          `json:"has_hidden_members,omitempty"`
