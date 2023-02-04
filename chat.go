@@ -26,6 +26,13 @@ type User struct {
 	SupportsInline  bool `json:"supports_inline_queries"`
 }
 
+type Topic struct {
+	ThreadID  int64  `json:"message_thread_id,omitempty"`
+	Name      string `json:"name,omitempty"`
+	IconColor int64  `json:"icon_color,omitempty"`
+	IconEmoji string `json:"icon_custom_emoji_id,omitempty"`
+}
+
 // Recipient returns user ID (see Recipient interface).
 func (u *User) Recipient() string {
 	return strconv.FormatInt(u.ID, 10)
@@ -44,6 +51,7 @@ type Chat struct {
 	FirstName string `json:"first_name"`
 	LastName  string `json:"last_name"`
 	Username  string `json:"username"`
+	ActiveUsernames []string `json:"active_usernames"`
 
 	// Returns only in getChat
 	Bio string `json:"bio,omitempty"`
@@ -53,15 +61,18 @@ type Chat struct {
 	InviteLink       string        `json:"invite_link,omitempty"`
 	PinnedMessage    *Message      `json:"pinned_message,omitempty"`
 	Permissions      *Rights       `json:"permissions,omitempty"`
+	Topic            *Topic        `json:"forum_topic,omitempty"`
 	SlowMode         int           `json:"slow_mode_delay,omitempty"`
 	StickerSet       string        `json:"sticker_set_name,omitempty"`
 	CanSetStickerSet bool          `json:"can_set_sticker_set,omitempty"`
 	LinkedChatID     int64         `json:"linked_chat_id,omitempty"`
 	ChatLocation     *ChatLocation `json:"location,omitempty"`
 	Private          bool          `json:"has_private_forwards,omitempty"`
+	IsForum bool `json:"is_forum,omitempty"`
 	Protected        bool          `json:"has_protected_content,omitempty"`
 	NoVoiceAndVideo  bool          `json:"has_restricted_voice_and_video_messages"`
 	HasHiddenMembers bool          `json:"has_hidden_members,omitempty"`
+	HasAntiSpam      bool          `json:"has_aggressive_anti_spam_enabled,omitempty"`
 }
 
 // Recipient returns chat ID (see Recipient interface).
@@ -189,6 +200,9 @@ type ChatJoinRequest struct {
 
 	// Sender is the user that sent the join request.
 	Sender *User `json:"from"`
+
+	// Identifier of a private chat with the user who sent the join request. This number may have more than 32 significant bits and some programming languages may have difficulty/silent defects in interpreting it. But it has at most 52 significant bits, so a 64-bit integer or double-precision float type are safe for storing this identifier. The bot can use this identifier for 24 hours to send messages until the join request is processed, assuming no other administrator contacted the user.
+	UserID int64 `json:"user_chat_id"`
 
 	// Unixtime, use ChatJoinRequest.Time() to get time.Time.
 	Unixtime int64 `json:"date"`

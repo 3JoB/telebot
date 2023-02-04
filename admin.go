@@ -24,11 +24,18 @@ type Rights struct {
 	CanPromoteMembers   bool `json:"can_promote_members"`
 	CanSendMessages     bool `json:"can_send_messages"`
 	CanSendMedia        bool `json:"can_send_media_messages"`
+	CanSendAudios       bool `json:"can_send_audios"`
+	CanSendDocuments    bool `json:"can_send_documents"`
+	CanSendPhotos       bool `json:"can_send_photos"`
+	CanSendVideos       bool `json:"can_send_videos"`
+	CanSendVideoNotes   bool `json:"can_send_video_notes"`
+	CanSendVoiceNotes   bool `json:"can_send_voice_notes"`
 	CanSendPolls        bool `json:"can_send_polls"`
 	CanSendOther        bool `json:"can_send_other_messages"`
 	CanAddPreviews      bool `json:"can_add_web_page_previews"`
 	CanManageVideoChats bool `json:"can_manage_video_chats"`
 	CanManageChat       bool `json:"can_manage_chat"`
+	CanManageTopics     bool `json:"can_manage_topics"`
 }
 
 // NoRights is the default Rights{}.

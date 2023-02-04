@@ -10,6 +10,9 @@ import (
 type Message struct {
 	ID int `json:"message_id"`
 
+	//Unique identifier of a message thread to which the message belongs; for supergroups only
+	ThreadID int `json:"message_thread_id"`
+
 	// For message sent to channels, Sender will be nil
 	Sender *User `json:"from"`
 
