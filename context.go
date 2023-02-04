@@ -155,20 +155,8 @@ type Context interface {
 	// Set saves data in the context.
 	Set(key string, val any)
 
-	// Create a Topic
-	NewTopic(r *Forum) error
-
-	// Edit a Topic
-	EditTopic(r *Forum) error
-
-	// Delete Forum Topic
-	TopicDelete(r *Forum) error
-
-	// Close a Topic
-	TopicClose(r *Forum) error
-
-	// Reopen a Topic
-	TopicReopen(r *Forum) error
+	// Topic
+	Topic() *Forum
 }
 
 // nativeContext is a native implementation of the Context interface.
