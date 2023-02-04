@@ -5,7 +5,7 @@ import (
 )
 
 type Forum struct {
-	ctx *nativeContext
+	ctx       *nativeContext
 	ID        int64  `json:"chat_id"`
 	IconColor int64  `json:"icon_color"`
 	ThreadID  int    `json:"message_thread_id"`
@@ -87,14 +87,13 @@ func (c *Forum) GeneralNameEdit(r *Forum) error {
 	return err
 }
 
-func (c *Forum) GeneralClose(r *Forum) error{
+func (c *Forum) GeneralClose(r *Forum) error {
 	if r.ID == 0 {
 		r.ID = c.ctx.Chat().ID
 	}
 	_, err := c.ctx.b.Raw("closeGeneralForumTopic", json.Marshal(r).String())
 	return err
 }
-
 
 func (c *Forum) GeneralReOpen(r *Forum) error {
 	if r.ID == 0 {
