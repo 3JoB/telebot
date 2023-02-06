@@ -21,7 +21,13 @@ func (c *nativeContext) Topic() *Forum {
 
 func (c *Forum) New(r *Forum) error {
 	if r.ID == 0 {
+		if !c.ctx.Chat().IsForum {
+			return Err("Not Forum")
+		}
 		r.ID = c.ctx.Chat().ID
+	}
+	if !c.ctx.Chat().IsForum {
+		return Err("Not Forum")
 	}
 	_, err := c.ctx.b.Raw("createForumTopic", json.Marshal(r).String())
 	return err
@@ -29,6 +35,9 @@ func (c *Forum) New(r *Forum) error {
 
 func (c *Forum) Edit(r *Forum) error {
 	if r.ID == 0 {
+		if !c.ctx.Chat().IsForum {
+			return Err("Not Forum")
+		}
 		r.ID = c.ctx.Chat().ID
 	}
 	if r.ThreadID == 0 {
@@ -40,6 +49,9 @@ func (c *Forum) Edit(r *Forum) error {
 
 func (c *Forum) Delete(r *Forum) error {
 	if r.ID == 0 {
+		if !c.ctx.Chat().IsForum {
+			return Err("Not Forum")
+		}
 		r.ID = c.ctx.Chat().ID
 	}
 	_, err := c.ctx.b.Raw("deleteForumTopic", json.Marshal(r).String())
@@ -48,6 +60,9 @@ func (c *Forum) Delete(r *Forum) error {
 
 func (c *Forum) ReOpen(r *Forum) error {
 	if r.ID == 0 {
+		if !c.ctx.Chat().IsForum {
+			return Err("Not Forum")
+		}
 		r.ID = c.ctx.Chat().ID
 	}
 	_, err := c.ctx.b.Raw("reopenForumTopic", json.Marshal(r).String())
@@ -56,6 +71,9 @@ func (c *Forum) ReOpen(r *Forum) error {
 
 func (c *Forum) Close(r *Forum) error {
 	if r.ID == 0 {
+		if !c.ctx.Chat().IsForum {
+			return Err("Not Forum")
+		}
 		r.ID = c.ctx.Chat().ID
 	}
 	if r.ThreadID == 0 {
@@ -67,6 +85,9 @@ func (c *Forum) Close(r *Forum) error {
 
 func (c *Forum) UnpinAllMessages(r *Forum) error {
 	if r.ID == 0 {
+		if !c.ctx.Chat().IsForum {
+			return Err("Not Forum")
+		}
 		r.ID = c.ctx.Chat().ID
 	}
 	if r.ThreadID == 0 {
@@ -78,6 +99,9 @@ func (c *Forum) UnpinAllMessages(r *Forum) error {
 
 func (c *Forum) GeneralNameEdit(r *Forum) error {
 	if r.ID == 0 {
+		if !c.ctx.Chat().IsForum {
+			return Err("Not Forum")
+		}
 		r.ID = c.ctx.Chat().ID
 	}
 	if r.Name == "" {
@@ -89,6 +113,9 @@ func (c *Forum) GeneralNameEdit(r *Forum) error {
 
 func (c *Forum) GeneralClose(r *Forum) error {
 	if r.ID == 0 {
+		if !c.ctx.Chat().IsForum {
+			return Err("Not Forum")
+		}
 		r.ID = c.ctx.Chat().ID
 	}
 	_, err := c.ctx.b.Raw("closeGeneralForumTopic", json.Marshal(r).String())
@@ -97,6 +124,9 @@ func (c *Forum) GeneralClose(r *Forum) error {
 
 func (c *Forum) GeneralReOpen(r *Forum) error {
 	if r.ID == 0 {
+		if !c.ctx.Chat().IsForum {
+			return Err("Not Forum")
+		}
 		r.ID = c.ctx.Chat().ID
 	}
 	_, err := c.ctx.b.Raw("reopenGeneralForumTopic", json.Marshal(r).String())
@@ -105,6 +135,9 @@ func (c *Forum) GeneralReOpen(r *Forum) error {
 
 func (c *Forum) GeneralHide(r *Forum) error {
 	if r.ID == 0 {
+		if !c.ctx.Chat().IsForum {
+			return Err("Not Forum")
+		}
 		r.ID = c.ctx.Chat().ID
 	}
 	_, err := c.ctx.b.Raw("hideGeneralForumTopic", json.Marshal(r).String())
@@ -113,6 +146,9 @@ func (c *Forum) GeneralHide(r *Forum) error {
 
 func (c *Forum) GeneralUnHide(r *Forum) error {
 	if r.ID == 0 {
+		if !c.ctx.Chat().IsForum {
+			return Err("Not Forum")
+		}
 		r.ID = c.ctx.Chat().ID
 	}
 	_, err := c.ctx.b.Raw("unhideGeneralForumTopic", json.Marshal(r).String())
