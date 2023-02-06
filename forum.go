@@ -5,7 +5,7 @@ import (
 )
 
 type Forum struct {
-	ctx       *nativeContext
+	ctx       *nativeContext `json:"-"`
 	ID        int64  `json:"chat_id"`
 	IconColor int64  `json:"icon_color"`
 	ThreadID  int    `json:"message_thread_id"`
