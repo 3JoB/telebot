@@ -292,15 +292,17 @@ func (v *VideoNote) MediaFile() *File {
 // Sticker object represents a WebP image, so-called sticker.
 type Sticker struct {
 	File
-	Width            int           `json:"width"`
-	Height           int           `json:"height"`
-	Animated         bool          `json:"is_animated"`
-	Video            bool          `json:"is_video"`
-	Thumbnail        *Photo        `json:"thumb"`
-	Emoji            string        `json:"emoji"`
-	SetName          string        `json:"set_name"`
-	MaskPosition     *MaskPosition `json:"mask_position"`
-	PremiumAnimation *File         `json:"premium_animation"`
+	Width            int            `json:"width"`
+	Height           int            `json:"height"`
+	Animated         bool           `json:"is_animated"`
+	Video            bool           `json:"is_video"`
+	Emoji            string         `json:"emoji"`
+	SetName          string         `json:"set_name"`
+	CustomEmoji      string         `json:"custom_emoji_id,omitempty"`
+	Thumbnail        *Photo         `json:"thumb"`
+	MaskPosition     *MaskPosition  `json:"mask_position"`
+	PremiumAnimation *File          `json:"premium_animation"`
+	Type             StickerSetType `json:"type"`
 }
 
 func (s *Sticker) MediaType() string {

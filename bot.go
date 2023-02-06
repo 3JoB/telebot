@@ -844,7 +844,6 @@ func (b *Bot) Download(file *File, localFilename string) error {
 	}
 	defer reader.Close()
 
-
 	out, err := os.Create(localFilename)
 	if err != nil {
 		return wrapError(err)

@@ -6,11 +6,11 @@ import (
 
 type Forum struct {
 	ctx       *nativeContext `json:"-"`
-	ID        int64  `json:"chat_id"`
-	IconColor int64  `json:"icon_color"`
-	ThreadID  int    `json:"message_thread_id"`
-	Name      string `json:"name"`
-	EmojiID   string `json:"icon_custom_emoji_id"`
+	ID        int64          `json:"chat_id"`
+	IconColor int64          `json:"icon_color"`
+	ThreadID  int            `json:"message_thread_id"`
+	Name      string         `json:"name"`
+	EmojiID   string         `json:"icon_custom_emoji_id"`
 }
 
 func (c *nativeContext) Topic() *Forum {
