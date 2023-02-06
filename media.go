@@ -28,7 +28,7 @@ type InputMedia struct {
 	Title                string   `json:"title,omitempty"`
 	Performer            string   `json:"performer,omitempty"`
 	Streaming            bool     `json:"supports_streaming,omitempty"`
-	HasSpoiler           bool     `json:"has_spoiler,omitempty"`
+	IsSpoiler           bool     `json:"has_spoiler,omitempty"`
 	DisableTypeDetection bool     `json:"disable_content_type_detection,omitempty"`
 }
 
@@ -52,7 +52,7 @@ type Photo struct {
 	Width      int    `json:"width"`
 	Height     int    `json:"height"`
 	Caption    string `json:"caption,omitempty"`
-	HasSpoiler bool   `json:"has_spoiler,omitempty"`
+	IsSpoiler bool   `json:"has_spoiler,omitempty"`
 }
 
 type photoSize struct {
@@ -75,7 +75,7 @@ func (p *Photo) InputMedia() InputMedia {
 	return InputMedia{
 		Type:       p.MediaType(),
 		Caption:    p.Caption,
-		HasSpoiler: p.HasSpoiler,
+		IsSpoiler: p.IsSpoiler,
 	}
 }
 
@@ -188,7 +188,7 @@ type Video struct {
 	Streaming  bool   `json:"supports_streaming,omitempty"`
 	MIME       string `json:"mime_type,omitempty"`
 	FileName   string `json:"file_name,omitempty"`
-	HasSpoiler bool   `json:"has_spoiler,omitempty"`
+	IsSpoiler bool   `json:"has_spoiler,omitempty"`
 }
 
 func (v *Video) MediaType() string {
@@ -208,7 +208,7 @@ func (v *Video) InputMedia() InputMedia {
 		Height:     v.Height,
 		Duration:   v.Duration,
 		Streaming:  v.Streaming,
-		HasSpoiler: v.HasSpoiler,
+		IsSpoiler: v.IsSpoiler,
 	}
 }
 
@@ -226,7 +226,7 @@ type Animation struct {
 	Thumbnail  *Photo `json:"thumb,omitempty"`
 	MIME       string `json:"mime_type,omitempty"`
 	FileName   string `json:"file_name,omitempty"`
-	HasSpoiler bool   `json:"has_spoiler,omitempty"`
+	IsSpoiler bool   `json:"has_spoiler,omitempty"`
 }
 
 func (a *Animation) MediaType() string {
@@ -245,7 +245,7 @@ func (a *Animation) InputMedia() InputMedia {
 		Width:      a.Width,
 		Height:     a.Height,
 		Duration:   a.Duration,
-		HasSpoiler: a.HasSpoiler,
+		IsSpoiler: a.IsSpoiler,
 	}
 }
 
