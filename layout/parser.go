@@ -11,7 +11,7 @@ import (
 	"github.com/spf13/viper"
 
 	tele "github.com/3JoB/telebot"
-	"github.com/3JoB/telebot/pkg"
+	reflects "github.com/3JoB/ulib/reflect"
 )
 
 type Settings struct {
@@ -140,7 +140,7 @@ func (lt *Layout) UnmarshalYAML(data []byte) error {
 				return err
 			}
 
-			tmpl, err := template.New(k).Funcs(lt.funcs).Parse(pkg.String(data))
+			tmpl, err := template.New(k).Funcs(lt.funcs).Parse(reflects.String(data))
 			if err != nil {
 				return err
 			}
@@ -190,7 +190,7 @@ func (lt *Layout) UnmarshalYAML(data []byte) error {
 				return err
 			}
 
-			tmpl, err := template.New(k).Funcs(lt.funcs).Parse(pkg.String(data))
+			tmpl, err := template.New(k).Funcs(lt.funcs).Parse(reflects.String(data))
 			if err != nil {
 				return err
 			}
@@ -210,7 +210,7 @@ func (lt *Layout) UnmarshalYAML(data []byte) error {
 			return err
 		}
 
-		tmpl, err := template.New(k).Funcs(lt.funcs).Parse(pkg.String(data))
+		tmpl, err := template.New(k).Funcs(lt.funcs).Parse(reflects.String(data))
 		if err != nil {
 			return err
 		}

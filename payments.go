@@ -4,9 +4,8 @@ import (
 	"math"
 	"strconv"
 
+	reflects "github.com/3JoB/ulib/reflect"
 	"github.com/goccy/go-json"
-
-	"github.com/3JoB/telebot/pkg"
 )
 
 // ShippingQuery contains information about an incoming shipping query.
@@ -131,7 +130,7 @@ func (i Invoice) params() map[string]string {
 	}
 	if len(i.Prices) > 0 {
 		data, _ := json.Marshal(i.Prices)
-		params["prices"] = pkg.String(data)
+		params["prices"] = reflects.String(data)
 	}
 	if len(i.SuggestedTipAmounts) > 0 {
 		var amounts []string
@@ -140,7 +139,7 @@ func (i Invoice) params() map[string]string {
 		}
 
 		data, _ := json.Marshal(amounts)
-		params["suggested_tip_amounts"] = pkg.String(data)
+		params["suggested_tip_amounts"] = reflects.String(data)
 	}
 	return params
 }

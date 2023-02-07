@@ -12,11 +12,10 @@ import (
 	"strconv"
 	"time"
 
+	reflects "github.com/3JoB/ulib/reflect"
 	"github.com/goccy/go-json"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
-
-	"github.com/3JoB/telebot/pkg"
 )
 
 // Raw lets you call any method of Bot API manually.
@@ -228,7 +227,7 @@ func (b *Bot) getUpdates(offset, limit int, timeout time.Duration, allowed []str
 	}
 	if len(allowed) > 0 {
 		data, _ := json.Marshal(allowed)
-		params["allowed_updates"] = pkg.String(data)
+		params["allowed_updates"] = reflects.String(data)
 	}
 
 	data, err := b.Raw("getUpdates", params)
@@ -320,9 +319,9 @@ func extractMessage(data []byte) (*Message, error) {
 
 func verbose(method string, payload any, data []byte) {
 	body, _ := json.Marshal(payload)
-	body = bytes.ReplaceAll(body, pkg.Bytes(`\"`), pkg.Bytes(`"`))
-	body = bytes.ReplaceAll(body, pkg.Bytes(`"{`), pkg.Bytes(`{`))
-	body = bytes.ReplaceAll(body, pkg.Bytes(`}"`), pkg.Bytes(`}`))
+	body = bytes.ReplaceAll(body, reflects.Bytes(`\"`), reflects.Bytes(`"`))
+	body = bytes.ReplaceAll(body, reflects.Bytes(`"{`), reflects.Bytes(`{`))
+	body = bytes.ReplaceAll(body, reflects.Bytes(`}"`), reflects.Bytes(`}`))
 
 	indent := func(b []byte) string {
 		var buf bytes.Buffer

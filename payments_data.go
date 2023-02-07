@@ -1,9 +1,8 @@
 package telebot
 
 import (
+	reflects "github.com/3JoB/ulib/reflect"
 	"github.com/goccy/go-json"
-
-	"github.com/3JoB/telebot/pkg"
 )
 
 // "github.com/goccy/go-json"
@@ -13,7 +12,7 @@ const dataCurrencies = `{"AED":{"code":"AED","title":"United Arab Emirates Dirha
 var SupportedCurrencies = make(map[string]Currency)
 
 func init() {
-	err := json.Unmarshal(pkg.Bytes(dataCurrencies), &SupportedCurrencies)
+	err := json.Unmarshal(reflects.Bytes(dataCurrencies), &SupportedCurrencies)
 	if err != nil {
 		panic(err)
 	}

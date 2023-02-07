@@ -8,11 +8,10 @@ import (
 	"strings"
 	"testing"
 
+	reflects "github.com/3JoB/ulib/reflect"
 	"github.com/goccy/go-json"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-
-	"github.com/3JoB/telebot/pkg"
 )
 
 // testPayload implements json.Marshaler
@@ -77,17 +76,17 @@ func TestRaw(t *testing.T) {
 }
 
 func TestExtractOk(t *testing.T) {
-	data := pkg.Bytes(`{"ok": true, "result": {}}`)
+	data := reflects.Bytes(`{"ok": true, "result": {}}`)
 	require.NoError(t, extractOk(data))
 
-	data = pkg.Bytes(`{
+	data = reflects.Bytes(`{
 		"ok": false,
 		"error_code": 400,
 		"description": "Bad Request: reply message not found"
 	}`)
 	assert.EqualError(t, extractOk(data), ErrNotFoundToReply.Error())
 
-	data = pkg.Bytes(`{
+	data = reflects.Bytes(`{
 		"ok": false,
 		"error_code": 429,
 		"description": "Too Many Requests: retry after 8",
@@ -98,7 +97,7 @@ func TestExtractOk(t *testing.T) {
 		RetryAfter: 8,
 	}, extractOk(data))
 
-	data = pkg.Bytes(`{
+	data = reflects.Bytes(`{
 		"ok": false,
 		"error_code": 400,
 		"description": "Bad Request: group chat was upgraded to a supergroup chat",
@@ -111,11 +110,11 @@ func TestExtractOk(t *testing.T) {
 }
 
 func TestExtractMessage(t *testing.T) {
-	data := pkg.Bytes(`{"ok":true,"result":true}`)
+	data := reflects.Bytes(`{"ok":true,"result":true}`)
 	_, err := extractMessage(data)
 	assert.Equal(t, ErrTrueResult, err)
 
-	data = pkg.Bytes(`{"ok":true,"result":{"foo":"bar"}}`)
+	data = reflects.Bytes(`{"ok":true,"result":{"foo":"bar"}}`)
 	_, err = extractMessage(data)
 	require.NoError(t, err)
 }

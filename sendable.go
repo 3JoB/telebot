@@ -5,9 +5,8 @@ import (
 	"path/filepath"
 	"strconv"
 
+	reflects "github.com/3JoB/ulib/reflect"
 	"github.com/goccy/go-json"
-
-	"github.com/3JoB/telebot/pkg"
 )
 
 // Recipient is any possible endpoint you can send
@@ -374,7 +373,7 @@ func (p *Poll) Send(b *Bot, to Recipient, opt *SendOptions) (*Message, error) {
 	}
 
 	opts, _ := json.Marshal(options)
-	params["options"] = pkg.String(opts)
+	params["options"] = reflects.String(opts)
 
 	data, err := b.Raw("sendPoll", params)
 	if err != nil {

@@ -3,9 +3,8 @@ package telebot
 import (
 	"strconv"
 
+	reflects "github.com/3JoB/ulib/reflect"
 	"github.com/goccy/go-json"
-
-	"github.com/3JoB/telebot/pkg"
 )
 
 // Option is a shortcut flag type for certain message features
@@ -171,9 +170,9 @@ func (b *Bot) embedSendOptions(params map[string]string, opt *SendOptions) {
 		entities, _ := json.Marshal(opt.Entities)
 
 		if params["caption"] != "" {
-			params["caption_entities"] = pkg.String(entities)
+			params["caption_entities"] = reflects.String(entities)
 		} else {
-			params["entities"] = pkg.String(entities)
+			params["entities"] = reflects.String(entities)
 		}
 	}
 
@@ -184,7 +183,7 @@ func (b *Bot) embedSendOptions(params map[string]string, opt *SendOptions) {
 	if opt.ReplyMarkup != nil {
 		processButtons(opt.ReplyMarkup.InlineKeyboard)
 		replyMarkup, _ := json.Marshal(opt.ReplyMarkup)
-		params["reply_markup"] = pkg.String(replyMarkup)
+		params["reply_markup"] = reflects.String(replyMarkup)
 	}
 
 	if opt.Protected {

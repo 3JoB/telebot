@@ -7,9 +7,8 @@ import (
 	"net/http"
 	"strconv"
 
+	reflects "github.com/3JoB/ulib/reflect"
 	"github.com/goccy/go-json"
-
-	"github.com/3JoB/telebot/pkg"
 )
 
 // A WebhookTLS specifies the path to a key and a cert so the poller can open
@@ -93,7 +92,7 @@ func (h *Webhook) getParams() map[string]string {
 	}
 	if len(h.AllowedUpdates) > 0 {
 		data, _ := json.Marshal(h.AllowedUpdates)
-		params["allowed_updates"] = pkg.String(data)
+		params["allowed_updates"] = reflects.String(data)
 	}
 	if h.IP != "" {
 		params["ip_address"] = h.IP

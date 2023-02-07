@@ -307,7 +307,7 @@ b.Send(user, "text", tele.Silent, tele.NoPreview)
 ```
 
 Full list of supported option-flags you can find
-[here](https://pkg.go.dev/github.com/3JoB/telebot#Option).
+[here](https://reflects.go.dev/github.com/3JoB/telebot#Option).
 
 ## Editable
 If you want to edit some existing message, you don't really need to store the

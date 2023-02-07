@@ -12,7 +12,7 @@ import (
 	"github.com/goccy/go-yaml"
 
 	tele "github.com/3JoB/telebot"
-	"github.com/3JoB/telebot/pkg"
+	reflects "github.com/3JoB/ulib/reflect"
 )
 
 type (
@@ -337,7 +337,7 @@ func (lt *Layout) ButtonLocale(locale, k string, args ...any) *tele.Btn {
 		return nil
 	}
 
-	tmpl, err := lt.template(template.New(k).Funcs(lt.funcs), locale).Parse(pkg.String(data))
+	tmpl, err := lt.template(template.New(k).Funcs(lt.funcs), locale).Parse(reflects.String(data))
 	if err != nil {
 		log.Println("telebot/layout:", err)
 		return nil
