@@ -3,7 +3,7 @@ module github.com/3JoB/telebot
 go 1.20
 
 require (
-	github.com/3JoB/ulib v0.0.10
+	github.com/3JoB/ulib v0.0.10-3
 	github.com/goccy/go-json v0.10.0
 	github.com/goccy/go-reflect v1.2.0
 	github.com/goccy/go-yaml v1.9.8
