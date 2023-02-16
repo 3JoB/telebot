@@ -3,7 +3,7 @@ module github.com/3JoB/telebot
 go 1.20
 
 require (
-	github.com/3JoB/ulib v0.0.11
+	github.com/3JoB/ulib v0.0.13
 	github.com/goccy/go-json v0.10.0
 	github.com/goccy/go-reflect v1.2.0
 	github.com/goccy/go-yaml v1.9.8
@@ -14,6 +14,7 @@ require (
 )
 
 require (
+	github.com/3JoB/unsafeConvert v0.0.1 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/fatih/color v1.13.0 // indirect
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
