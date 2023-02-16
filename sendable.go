@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"strconv"
 
-	reflects "github.com/3JoB/ulib/reflect"
+	"github.com/3JoB/unsafeConvert"
 	"github.com/goccy/go-json"
 )
 
@@ -373,7 +373,7 @@ func (p *Poll) Send(b *Bot, to Recipient, opt *SendOptions) (*Message, error) {
 	}
 
 	opts, _ := json.Marshal(options)
-	params["options"] = reflects.String(opts)
+	params["options"] = unsafeConvert.String(opts)
 
 	data, err := b.Raw("sendPoll", params)
 	if err != nil {

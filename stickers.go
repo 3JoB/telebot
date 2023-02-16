@@ -3,7 +3,7 @@ package telebot
 import (
 	"strconv"
 
-	reflects "github.com/3JoB/ulib/reflect"
+	"github.com/3JoB/unsafeConvert"
 	"github.com/goccy/go-json"
 )
 
@@ -114,7 +114,7 @@ func (b *Bot) CreateStickerSet(to Recipient, s StickerSet) error {
 
 	if s.MaskPosition != nil {
 		data, _ := json.Marshal(&s.MaskPosition)
-		params["mask_position"] = reflects.String(data)
+		params["mask_position"] = unsafeConvert.String(data)
 	}
 
 	_, err := b.sendFiles("createNewStickerSet", files, params)
@@ -140,7 +140,7 @@ func (b *Bot) AddSticker(to Recipient, s StickerSet) error {
 
 	if s.MaskPosition != nil {
 		data, _ := json.Marshal(&s.MaskPosition)
-		params["mask_position"] = reflects.String(data)
+		params["mask_position"] = unsafeConvert.String(data)
 	}
 
 	_, err := b.sendFiles("addStickerToSet", files, params)
@@ -194,7 +194,7 @@ func (b *Bot) CustomEmojiStickers(ids []string) ([]Sticker, error) {
 	data, _ := json.Marshal(ids)
 
 	params := map[string]string{
-		"custom_emoji_ids": reflects.String(data),
+		"custom_emoji_ids": unsafeConvert.String(data),
 	}
 
 	data, err := b.Raw("getCustomEmojiStickers", params)

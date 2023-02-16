@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	reflects "github.com/3JoB/ulib/reflect"
+	"github.com/3JoB/unsafeConvert"
 	"github.com/goccy/go-json"
 	"github.com/grafana/regexp"
 )
@@ -325,7 +325,7 @@ func (b *Bot) SendAlbum(to Recipient, a Album, opts ...any) ([]Message, error) {
 		}
 
 		data, _ = json.Marshal(im)
-		media[i] = reflects.String(data)
+		media[i] = unsafeConvert.String(data)
 	}
 
 	params := map[string]string{
@@ -522,7 +522,7 @@ func (b *Bot) EditReplyMarkup(msg Editable, markup *ReplyMarkup) (*Message, erro
 
 	processButtons(markup.InlineKeyboard)
 	data, _ := json.Marshal(markup)
-	params["reply_markup"] = reflects.String(data)
+	params["reply_markup"] = unsafeConvert.String(data)
 
 	data, err := b.Raw("editMessageReplyMarkup", params)
 	if err != nil {
@@ -633,7 +633,7 @@ func (b *Bot) EditMedia(msg Editable, media Inputtable, opts ...any) (*Message, 
 	}
 
 	data, _ := json.Marshal(im)
-	params["media"] = reflects.String(data)
+	params["media"] = unsafeConvert.String(data)
 
 	if chatID == 0 { // if inline message
 		params["inline_message_id"] = msgID
@@ -726,7 +726,7 @@ func (b *Bot) Ship(query *ShippingQuery, what ...any) error {
 
 		params["ok"] = "true"
 		data, _ := json.Marshal(opts)
-		params["shipping_options"] = reflects.String(data)
+		params["shipping_options"] = unsafeConvert.String(data)
 	}
 
 	_, err := b.Raw("answerShippingQuery", params)

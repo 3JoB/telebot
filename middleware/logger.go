@@ -3,10 +3,10 @@ package middleware
 import (
 	"log"
 
+	"github.com/3JoB/unsafeConvert"
 	"github.com/goccy/go-json"
 
 	tele "github.com/3JoB/telebot"
-	reflects "github.com/3JoB/ulib/reflect"
 )
 
 // Logger returns a middleware that logs incoming updates.
@@ -22,7 +22,7 @@ func Logger(logger ...*log.Logger) tele.MiddlewareFunc {
 	return func(next tele.HandlerFunc) tele.HandlerFunc {
 		return func(c tele.Context) error {
 			data, _ := json.MarshalIndent(c.Update(), "", "  ")
-			l.Println(reflects.String(data))
+			l.Println(unsafeConvert.String(data))
 			return next(c)
 		}
 	}

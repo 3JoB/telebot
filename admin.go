@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/goccy/go-json"
-	// "github.com/goccy/go-json"
 )
 
 // Rights is a list of privileges available to chat members.
