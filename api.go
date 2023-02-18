@@ -317,6 +317,7 @@ func extractMessage(data []byte) (*Message, error) {
 	return resp.Result, nil
 }
 
+
 func verbose(method string, payload any, data []byte) {
 	body, _ := json.Marshal(payload)
 	body = bytes.ReplaceAll(body, unsafeConvert.Bytes(`\"`), unsafeConvert.Bytes(`"`))

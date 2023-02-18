@@ -8,6 +8,7 @@ import (
 	"github.com/goccy/go-json"
 )
 
+
 // ShippingQuery contains information about an incoming shipping query.
 type ShippingQuery struct {
 	Sender  *User           `json:"from"`

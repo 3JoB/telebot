@@ -8,6 +8,7 @@ type Command struct {
 	// Can contain only lowercase English letters, digits and underscores.
 	Text string `json:"command"`
 
+	
 	// Description of the command, 3-256 characters.
 	Description string `json:"description"`
 }

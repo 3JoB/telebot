@@ -9,6 +9,7 @@ import (
 	"github.com/goccy/go-json"
 )
 
+
 // Recipient is any possible endpoint you can send
 // messages to: either user, group or a channel.
 type Recipient interface {

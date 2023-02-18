@@ -5,6 +5,7 @@ import (
 	"github.com/goccy/go-json"
 )
 
+
 type Forum struct {
 	ctx       *nativeContext `json:"-"`
 	ID        int64          `json:"chat_id"`
@@ -13,6 +14,7 @@ type Forum struct {
 	Name      string         `json:"name"`
 	EmojiID   string         `json:"icon_custom_emoji_id"`
 }
+
 
 func (c *nativeContext) Topic() *Forum {
 	r := new(Forum)

@@ -7,6 +7,7 @@ import (
 	"github.com/goccy/go-json"
 )
 
+
 type StickerSetType = string
 
 const (

@@ -14,6 +14,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+
 // testPayload implements json.Marshaler
 // to test json encoding error behaviour.
 type testPayload struct{}

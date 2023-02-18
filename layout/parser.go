@@ -14,6 +14,7 @@ import (
 	tele "github.com/3JoB/telebot"
 )
 
+
 type Settings struct {
 	URL     string
 	Token   string
