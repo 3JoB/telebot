@@ -1,8 +1,10 @@
 package telebot
 
 import (
-	"github.com/3JoB/ulib/json"
+	"github.com/3JoB/unsafeConvert"
+	"github.com/goccy/go-json"
 )
+
 
 type Forum struct {
 	ctx       *nativeContext `json:"-"`
@@ -12,6 +14,7 @@ type Forum struct {
 	Name      string         `json:"name"`
 	EmojiID   string         `json:"icon_custom_emoji_id"`
 }
+
 
 func (c *nativeContext) Topic() *Forum {
 	r := new(Forum)
@@ -29,7 +32,8 @@ func (c *Forum) New(r *Forum) error {
 	if !c.ctx.Chat().IsForum {
 		return Err("Not Forum")
 	}
-	_, err := c.ctx.b.Raw("createForumTopic", json.Marshal(r).String())
+	data, _ := json.Marshal(r)
+	_, err := c.ctx.b.Raw("createForumTopic", unsafeConvert.String(data))
 	return err
 }
 
@@ -43,7 +47,8 @@ func (c *Forum) Edit(r *Forum) error {
 	if r.ThreadID == 0 {
 		r.ThreadID = c.ctx.Message().ThreadID
 	}
-	_, err := c.ctx.b.Raw("editForumTopic", json.Marshal(r).String())
+	data, _ := json.Marshal(r)
+	_, err := c.ctx.b.Raw("editForumTopic", unsafeConvert.String(data))
 	return err
 }
 
@@ -54,7 +59,8 @@ func (c *Forum) Delete(r *Forum) error {
 		}
 		r.ID = c.ctx.Chat().ID
 	}
-	_, err := c.ctx.b.Raw("deleteForumTopic", json.Marshal(r).String())
+	data, _ := json.Marshal(r)
+	_, err := c.ctx.b.Raw("deleteForumTopic", unsafeConvert.String(data))
 	return err
 }
 
@@ -65,7 +71,8 @@ func (c *Forum) ReOpen(r *Forum) error {
 		}
 		r.ID = c.ctx.Chat().ID
 	}
-	_, err := c.ctx.b.Raw("reopenForumTopic", json.Marshal(r).String())
+	data, _ := json.Marshal(r)
+	_, err := c.ctx.b.Raw("reopenForumTopic", unsafeConvert.String(data))
 	return err
 }
 
@@ -79,7 +86,8 @@ func (c *Forum) Close(r *Forum) error {
 	if r.ThreadID == 0 {
 		r.ThreadID = c.ctx.Message().ThreadID
 	}
-	_, err := c.ctx.b.Raw("closeForumTopic", json.Marshal(r).String())
+	data, _ := json.Marshal(r)
+	_, err := c.ctx.b.Raw("closeForumTopic", unsafeConvert.String(data))
 	return err
 }
 
@@ -93,7 +101,8 @@ func (c *Forum) UnpinAllMessages(r *Forum) error {
 	if r.ThreadID == 0 {
 		r.ThreadID = c.ctx.Message().ThreadID
 	}
-	_, err := c.ctx.b.Raw("unpinAllForumTopicMessages", json.Marshal(r).String())
+	data, _ := json.Marshal(r)
+	_, err := c.ctx.b.Raw("unpinAllForumTopicMessages", unsafeConvert.String(data))
 	return err
 }
 
@@ -107,7 +116,8 @@ func (c *Forum) GeneralNameEdit(r *Forum) error {
 	if r.Name == "" {
 		r.Name = "GTopic"
 	}
-	_, err := c.ctx.b.Raw("editGeneralForumTopic", json.Marshal(r).String())
+	data, _ := json.Marshal(r)
+	_, err := c.ctx.b.Raw("editGeneralForumTopic", unsafeConvert.String(data))
 	return err
 }
 
@@ -118,7 +128,8 @@ func (c *Forum) GeneralClose(r *Forum) error {
 		}
 		r.ID = c.ctx.Chat().ID
 	}
-	_, err := c.ctx.b.Raw("closeGeneralForumTopic", json.Marshal(r).String())
+	data, _ := json.Marshal(r)
+	_, err := c.ctx.b.Raw("closeGeneralForumTopic", unsafeConvert.String(data))
 	return err
 }
 
@@ -129,7 +140,8 @@ func (c *Forum) GeneralReOpen(r *Forum) error {
 		}
 		r.ID = c.ctx.Chat().ID
 	}
-	_, err := c.ctx.b.Raw("reopenGeneralForumTopic", json.Marshal(r).String())
+	data, _ := json.Marshal(r)
+	_, err := c.ctx.b.Raw("reopenGeneralForumTopic", unsafeConvert.String(data))
 	return err
 }
 
@@ -140,7 +152,8 @@ func (c *Forum) GeneralHide(r *Forum) error {
 		}
 		r.ID = c.ctx.Chat().ID
 	}
-	_, err := c.ctx.b.Raw("hideGeneralForumTopic", json.Marshal(r).String())
+	data, _ := json.Marshal(r)
+	_, err := c.ctx.b.Raw("hideGeneralForumTopic", unsafeConvert.String(data))
 	return err
 }
 
@@ -151,6 +164,7 @@ func (c *Forum) GeneralUnHide(r *Forum) error {
 		}
 		r.ID = c.ctx.Chat().ID
 	}
-	_, err := c.ctx.b.Raw("unhideGeneralForumTopic", json.Marshal(r).String())
+	data, _ := json.Marshal(r)
+	_, err := c.ctx.b.Raw("unhideGeneralForumTopic", unsafeConvert.String(data))
 	return err
 }

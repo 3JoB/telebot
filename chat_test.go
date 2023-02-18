@@ -6,6 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+
 func TestChat(t *testing.T) {
 	user := &User{ID: 1}
 	chat := &Chat{ID: 1}

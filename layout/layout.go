@@ -8,12 +8,13 @@ import (
 	"sync"
 	"text/template"
 
+	"github.com/3JoB/unsafeConvert"
 	"github.com/goccy/go-json"
 	"github.com/goccy/go-yaml"
 
 	tele "github.com/3JoB/telebot"
-	reflects "github.com/3JoB/ulib/reflect"
 )
+
 
 type (
 	// Layout provides an interface to interact with the layout,
@@ -337,7 +338,7 @@ func (lt *Layout) ButtonLocale(locale, k string, args ...any) *tele.Btn {
 		return nil
 	}
 
-	tmpl, err := lt.template(template.New(k).Funcs(lt.funcs), locale).Parse(reflects.String(data))
+	tmpl, err := lt.template(template.New(k).Funcs(lt.funcs), locale).Parse(unsafeConvert.String(data))
 	if err != nil {
 		log.Println("telebot/layout:", err)
 		return nil

@@ -12,7 +12,7 @@ import (
 	"strconv"
 	"time"
 
-	reflects "github.com/3JoB/ulib/reflect"
+	"github.com/3JoB/unsafeConvert"
 	"github.com/goccy/go-json"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
@@ -227,7 +227,7 @@ func (b *Bot) getUpdates(offset, limit int, timeout time.Duration, allowed []str
 	}
 	if len(allowed) > 0 {
 		data, _ := json.Marshal(allowed)
-		params["allowed_updates"] = reflects.String(data)
+		params["allowed_updates"] = unsafeConvert.String(data)
 	}
 
 	data, err := b.Raw("getUpdates", params)
@@ -317,11 +317,12 @@ func extractMessage(data []byte) (*Message, error) {
 	return resp.Result, nil
 }
 
+
 func verbose(method string, payload any, data []byte) {
 	body, _ := json.Marshal(payload)
-	body = bytes.ReplaceAll(body, reflects.Bytes(`\"`), reflects.Bytes(`"`))
-	body = bytes.ReplaceAll(body, reflects.Bytes(`"{`), reflects.Bytes(`{`))
-	body = bytes.ReplaceAll(body, reflects.Bytes(`}"`), reflects.Bytes(`}`))
+	body = bytes.ReplaceAll(body, unsafeConvert.Bytes(`\"`), unsafeConvert.Bytes(`"`))
+	body = bytes.ReplaceAll(body, unsafeConvert.Bytes(`"{`), unsafeConvert.Bytes(`{`))
+	body = bytes.ReplaceAll(body, unsafeConvert.Bytes(`}"`), unsafeConvert.Bytes(`}`))
 
 	indent := func(b []byte) string {
 		var buf bytes.Buffer

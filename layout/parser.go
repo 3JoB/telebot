@@ -7,12 +7,13 @@ import (
 	"strings"
 	"text/template"
 
+	"github.com/3JoB/unsafeConvert"
 	"github.com/goccy/go-yaml"
 	"github.com/spf13/viper"
 
 	tele "github.com/3JoB/telebot"
-	reflects "github.com/3JoB/ulib/reflect"
 )
+
 
 type Settings struct {
 	URL     string
@@ -140,7 +141,7 @@ func (lt *Layout) UnmarshalYAML(data []byte) error {
 				return err
 			}
 
-			tmpl, err := template.New(k).Funcs(lt.funcs).Parse(reflects.String(data))
+			tmpl, err := template.New(k).Funcs(lt.funcs).Parse(unsafeConvert.String(data))
 			if err != nil {
 				return err
 			}
@@ -190,7 +191,7 @@ func (lt *Layout) UnmarshalYAML(data []byte) error {
 				return err
 			}
 
-			tmpl, err := template.New(k).Funcs(lt.funcs).Parse(reflects.String(data))
+			tmpl, err := template.New(k).Funcs(lt.funcs).Parse(unsafeConvert.String(data))
 			if err != nil {
 				return err
 			}
@@ -210,7 +211,7 @@ func (lt *Layout) UnmarshalYAML(data []byte) error {
 			return err
 		}
 
-		tmpl, err := template.New(k).Funcs(lt.funcs).Parse(reflects.String(data))
+		tmpl, err := template.New(k).Funcs(lt.funcs).Parse(unsafeConvert.String(data))
 		if err != nil {
 			return err
 		}

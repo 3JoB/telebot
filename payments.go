@@ -4,9 +4,10 @@ import (
 	"math"
 	"strconv"
 
-	reflects "github.com/3JoB/ulib/reflect"
+	"github.com/3JoB/unsafeConvert"
 	"github.com/goccy/go-json"
 )
+
 
 // ShippingQuery contains information about an incoming shipping query.
 type ShippingQuery struct {
@@ -130,7 +131,7 @@ func (i Invoice) params() map[string]string {
 	}
 	if len(i.Prices) > 0 {
 		data, _ := json.Marshal(i.Prices)
-		params["prices"] = reflects.String(data)
+		params["prices"] = unsafeConvert.String(data)
 	}
 	if len(i.SuggestedTipAmounts) > 0 {
 		var amounts []string
@@ -139,7 +140,7 @@ func (i Invoice) params() map[string]string {
 		}
 
 		data, _ := json.Marshal(amounts)
-		params["suggested_tip_amounts"] = reflects.String(data)
+		params["suggested_tip_amounts"] = unsafeConvert.String(data)
 	}
 	return params
 }

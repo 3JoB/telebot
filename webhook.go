@@ -7,9 +7,10 @@ import (
 	"net/http"
 	"strconv"
 
-	reflects "github.com/3JoB/ulib/reflect"
+	"github.com/3JoB/unsafeConvert"
 	"github.com/goccy/go-json"
 )
+
 
 // A WebhookTLS specifies the path to a key and a cert so the poller can open
 // a TLS listener.
@@ -50,6 +51,7 @@ type Webhook struct {
 
 	// (WebhookInfo)
 	HasCustomCert bool `json:"has_custom_certificate"`
+
 	PendingUpdates    int    `json:"pending_update_count"`
 	ErrorMessage      string `json:"last_error_message"`
 	SyncErrorUnixtime int64  `json:"last_synchronization_error_date"`
@@ -92,7 +94,7 @@ func (h *Webhook) getParams() map[string]string {
 	}
 	if len(h.AllowedUpdates) > 0 {
 		data, _ := json.Marshal(h.AllowedUpdates)
-		params["allowed_updates"] = reflects.String(data)
+		params["allowed_updates"] = unsafeConvert.String(data)
 	}
 	if h.IP != "" {
 		params["ip_address"] = h.IP

@@ -5,6 +5,7 @@ import (
 	"os"
 )
 
+
 // File object represents any sort of file.
 type File struct {
 	FileID   string `json:"file_id"`
