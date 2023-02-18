@@ -7,7 +7,6 @@ import (
 	"github.com/goccy/go-json"
 )
 
-
 // User object represents a Telegram user, bot.
 type User struct {
 	ID int64 `json:"id"`

@@ -11,7 +11,6 @@ import (
 	"github.com/goccy/go-json"
 )
 
-
 // A WebhookTLS specifies the path to a key and a cert so the poller can open
 // a TLS listener.
 type WebhookTLS struct {

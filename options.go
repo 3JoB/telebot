@@ -7,7 +7,6 @@ import (
 	"github.com/goccy/go-json"
 )
 
-
 // Option is a shortcut flag type for certain message features
 // (so-called options). It means that instead of passing
 // fully-fledged SendOptions* to Send(), you can use these

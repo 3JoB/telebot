@@ -12,7 +12,6 @@ type (
 		Message     string
 	}
 
-	
 	FloodError struct {
 		err        *Error
 		RetryAfter int

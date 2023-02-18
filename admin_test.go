@@ -6,7 +6,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-
 func TestEmbedRights(t *testing.T) {
 	rights := NoRestrictions()
 	params := map[string]any{

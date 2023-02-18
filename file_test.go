@@ -7,7 +7,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-
 func TestFile(t *testing.T) {
 	f := FromDisk("telebot.go")
 	g := FromURL("http://")

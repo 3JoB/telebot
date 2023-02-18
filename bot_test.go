@@ -14,7 +14,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-
 var (
 	// required to test send and edit methods
 	token     = os.Getenv("TELEBOT_SECRET")

@@ -16,7 +16,6 @@ type Editable interface {
 	MessageSig() (messageID string, chatID int64)
 }
 
-
 // StoredMessage is an example struct suitable for being
 // stored in the database as-is or being embedded into
 // a larger struct, which is often the case (you might

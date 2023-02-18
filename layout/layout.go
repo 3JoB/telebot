@@ -15,7 +15,6 @@ import (
 	tele "github.com/3JoB/telebot"
 )
 
-
 type (
 	// Layout provides an interface to interact with the layout,
 	// parsed from the config file and locales.

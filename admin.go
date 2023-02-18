@@ -7,7 +7,6 @@ import (
 	"github.com/goccy/go-json"
 )
 
-
 // Rights is a list of privileges available to chat members.
 type Rights struct {
 	// Anonymous is true, if the user's presence in the chat is hidden.

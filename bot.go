@@ -16,7 +16,6 @@ import (
 	"github.com/grafana/regexp"
 )
 
-
 // NewBot does try to build a Bot with token `token`, which
 // is a secret API key assigned to particular bot.
 func NewBot(pref Settings) (*Bot, error) {

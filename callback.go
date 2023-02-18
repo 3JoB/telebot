@@ -6,7 +6,6 @@ type CallbackEndpoint interface {
 	CallbackUnique() string
 }
 
-
 // Callback object represents a query from a callback button in an
 // inline keyboard.
 type Callback struct {
