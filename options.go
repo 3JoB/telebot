@@ -79,6 +79,9 @@ type SendOptions struct {
 
 	// Protected protects the contents of the sent message from forwarding and saving
 	Protected bool
+
+	// Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
+	Thread *Topic
 }
 
 func (og *SendOptions) copy() *SendOptions {
@@ -140,7 +143,7 @@ func extractOptions(how []any) *SendOptions {
 	return opts
 }
 
-func (b *Bot) embedSendOptions(params map[string]string, opt *SendOptions) {
+func (b *Bot) embedSendOptions(params map[string]any, opt *SendOptions) {
 	if b.parseMode != ModeDefault {
 		params["parse_mode"] = b.parseMode
 	}
@@ -154,15 +157,19 @@ func (b *Bot) embedSendOptions(params map[string]string, opt *SendOptions) {
 	}
 
 	if opt.DisableWebPagePreview {
-		params["disable_web_page_preview"] = "true"
+		params["disable_web_page_preview"] = true
 	}
 
 	if opt.DisableNotification {
-		params["disable_notification"] = "true"
+		params["disable_notification"] = true
 	}
 
 	if opt.ParseMode != ModeDefault {
 		params["parse_mode"] = opt.ParseMode
+	}
+
+	if opt.Thread != nil {
+		params["message_thread_id"] = opt.Thread.ThreadID
 	}
 
 	if len(opt.Entities) > 0 {

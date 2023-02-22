@@ -96,8 +96,8 @@ type Invoice struct {
 	Flexible            bool `json:"is_flexible"`
 }
 
-func (i Invoice) params() map[string]string {
-	params := map[string]string{
+func (i Invoice) params() map[string]any {
+	params := map[string]any{
 		"title":                         i.Title,
 		"description":                   i.Description,
 		"start_parameter":               i.Start,

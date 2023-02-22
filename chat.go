@@ -421,7 +421,7 @@ func (b *Bot) SetGroupDescription(chat *Chat, description string) error {
 
 // SetGroupPhoto should be used to update group photo.
 func (b *Bot) SetGroupPhoto(chat *Chat, p *Photo) error {
-	params := map[string]string{
+	params := map[string]any{
 		"chat_id": chat.Recipient(),
 	}
 
@@ -431,7 +431,7 @@ func (b *Bot) SetGroupPhoto(chat *Chat, p *Photo) error {
 
 // SetGroupStickerSet should be used to update group's group sticker set.
 func (b *Bot) SetGroupStickerSet(chat *Chat, setName string) error {
-	params := map[string]string{
+	params := map[string]any{
 		"chat_id":          chat.Recipient(),
 		"sticker_set_name": setName,
 	}
@@ -453,7 +453,7 @@ func (b *Bot) SetGroupPermissions(chat *Chat, perms Rights) error {
 
 // DeleteGroupPhoto should be used to just remove group photo.
 func (b *Bot) DeleteGroupPhoto(chat *Chat) error {
-	params := map[string]string{
+	params := map[string]any{
 		"chat_id": chat.Recipient(),
 	}
 
@@ -463,7 +463,7 @@ func (b *Bot) DeleteGroupPhoto(chat *Chat) error {
 
 // DeleteGroupStickerSet should be used to just remove group sticker set.
 func (b *Bot) DeleteGroupStickerSet(chat *Chat) error {
-	params := map[string]string{
+	params := map[string]any{
 		"chat_id": chat.Recipient(),
 	}
 

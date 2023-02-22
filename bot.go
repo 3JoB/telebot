@@ -328,7 +328,7 @@ func (b *Bot) SendAlbum(to Recipient, a Album, opts ...any) ([]Message, error) {
 		media[i] = unsafeConvert.String(data)
 	}
 
-	params := map[string]string{
+	params := map[string]any{
 		"chat_id": to.Recipient(),
 		"media":   "[" + strings.Join(media, ",") + "]",
 	}
@@ -388,7 +388,7 @@ func (b *Bot) Forward(to Recipient, msg Editable, opts ...any) (*Message, error)
 	}
 	msgID, chatID := msg.MessageSig()
 
-	params := map[string]string{
+	params := map[string]any{
 		"chat_id":      to.Recipient(),
 		"from_chat_id": strconv.FormatInt(chatID, 10),
 		"message_id":   msgID,
@@ -414,7 +414,7 @@ func (b *Bot) Copy(to Recipient, msg Editable, options ...any) (*Message, error)
 	}
 	msgID, chatID := msg.MessageSig()
 
-	params := map[string]string{
+	params := map[string]any{
 		"chat_id":      to.Recipient(),
 		"from_chat_id": strconv.FormatInt(chatID, 10),
 		"message_id":   msgID,
@@ -449,7 +449,7 @@ func (b *Bot) Copy(to Recipient, msg Editable, options ...any) (*Message, error)
 func (b *Bot) Edit(msg Editable, what any, opts ...any) (*Message, error) {
 	var (
 		method string
-		params = make(map[string]string)
+		params = make(map[string]any)
 	)
 
 	switch v := what.(type) {
@@ -540,7 +540,7 @@ func (b *Bot) EditReplyMarkup(msg Editable, markup *ReplyMarkup) (*Message, erro
 func (b *Bot) EditCaption(msg Editable, caption string, opts ...any) (*Message, error) {
 	msgID, chatID := msg.MessageSig()
 
-	params := map[string]string{
+	params := map[string]any{
 		"caption": caption,
 	}
 
@@ -613,7 +613,7 @@ func (b *Bot) EditMedia(msg Editable, media Inputtable, opts ...any) (*Message, 
 	}
 
 	msgID, chatID := msg.MessageSig()
-	params := make(map[string]string)
+	params := make(map[string]any)
 
 	sendOpts := extractOptions(opts)
 	b.embedSendOptions(params, sendOpts)
@@ -898,7 +898,7 @@ func (b *Bot) File(file *File) (io.ReadCloser, error) {
 func (b *Bot) StopLiveLocation(msg Editable, opts ...any) (*Message, error) {
 	msgID, chatID := msg.MessageSig()
 
-	params := map[string]string{
+	params := map[string]any{
 		"chat_id":    strconv.FormatInt(chatID, 10),
 		"message_id": msgID,
 	}
@@ -922,7 +922,7 @@ func (b *Bot) StopLiveLocation(msg Editable, opts ...any) (*Message, error) {
 func (b *Bot) StopPoll(msg Editable, opts ...any) (*Poll, error) {
 	msgID, chatID := msg.MessageSig()
 
-	params := map[string]string{
+	params := map[string]any{
 		"chat_id":    strconv.FormatInt(chatID, 10),
 		"message_id": msgID,
 	}
@@ -961,7 +961,7 @@ func (b *Bot) Leave(chat *Chat) error {
 func (b *Bot) Pin(msg Editable, opts ...any) error {
 	msgID, chatID := msg.MessageSig()
 
-	params := map[string]string{
+	params := map[string]any{
 		"chat_id":    strconv.FormatInt(chatID, 10),
 		"message_id": msgID,
 	}

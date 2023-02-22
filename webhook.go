@@ -85,8 +85,8 @@ func (h *Webhook) getFiles() map[string]File {
 	return m
 }
 
-func (h *Webhook) getParams() map[string]string {
-	params := make(map[string]string)
+func (h *Webhook) getParams() map[string]any {
+	params := make(map[string]any)
 
 	if h.MaxConnections != 0 {
 		params["max_connections"] = strconv.Itoa(h.MaxConnections)

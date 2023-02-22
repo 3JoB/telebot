@@ -14,6 +14,7 @@ import (
 
 	"github.com/3JoB/unsafeConvert"
 	"github.com/goccy/go-json"
+	"github.com/spf13/cast"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 )
@@ -72,7 +73,7 @@ func (b *Bot) Raw(method string, payload any) ([]byte, error) {
 	return data, extractOk(data)
 }
 
-func (b *Bot) sendFiles(method string, files map[string]File, params map[string]string) ([]byte, error) {
+func (b *Bot) sendFiles(method string, files map[string]File, params map[string]any) ([]byte, error) {
 	rawFiles := make(map[string]any)
 	for name, f := range files {
 		switch {
@@ -106,7 +107,7 @@ func (b *Bot) sendFiles(method string, files map[string]File, params map[string]
 			}
 		}
 		for field, value := range params {
-			if err := writer.WriteField(field, value); err != nil {
+			if err := writer.WriteField(field, cast.ToString(value)); err != nil {
 				pipeWriter.CloseWithError(err)
 				return
 			}
@@ -166,7 +167,7 @@ func addFileToWriter(writer *multipart.Writer, filename, field string, file any)
 }
 
 func (b *Bot) sendText(to Recipient, text string, opt *SendOptions) (*Message, error) {
-	params := map[string]string{
+	params := map[string]any{
 		"chat_id": to.Recipient(),
 		"text":    text,
 	}
@@ -180,7 +181,7 @@ func (b *Bot) sendText(to Recipient, text string, opt *SendOptions) (*Message, e
 	return extractMessage(data)
 }
 
-func (b *Bot) sendMedia(media Media, params map[string]string, files map[string]File) (*Message, error) {
+func (b *Bot) sendMedia(media Media, params map[string]any, files map[string]File) (*Message, error) {
 	kind := media.MediaType()
 	what := "send" + cases.Title(language.English).String(kind)
 

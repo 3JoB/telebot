@@ -56,7 +56,7 @@ func (b *Bot) UploadSticker(to Recipient, png *File) (*File, error) {
 	files := map[string]File{
 		"png_sticker": *png,
 	}
-	params := map[string]string{
+	params := map[string]any{
 		"user_id": to.Recipient(),
 	}
 
@@ -103,7 +103,7 @@ func (b *Bot) CreateStickerSet(to Recipient, s StickerSet) error {
 		files["webm_sticker"] = *s.WebM
 	}
 
-	params := map[string]string{
+	params := map[string]any{
 		"user_id":        to.Recipient(),
 		"sticker_type":   s.Type,
 		"name":           s.Name,
@@ -132,7 +132,7 @@ func (b *Bot) AddSticker(to Recipient, s StickerSet) error {
 		files["webm_sticker"] = *s.WebM
 	}
 
-	params := map[string]string{
+	params := map[string]any{
 		"user_id": to.Recipient(),
 		"name":    s.Name,
 		"emojis":  s.Emojis,
@@ -180,7 +180,7 @@ func (b *Bot) SetStickerSetThumb(to Recipient, s StickerSet) error {
 		files["thumb"] = *s.TGS
 	}
 
-	params := map[string]string{
+	params := map[string]any{
 		"name":    s.Name,
 		"user_id": to.Recipient(),
 	}
