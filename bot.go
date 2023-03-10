@@ -254,6 +254,20 @@ func (b *Bot) NewContext(u Update) Context {
 	}
 }
 
+// Use this method to change the bot's short description,
+// which is shown on the bot's profile page and is sent together with
+// the link when users share the bot.
+func (b *Bot) SetDescription(description, lang string) error {
+	d := map[string]string{
+		"short_description": description,
+		"language_code":     lang,
+	}
+	if _, err := b.Raw("setMyShortDescription", d); err != nil {
+		return err
+	}
+	return nil
+}
+
 // Send accepts 2+ arguments, starting with destination chat, followed by
 // some Sendable (or string!) and optional send options.
 //
@@ -579,7 +593,7 @@ func (b *Bot) EditMedia(msg Editable, media Inputtable, opts ...any) (*Message, 
 		files = make(map[string]File)
 
 		thumb     *Photo
-		thumbName = "thumb"
+		thumbName = "thumbnail"
 	)
 
 	switch {
@@ -592,7 +606,7 @@ func (b *Bot) EditMedia(msg Editable, media Inputtable, opts ...any) (*Message, 
 		if file.FileReader != nil {
 			s = "0"
 		} else if s == thumbName {
-			thumbName = "thumb2"
+			thumbName = "thumbnail2"
 		}
 
 		repr = "attach://" + s

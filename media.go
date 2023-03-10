@@ -294,10 +294,11 @@ type Sticker struct {
 	Height           int            `json:"height"`
 	Animated         bool           `json:"is_animated"`
 	Video            bool           `json:"is_video"`
+	NeedsRepainting  bool           `json:"needs_repainting"`
 	Emoji            string         `json:"emoji"`
 	SetName          string         `json:"set_name"`
 	CustomEmoji      string         `json:"custom_emoji_id,omitempty"`
-	Thumbnail        *Photo         `json:"thumb"`
+	Thumbnail        *Photo         `json:"thumbnail"`
 	MaskPosition     *MaskPosition  `json:"mask_position"`
 	PremiumAnimation *File          `json:"premium_animation"`
 	Type             StickerSetType `json:"type"`

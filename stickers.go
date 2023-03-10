@@ -23,7 +23,7 @@ type StickerSet struct {
 	Animated      bool           `json:"is_animated"`
 	Video         bool           `json:"is_video"`
 	Stickers      []Sticker      `json:"stickers"`
-	Thumbnail     *Photo         `json:"thumb"`
+	Thumbnail     *Photo         `json:"thumbnail"`
 	PNG           *File          `json:"png_sticker"`
 	TGS           *File          `json:"tgs_sticker"`
 	WebM          *File          `json:"webm_sticker"`
@@ -164,7 +164,7 @@ func (b *Bot) DeleteSticker(sticker string) error {
 	return err
 }
 
-// SetStickerSetThumb sets a thumbnail of the sticker set.
+// SetStickerSetThumbnail sets a thumbnail of the sticker set.
 // Animated thumbnails can be set for animated sticker sets only.
 //
 // Thumbnail must be a PNG image, up to 128 kilobytes in size
@@ -172,12 +172,12 @@ func (b *Bot) DeleteSticker(sticker string) error {
 // up to 32 kilobytes in size.
 //
 // Animated sticker set thumbnail can't be uploaded via HTTP URL.
-func (b *Bot) SetStickerSetThumb(to Recipient, s StickerSet) error {
+func (b *Bot) SetStickerSetThumbnail(to Recipient, s StickerSet) error {
 	files := make(map[string]File)
 	if s.PNG != nil {
-		files["thumb"] = *s.PNG
+		files["thumbnail"] = *s.PNG
 	} else if s.TGS != nil {
-		files["thumb"] = *s.TGS
+		files["thumbnail"] = *s.TGS
 	}
 
 	params := map[string]any{
@@ -185,7 +185,7 @@ func (b *Bot) SetStickerSetThumb(to Recipient, s StickerSet) error {
 		"user_id": to.Recipient(),
 	}
 
-	_, err := b.sendFiles("setStickerSetThumb", files, params)
+	_, err := b.sendFiles("setStickerSetThumbnail", files, params)
 	return err
 }
 
