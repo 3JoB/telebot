@@ -177,9 +177,9 @@ func (b *Bot) embedSendOptions(params map[string]any, opt *SendOptions) {
 		entities, _ := json.Marshal(opt.Entities)
 
 		if params["caption"] != "" {
-			params["caption_entities"] = unsafeConvert.String(entities)
+			params["caption_entities"] = unsafeConvert.StringReflect(entities)
 		} else {
-			params["entities"] = unsafeConvert.String(entities)
+			params["entities"] = unsafeConvert.StringReflect(entities)
 		}
 	}
 
@@ -190,7 +190,7 @@ func (b *Bot) embedSendOptions(params map[string]any, opt *SendOptions) {
 	if opt.ReplyMarkup != nil {
 		processButtons(opt.ReplyMarkup.InlineKeyboard)
 		replyMarkup, _ := json.Marshal(opt.ReplyMarkup)
-		params["reply_markup"] = unsafeConvert.String(replyMarkup)
+		params["reply_markup"] = unsafeConvert.StringReflect(replyMarkup)
 	}
 
 	if opt.Protected {

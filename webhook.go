@@ -93,7 +93,7 @@ func (h *Webhook) getParams() map[string]any {
 	}
 	if len(h.AllowedUpdates) > 0 {
 		data, _ := json.Marshal(h.AllowedUpdates)
-		params["allowed_updates"] = unsafeConvert.String(data)
+		params["allowed_updates"] = unsafeConvert.StringReflect(data)
 	}
 	if h.IP != "" {
 		params["ip_address"] = h.IP

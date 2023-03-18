@@ -228,7 +228,7 @@ func (b *Bot) getUpdates(offset, limit int, timeout time.Duration, allowed []str
 	}
 	if len(allowed) > 0 {
 		data, _ := json.Marshal(allowed)
-		params["allowed_updates"] = unsafeConvert.String(data)
+		params["allowed_updates"] = unsafeConvert.StringReflect(data)
 	}
 
 	data, err := b.Raw("getUpdates", params)
@@ -320,9 +320,9 @@ func extractMessage(data []byte) (*Message, error) {
 
 func verbose(method string, payload any, data []byte) {
 	body, _ := json.Marshal(payload)
-	body = bytes.ReplaceAll(body, unsafeConvert.Bytes(`\"`), unsafeConvert.Bytes(`"`))
-	body = bytes.ReplaceAll(body, unsafeConvert.Bytes(`"{`), unsafeConvert.Bytes(`{`))
-	body = bytes.ReplaceAll(body, unsafeConvert.Bytes(`}"`), unsafeConvert.Bytes(`}`))
+	body = bytes.ReplaceAll(body, unsafeConvert.BytesReflect(`\"`), unsafeConvert.BytesReflect(`"`))
+	body = bytes.ReplaceAll(body, unsafeConvert.BytesReflect(`"{`), unsafeConvert.BytesReflect(`{`))
+	body = bytes.ReplaceAll(body, unsafeConvert.BytesReflect(`}"`), unsafeConvert.BytesReflect(`}`))
 
 	indent := func(b []byte) string {
 		var buf bytes.Buffer
