@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/3JoB/unsafeConvert v1.3.0
-	github.com/goccy/go-json v0.10.1
+	github.com/goccy/go-json v0.10.2
 	github.com/goccy/go-yaml v1.10.0
 	github.com/grafana/regexp v0.0.0-20221122212121-6b5c0a4cb7fd
 	github.com/spf13/cast v1.5.0
