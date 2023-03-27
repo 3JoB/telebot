@@ -20,7 +20,7 @@ func (c *Config) Unmarshal(v any) error {
 	return c.v.Unmarshal(v)
 }
 
-// UnmarshalKey parses the specific ke in the config into the out value.
+// UnmarshalKey parses the specific key in the config into the out value.
 func (c *Config) UnmarshalKey(k string, v any) error {
 	return c.v.UnmarshalKey(k, v)
 }
