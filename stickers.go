@@ -121,6 +121,12 @@ func (b *Bot) CreateStickerSet(to Recipient, s StickerSet) error {
 	return err
 }
 
+// Use this method to delete a sticker set that was created by the bot. Returns True on success.
+func (b *Bot) DeleteStickerSet(name string) error {
+	_, err := b.Raw("deleteStickerSet", map[string]string{"name": name})
+    return err
+}
+
 // AddSticker adds a new sticker to the existing sticker set.
 func (b *Bot) AddSticker(to Recipient, s StickerSet) error {
 	files := make(map[string]File)

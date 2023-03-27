@@ -257,7 +257,7 @@ func (b *Bot) NewContext(u Update) Context {
 // Use this method to change the bot's short description,
 // which is shown on the bot's profile page and is sent together with
 // the link when users share the bot.
-func (b *Bot) SetDescription(description, lang string) error {
+func (b *Bot) SetShortDescription(description, lang string) error {
 	d := map[string]string{
 		"short_description": description,
 		"language_code":     lang,
@@ -266,6 +266,41 @@ func (b *Bot) SetDescription(description, lang string) error {
 		return err
 	}
 	return nil
+}
+
+// Use this method to get the current bot description for the given user language.
+func (b *Bot) GetMyDescription(lang string) (string, error) {
+	d := map[string]string{
+        "language_code":     lang,
+    }
+    if r, err := b.Raw("getMyDescription", d); err!= nil {
+        return "", err
+    } else {
+		return unsafeConvert.StringReflect(r), nil
+	}
+}
+
+// Use this method to get the current bot short description for the given user language.
+func (b *Bot) GetMyShortDescription(lang string) (string, error) {
+	d := map[string]string{
+        "language_code":     lang,
+    }
+    if r, err := b.Raw("getMyShortDescription", d); err!= nil {
+        return "", err
+    } else {
+		return unsafeConvert.StringReflect(r), nil
+	}
+}
+
+func (b *Bot) SetDescription(description, lang string) error {
+	d := map[string]string{
+        "description": description,
+        "language_code": lang,
+    }
+    if _, err := b.Raw("setMyDescription", d); err!= nil {
+        return err
+    }
+    return nil
 }
 
 // Send accepts 2+ arguments, starting with destination chat, followed by

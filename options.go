@@ -1,8 +1,6 @@
 package telebot
 
 import (
-	"strconv"
-
 	"github.com/3JoB/unsafeConvert"
 	"github.com/goccy/go-json"
 )
@@ -153,7 +151,7 @@ func (b *Bot) embedSendOptions(params map[string]any, opt *SendOptions) {
 	}
 
 	if opt.ReplyTo != nil && opt.ReplyTo.ID != 0 {
-		params["reply_to_message_id"] = strconv.Itoa(opt.ReplyTo.ID)
+		params["reply_to_message_id"] = unsafeConvert.IntToString(opt.ReplyTo.ID)
 	}
 
 	if opt.DisableWebPagePreview {
