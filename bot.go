@@ -268,15 +268,30 @@ func (b *Bot) SetShortDescription(description, lang string) error {
 	return nil
 }
 
+type Description struct {
+	Description string `json:"description"`
+}
+
+type ShortDescription struct {
+	ShortDescription string `json:"short_description"`
+}
+
 // Use this method to get the current bot description for the given user language.
 func (b *Bot) GetMyDescription(lang string) (string, error) {
 	d := map[string]string{
         "language_code":     lang,
     }
+	if lang == "" {
+		d = nil
+	}
     if r, err := b.Raw("getMyDescription", d); err!= nil {
         return "", err
     } else {
-		return unsafeConvert.StringReflect(r), nil
+		var resp struct {
+			Result Description
+		}
+		json.Unmarshal(r, &resp)
+		return resp.Result.Description, nil
 	}
 }
 
@@ -285,10 +300,17 @@ func (b *Bot) GetMyShortDescription(lang string) (string, error) {
 	d := map[string]string{
         "language_code":     lang,
     }
+	if lang == "" {
+		d = nil
+	}
     if r, err := b.Raw("getMyShortDescription", d); err!= nil {
         return "", err
     } else {
-		return unsafeConvert.StringReflect(r), nil
+		var resp struct {
+			Result ShortDescription
+		}
+		json.Unmarshal(r, &resp)
+		return resp.Result.ShortDescription, nil
 	}
 }
 
