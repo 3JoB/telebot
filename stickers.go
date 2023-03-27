@@ -124,7 +124,7 @@ func (b *Bot) CreateStickerSet(to Recipient, s StickerSet) error {
 // Use this method to delete a sticker set that was created by the bot. Returns True on success.
 func (b *Bot) DeleteStickerSet(name string) error {
 	_, err := b.Raw("deleteStickerSet", map[string]string{"name": name})
-    return err
+	return err
 }
 
 // AddSticker adds a new sticker to the existing sticker set.
@@ -157,7 +157,7 @@ func (b *Bot) AddSticker(to Recipient, s StickerSet) error {
 func (b *Bot) SetStickerPosition(sticker string, position int) error {
 	params := map[string]string{
 		"sticker":  sticker,
-		"position": strconv.Itoa(position),
+		"position": unsafeConvert.IntToString(position),
 	}
 
 	_, err := b.Raw("setStickerPositionInSet", params)

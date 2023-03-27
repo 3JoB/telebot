@@ -23,7 +23,7 @@ import (
 // It also handles API errors, so you only need to unwrap
 // result field from json data.
 func (b *Bot) Raw(method string, payload any) ([]byte, error) {
-	url := b.URL + "/bot" + b.Token + "/" + method
+	url := b.buildUrl(method)
 
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(payload); err != nil {
@@ -73,48 +73,8 @@ func (b *Bot) Raw(method string, payload any) ([]byte, error) {
 	return data, extractOk(data)
 }
 
-func (b *Bot) Request(method string) ([]byte, error) {
-	url := b.URL + "/bot" + b.Token + "/" + method
-	// Cancel the request immediately without waiting for the timeout  when bot is about to stop.
-	// This may become important if doing long polling with long timeout.
-	exit := make(chan struct{})
-	defer close(exit)
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
-	go func() {
-		select {
-		case <-b.stopClient:
-			cancel()
-		case <-exit:
-		}
-	}()
-
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, nil)
-	if err != nil {
-		return nil, wrapError(err)
-	}
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("User-Agent", "3JoB-telebot/3")
-
-	resp, err := b.client.Do(req)
-	if err != nil {
-		return nil, wrapError(err)
-	}
-	resp.Close = true
-	defer resp.Body.Close()
-
-	data, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, wrapError(err)
-	}
-
-	if b.verbose {
-		verbose(method, nil, data)
-	}
-
-	// returning data as well
-	return data, extractOk(data)
+func (b *Bot) buildUrl(method string) string {
+	return fmt.Sprintf("%v/bot%v/%v", b.URL, b.Token, method)
 }
 
 func (b *Bot) sendFiles(method string, files map[string]File, params map[string]any) ([]byte, error) {
@@ -162,7 +122,8 @@ func (b *Bot) sendFiles(method string, files map[string]File, params map[string]
 		}
 	}()
 
-	url := b.URL + "/bot" + b.Token + "/" + method
+	url := b.buildUrl(method)
+	// url := b.URL + "/bot" + b.Token + "/" + method
 
 	resp, err := b.client.Post(url, writer.FormDataContentType(), pipeReader)
 	if err != nil {

@@ -65,11 +65,9 @@ func (b *Bot) ProcessUpdate(u Update) {
 			b.handle(OnText, c)
 			return
 		}
-
 		if b.handleMedia(c) {
 			return
 		}
-
 		if m.Contact != nil {
 			b.handle(OnContact, c)
 			return

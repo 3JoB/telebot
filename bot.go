@@ -279,14 +279,14 @@ type ShortDescription struct {
 // Use this method to get the current bot description for the given user language.
 func (b *Bot) GetMyDescription(lang string) (string, error) {
 	d := map[string]string{
-        "language_code":     lang,
-    }
+		"language_code": lang,
+	}
 	if lang == "" {
 		d = nil
 	}
-    if r, err := b.Raw("getMyDescription", d); err!= nil {
-        return "", err
-    } else {
+	if r, err := b.Raw("getMyDescription", d); err != nil {
+		return "", err
+	} else {
 		var resp struct {
 			Result Description
 		}
@@ -298,14 +298,14 @@ func (b *Bot) GetMyDescription(lang string) (string, error) {
 // Use this method to get the current bot short description for the given user language.
 func (b *Bot) GetMyShortDescription(lang string) (string, error) {
 	d := map[string]string{
-        "language_code":     lang,
-    }
+		"language_code": lang,
+	}
 	if lang == "" {
 		d = nil
 	}
-    if r, err := b.Raw("getMyShortDescription", d); err!= nil {
-        return "", err
-    } else {
+	if r, err := b.Raw("getMyShortDescription", d); err != nil {
+		return "", err
+	} else {
 		var resp struct {
 			Result ShortDescription
 		}
@@ -316,13 +316,13 @@ func (b *Bot) GetMyShortDescription(lang string) (string, error) {
 
 func (b *Bot) SetDescription(description, lang string) error {
 	d := map[string]string{
-        "description": description,
-        "language_code": lang,
-    }
-    if _, err := b.Raw("setMyDescription", d); err!= nil {
-        return err
-    }
-    return nil
+		"description":   description,
+		"language_code": lang,
+	}
+	if _, err := b.Raw("setMyDescription", d); err != nil {
+		return err
+	}
+	return nil
 }
 
 // Send accepts 2+ arguments, starting with destination chat, followed by
@@ -380,8 +380,8 @@ func (b *Bot) SendAlbum(to Recipient, a Album, opts ...any) ([]Message, error) {
 		case file.FileURL != "":
 			repr = file.FileURL
 		case file.OnDisk() || file.FileReader != nil:
-			repr = "attach://" + strconv.Itoa(i)
-			files[strconv.Itoa(i)] = *file
+			repr = fmt.Sprintf("attach://%v", unsafeConvert.IntToString(i))
+			files[unsafeConvert.IntToString(i)] = *file
 		default:
 			return nil, fmt.Errorf("telebot: album entry #%d does not exist", i)
 		}
@@ -401,7 +401,7 @@ func (b *Bot) SendAlbum(to Recipient, a Album, opts ...any) ([]Message, error) {
 
 	params := map[string]any{
 		"chat_id": to.Recipient(),
-		"media":   "[" + strings.Join(media, ",") + "]",
+		"media":   fmt.Sprintf("[%v]", strings.Join(media, ",")),
 	}
 	b.embedSendOptions(params, sendOpts)
 
@@ -418,7 +418,7 @@ func (b *Bot) SendAlbum(to Recipient, a Album, opts ...any) ([]Message, error) {
 	}
 
 	for attachName := range files {
-		i, _ := strconv.Atoi(attachName)
+		i := unsafeConvert.StringToInt(attachName)
 		r := resp.Result[i]
 
 		var newID string
@@ -666,7 +666,7 @@ func (b *Bot) EditMedia(msg Editable, media Inputtable, opts ...any) (*Message, 
 			thumbName = "thumbnail2"
 		}
 
-		repr = "attach://" + s
+		repr = fmt.Sprintf("attach://%v", s)
 		files[s] = *file
 	default:
 		return nil, errors.New("telebot: cannot edit media, it does not exist")
@@ -699,7 +699,7 @@ func (b *Bot) EditMedia(msg Editable, media Inputtable, opts ...any) (*Message, 
 	}
 
 	if thumb != nil {
-		im.Thumbnail = "attach://" + thumbName
+		im.Thumbnail = fmt.Sprintf("attach://%v", thumbName)
 		files[thumbName] = *thumb.MediaFile()
 	}
 
@@ -929,6 +929,10 @@ func (b *Bot) Download(file *File, localFilename string) error {
 	return nil
 }
 
+func (b *Bot) buildFileUrl(filepath string) string {
+	return fmt.Sprintf("%v/file/bot%v/%v", b.URL, b.Token, filepath)
+}
+
 // File gets a file from Telegram servers.
 func (b *Bot) File(file *File) (io.ReadCloser, error) {
 	f, err := b.FileByID(file.FileID)
@@ -936,7 +940,7 @@ func (b *Bot) File(file *File) (io.ReadCloser, error) {
 		return nil, err
 	}
 
-	url := b.URL + "/file/bot" + b.Token + "/" + f.FilePath
+	url := b.buildFileUrl(f.FilePath)
 	file.FilePath = f.FilePath // saving file path
 
 	req, err := http.NewRequest(http.MethodGet, url, nil)
@@ -1051,7 +1055,7 @@ func (b *Bot) Unpin(chat *Chat, messageID ...int) error {
 		"chat_id": chat.Recipient(),
 	}
 	if len(messageID) > 0 {
-		params["message_id"] = strconv.Itoa(messageID[0])
+		params["message_id"] = unsafeConvert.IntToString(messageID[0])
 	}
 
 	_, err := b.Raw("unpinChatMessage", params)
