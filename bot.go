@@ -262,6 +262,11 @@ func (b *Bot) SetShortDescription(description, lang string) error {
 		"short_description": description,
 		"language_code":     lang,
 	}
+	if lang == "" {
+		d = map[string]string{
+			"description": description,
+		}
+	}
 	if _, err := b.Raw("setMyShortDescription", d); err != nil {
 		return err
 	}
@@ -318,6 +323,11 @@ func (b *Bot) SetDescription(description, lang string) error {
 	d := map[string]string{
 		"description":   description,
 		"language_code": lang,
+	}
+	if lang == "" {
+		d = map[string]string{
+			"description": description,
+		}
 	}
 	if _, err := b.Raw("setMyDescription", d); err != nil {
 		return err
