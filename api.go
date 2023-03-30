@@ -12,6 +12,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/3JoB/resty-ilo"
 	"github.com/3JoB/unsafeConvert"
 	"github.com/goccy/go-json"
 	"github.com/spf13/cast"
@@ -46,12 +47,13 @@ func (b *Bot) Raw(method string, payload any) ([]byte, error) {
 		}
 	}()
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, &buf)
+	req, err := resty.New().R().SetContext(ctx).SetHeaders(map[string]string{
+		"Content-Type": "application/json",
+		"User-Agent": "telebot-exp/3 (https://github.com/3JoB/telebot)",
+	}).SetBody(&buf).Post(url)
 	if err != nil {
 		return nil, wrapError(err)
 	}
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("User-Agent", "3JoB-telebot/3")
 
 	resp, err := b.client.Do(req)
 	if err != nil {
