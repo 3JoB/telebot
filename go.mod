@@ -3,7 +3,7 @@ module github.com/3JoB/telebot
 go 1.20
 
 require (
-	github.com/3JoB/resty-ilo v1.1.0
+	github.com/3JoB/resty-ilo v1.1.1
 	github.com/3JoB/unsafeConvert v1.3.0
 	github.com/goccy/go-json v0.10.2
 	github.com/goccy/go-yaml v1.10.1
@@ -15,7 +15,7 @@ require (
 )
 
 require (
-	github.com/3JoB/ulib v1.22.2 // indirect
+	github.com/3JoB/ulib v1.23.0 // indirect
 	github.com/aead/chacha20 v0.0.0-20180709150244-8b13a72661da // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/fatih/color v1.13.0 // indirect

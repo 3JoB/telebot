@@ -36,10 +36,10 @@ cloud.google.com/go/storage v1.8.0/go.mod h1:Wv1Oy7z6Yz3DshWRJFhqM/UCfaWIRTdp0RX
 cloud.google.com/go/storage v1.10.0/go.mod h1:FLPqc6j+Ki4BU591ie1oL6qBQGu2Bl/tZ9ullr3+Kg0=
 cloud.google.com/go/storage v1.14.0/go.mod h1:GrKmX003DSIwi9o29oFT7YDnHYwZoctc3fOKtUw0Xmo=
 dmitri.shuralyov.com/gpu/mtl v0.0.0-20190408044501-666a987793e9/go.mod h1:H6x//7gZCb22OMCxBHrMx7a5I7Hp++hsVxbQ4BYO7hU=
-github.com/3JoB/resty-ilo v1.1.0 h1:P21r2D63FINxMDxFJpMBROa23fcGxiW3cNBaAHs194o=
-github.com/3JoB/resty-ilo v1.1.0/go.mod h1:DA8ucK8CNeN+9dgoepnk5DOC6wFE0qLaIG9gDzHpyxA=
-github.com/3JoB/ulib v1.22.2 h1:UMVb0miePNX+vaL6fBRMpQfp/51hK3piAYLOt1FQpnI=
-github.com/3JoB/ulib v1.22.2/go.mod h1:kdsyiyOB7cz3PN0hyJZRipYuKhKt7j9Z/159Ds1E/iM=
+github.com/3JoB/resty-ilo v1.1.1 h1:iSkPSX8KMSp8tEY6fLfQkCddSTm6QyxHb4Y+6pEi4TA=
+github.com/3JoB/resty-ilo v1.1.1/go.mod h1:rbeaXOu4iN0afDO8T/jnZKO5JUVGZD4g7Lq4YOjENMo=
+github.com/3JoB/ulib v1.23.0 h1:FHrOuSlhUISAJ7fk19zYBgwdgsqAjSpl1fPD0zPAB+g=
+github.com/3JoB/ulib v1.23.0/go.mod h1:AJwwS1pJcYR2wzOLHQWvNc7f/K+KiNEdJlDwRmFCU8A=
 github.com/3JoB/unsafeConvert v1.3.0 h1:HxWedv9pqNZjzkjdvyPToxolN+kjF55lMbsBedhuKR0=
 github.com/3JoB/unsafeConvert v1.3.0/go.mod h1:eSOZxiCOcyEi0vBO56ULYtfXJEn4vafvkebEfI0pYoE=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
