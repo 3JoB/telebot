@@ -11,6 +11,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/3JoB/resty-ilo"
 	"github.com/3JoB/unsafeConvert"
 	"github.com/goccy/go-json"
 	"github.com/grafana/regexp"
@@ -952,24 +953,20 @@ func (b *Bot) File(file *File) (io.ReadCloser, error) {
 
 	url := b.buildFileUrl(f.FilePath)
 	file.FilePath = f.FilePath // saving file path
+	resp, err := resty.NewWithClient(b.client).R().SetHeaders(map[string]string{
+		"User-Agent": "Mozilla/5.0(compatible; Telebot-Expansion-Pack/v1; +https://github.com/3JoB/telebot)",
+	}).Get(url)
 
-	req, err := http.NewRequest(http.MethodGet, url, nil)
-	if err != nil {
-		return nil, wrapError(err)
-	}
-	req.Header.Set("User-Agent", "3JoB-telebot/3")
-
-	resp, err := b.client.Do(req)
 	if err != nil {
 		return nil, wrapError(err)
 	}
 
-	if resp.StatusCode != http.StatusOK {
-		resp.Body.Close()
-		return nil, fmt.Errorf("telebot: expected status 200 but got %s", resp.Status)
+	if !resp.IsStatusCode(200) {
+		resp.RawBody().Close()
+		return nil, fmt.Errorf("telebot: expected status 200 but got %s", resp.Status())
 	}
 
-	return resp.Body, nil
+	return resp.RawBody(), nil
 }
 
 // StopLiveLocation stops broadcasting live message location

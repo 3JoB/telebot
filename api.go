@@ -7,7 +7,6 @@ import (
 	"io"
 	"log"
 	"mime/multipart"
-	"net/http"
 	"os"
 	"strconv"
 	"time"
@@ -47,32 +46,21 @@ func (b *Bot) Raw(method string, payload any) ([]byte, error) {
 		}
 	}()
 
-	req, err := resty.New().R().SetContext(ctx).SetHeaders(map[string]string{
+	resp, err := resty.New().R().SetContext(ctx).SetHeaders(map[string]string{
 		"Content-Type": "application/json",
-		"User-Agent": "telebot-exp/3 (https://github.com/3JoB/telebot)",
+		"User-Agent": "Mozilla/5.0(compatible; Telebot-Expansion-Pack/v1; +https://github.com/3JoB/telebot)",
 	}).SetBody(&buf).Post(url)
 	if err != nil {
 		return nil, wrapError(err)
 	}
-
-	resp, err := b.client.Do(req)
-	if err != nil {
-		return nil, wrapError(err)
-	}
-	resp.Close = true
-	defer resp.Body.Close()
-
-	data, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, wrapError(err)
-	}
+	defer resp.RawBody().Close()
 
 	if b.verbose {
-		verbose(method, payload, data)
+		verbose(method, payload, resp.Body())
 	}
 
 	// returning data as well
-	return data, extractOk(data)
+	return resp.Body(), extractOk(resp.Body())
 }
 
 func (b *Bot) buildUrl(method string) string {
@@ -126,27 +114,23 @@ func (b *Bot) sendFiles(method string, files map[string]File, params map[string]
 
 	url := b.buildUrl(method)
 	// url := b.URL + "/bot" + b.Token + "/" + method
+	resp, err := resty.NewWithClient(b.client).R().SetHeaders(map[string]string{
+		"User-Agent": "Mozilla/5.0(compatible; Telebot-Expansion-Pack/v1; +https://github.com/3JoB/telebot)",
+		"Content-Type": writer.FormDataContentType(),
+	}).SetBody(pipeReader).Post(url)
 
-	resp, err := b.client.Post(url, writer.FormDataContentType(), pipeReader)
 	if err != nil {
 		err = wrapError(err)
 		pipeReader.CloseWithError(err)
 		return nil, err
 	}
-	resp.Header.Set("User-Agent", "3JoB-telebot/3")
-	resp.Close = true
-	defer resp.Body.Close()
+	defer resp.RawBody().Close()
 
-	if resp.StatusCode == http.StatusInternalServerError {
+	if resp.IsStatusCode(500) {
 		return nil, ErrInternal
 	}
 
-	data, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, wrapError(err)
-	}
-
-	return data, extractOk(data)
+	return resp.Body(), extractOk(resp.Body())
 }
 
 func addFileToWriter(writer *multipart.Writer, filename, field string, file any) error {
@@ -285,7 +269,7 @@ func extractOk(data []byte) error {
 	}
 
 	switch e.Code {
-	case http.StatusTooManyRequests:
+	case 429:
 		retryAfter, ok := e.Parameters["retry_after"]
 		if !ok {
 			return NewError(e.Code, e.Description)
