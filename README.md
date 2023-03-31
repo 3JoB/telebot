@@ -1,4 +1,4 @@
-# Telebot
+# Telebot • Telebot Expansion Pack
 >"I never knew creating Telegram bots could be so _sexy_!"
 
 
