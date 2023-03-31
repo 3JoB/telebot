@@ -23,7 +23,7 @@ This is a fork of https://github.com/tucnak/telebot . This library requires mini
 go get -u github.com/3JoB/telebot
 ```
 
-- [Telebot](#telebot)
+- [Telebot](#telebot--telebot-expansion-pack)
 - [Overview](#overview)
 - [Getting Started](#getting-started)
 	- [Context](#context)
