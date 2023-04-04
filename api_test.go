@@ -3,11 +3,11 @@ package telebot
 import (
 	"errors"
 	"io"
-	"net/http"
-	"net/http/httptest"
 	"strings"
 	"testing"
 
+	"github.com/3JoB/nhtp"
+	"github.com/3JoB/nhtp/httptest"
 	"github.com/3JoB/unsafeConvert"
 	"github.com/goccy/go-json"
 	"github.com/stretchr/testify/assert"

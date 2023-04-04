@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"io"
 	"log"
-	"net/http"
 	"os"
 	"strconv"
 	"strings"
 	"time"
 
+	"github.com/3JoB/nhtp"
 	"github.com/3JoB/resty-ilo"
 	"github.com/3JoB/unsafeConvert"
 	"github.com/goccy/go-json"

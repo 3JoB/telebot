@@ -4,9 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"net/http"
 	"strconv"
 
+	"github.com/3JoB/nhtp"
 	"github.com/3JoB/unsafeConvert"
 	"github.com/goccy/go-json"
 )

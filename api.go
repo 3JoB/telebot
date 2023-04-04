@@ -48,7 +48,7 @@ func (b *Bot) Raw(method string, payload any) ([]byte, error) {
 
 	resp, err := resty.New().R().SetContext(ctx).SetHeaders(map[string]string{
 		"Content-Type": "application/json",
-		"User-Agent": "Mozilla/5.0(compatible; Telebot-Expansion-Pack/v1; +https://github.com/3JoB/telebot)",
+		"User-Agent":   "Mozilla/5.0(compatible; Telebot-Expansion-Pack/v1; +https://github.com/3JoB/telebot)",
 	}).SetBody(&buf).Post(url)
 	if err != nil {
 		return nil, wrapError(err)
@@ -115,7 +115,7 @@ func (b *Bot) sendFiles(method string, files map[string]File, params map[string]
 	url := b.buildUrl(method)
 	// url := b.URL + "/bot" + b.Token + "/" + method
 	resp, err := resty.NewWithClient(b.client).R().SetHeaders(map[string]string{
-		"User-Agent": "Mozilla/5.0(compatible; Telebot-Expansion-Pack/v1; +https://github.com/3JoB/telebot)",
+		"User-Agent":   "Mozilla/5.0(compatible; Telebot-Expansion-Pack/v1; +https://github.com/3JoB/telebot)",
 		"Content-Type": writer.FormDataContentType(),
 	}).SetBody(pipeReader).Post(url)
 
