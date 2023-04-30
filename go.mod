@@ -5,7 +5,7 @@ go 1.20
 require (
 	github.com/3JoB/nhtp v0.0.3
 	github.com/3JoB/resty-ilo v1.1.3
-	github.com/3JoB/unsafeConvert v1.3.0
+	github.com/3JoB/unsafeConvert v1.4.0
 	github.com/goccy/go-json v0.10.2
 	github.com/goccy/go-yaml v1.11.0
 	github.com/grafana/regexp v0.0.0-20221122212121-6b5c0a4cb7fd
