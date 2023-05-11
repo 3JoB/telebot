@@ -258,6 +258,18 @@ func (b *Bot) NewContext(u Update) Context {
 	}
 }
 
+// Use this method to change the bot's name. Returns True on success.
+func (b *Bot) SetMyName(name, language_code string) error {
+	d := map[string]string{
+		"name": name,
+		"language_code": language_code,
+	}
+	if _, err := b.Raw("setMyName", d); err != nil {
+		return err
+	}
+	return nil
+}
+
 // Use this method to change the bot's short description,
 // which is shown on the bot's profile page and is sent together with
 // the link when users share the bot.
