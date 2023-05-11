@@ -3,7 +3,7 @@ module github.com/3JoB/telebot
 go 1.20
 
 require (
-	github.com/3JoB/nhtp v0.0.4
+	github.com/3JoB/nhtp v0.0.5
 	github.com/3JoB/resty-ilo v1.1.4
 	github.com/3JoB/unsafeConvert v1.4.0
 	github.com/goccy/go-json v0.10.2
