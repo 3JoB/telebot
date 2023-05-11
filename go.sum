@@ -36,6 +36,18 @@ cloud.google.com/go/storage v1.8.0/go.mod h1:Wv1Oy7z6Yz3DshWRJFhqM/UCfaWIRTdp0RX
 cloud.google.com/go/storage v1.10.0/go.mod h1:FLPqc6j+Ki4BU591ie1oL6qBQGu2Bl/tZ9ullr3+Kg0=
 cloud.google.com/go/storage v1.14.0/go.mod h1:GrKmX003DSIwi9o29oFT7YDnHYwZoctc3fOKtUw0Xmo=
 dmitri.shuralyov.com/gpu/mtl v0.0.0-20190408044501-666a987793e9/go.mod h1:H6x//7gZCb22OMCxBHrMx7a5I7Hp++hsVxbQ4BYO7hU=
+github.com/3JoB/go-json v0.10.3 h1:LuFlaH1EhYQsyzRE59CBLrNE5vIr28z2CKrhy83WYno=
+github.com/3JoB/go-json v0.10.3/go.mod h1:mZcc16VxPgNwB9hnFumjhGNKLel5AkQpO1AOQB7odF4=
+github.com/3JoB/go-reflect v1.0.1 h1:o8FsdGDAq32rM84vjIcoEs6ezB2whS0MCR+w7HNIuqI=
+github.com/3JoB/go-reflect v1.0.1/go.mod h1:uqE8sGxe7gZKaXFFhkzOhXgAPnSdlXaT1Oy8CDYDWfE=
+github.com/3JoB/nhtp v0.0.4 h1:M1Aes7McWfx0WUBPAC5DOY3CfyFk0AixJ4PFF8WYeuQ=
+github.com/3JoB/nhtp v0.0.4/go.mod h1:PKg9kwTUlsCWvD9uWIzkm9I1sVV9Qeo62+5IPnuDTfw=
+github.com/3JoB/resty-ilo v1.1.4 h1:2O2R3ULODuqBALIjPb6jpwKMWEbvmkjtPS6KcvMvdVs=
+github.com/3JoB/resty-ilo v1.1.4/go.mod h1:DSSrLHoNsba8gHtX7W/cG7U5vywlz4ABBepsUVsaIA8=
+github.com/3JoB/ulib v1.30.0 h1:SdkTKKZyDw13wsU4cXzOFVUa46dHBi7p5CYzMSujyRg=
+github.com/3JoB/ulib v1.30.0/go.mod h1:xfGmnqpZt2u24ufTC2oUEvTdD3dEn1m0Fs2KCBfR/KE=
+github.com/3JoB/unsafeConvert v1.4.0 h1:S6cgfWjZNQ0++/djthTX5i73LVcdJmNU6X9iMuImVx4=
+github.com/3JoB/unsafeConvert v1.4.0/go.mod h1:eSOZxiCOcyEi0vBO56ULYtfXJEn4vafvkebEfI0pYoE=
 github.com/3JoB/go-reflect v1.0.1 h1:o8FsdGDAq32rM84vjIcoEs6ezB2whS0MCR+w7HNIuqI=
 github.com/3JoB/go-reflect v1.0.1/go.mod h1:uqE8sGxe7gZKaXFFhkzOhXgAPnSdlXaT1Oy8CDYDWfE=
 github.com/3JoB/nhtp v0.0.3 h1:uJMaPMwFHy4V/ivUx7ratmALc64Pnt1YPt0M0vgD42M=
@@ -84,8 +96,6 @@ github.com/go-task/slim-sprig v0.0.0-20210107165309-348f09dbbbc0 h1:p104kn46Q8Wd
 github.com/go-task/slim-sprig v0.0.0-20210107165309-348f09dbbbc0/go.mod h1:fyg7847qk6SyHyPtNmDHnmrv/HOrqktSC+C9fM+CJOE=
 github.com/goccy/go-json v0.10.2 h1:CrxCmQqYDkv1z7lO7Wbh2HN93uovUHgrECaO5ZrCXAU=
 github.com/goccy/go-json v0.10.2/go.mod h1:6MelG93GURQebXPDq3khkgXZkazVtN9CRI+MGFi0w8I=
-github.com/goccy/go-reflect v1.2.0 h1:O0T8rZCuNmGXewnATuKYnkL0xm6o8UNOJZd/gOkb9ms=
-github.com/goccy/go-reflect v1.2.0/go.mod h1:n0oYZn8VcV2CkWTxi8B9QjkCoq6GTtCEdfmR66YhFtE=
 github.com/goccy/go-yaml v1.11.0 h1:n7Z+zx8S9f9KgzG6KtQKf+kwqXZlLNR2F6018Dgau54=
 github.com/goccy/go-yaml v1.11.0/go.mod h1:H+mJrWtjPTJAHvRbV09MCK9xYwODM+wRTVFFTWckfng=
 github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b/go.mod h1:SBH7ygxi8pfUlaOkMMuAQtPIUF8ecWP5IEl/CR7VP2Q=
@@ -159,6 +169,8 @@ github.com/ianlancetaylor/demangle v0.0.0-20200824232613-28f6c0f3b639/go.mod h1:
 github.com/jstemmer/go-junit-report v0.0.0-20190106144839-af01ea7f8024/go.mod h1:6v2b51hI/fHJwM22ozAgKL4VKDeJcHhJFhtBdhmNjmU=
 github.com/jstemmer/go-junit-report v0.9.1/go.mod h1:Brl9GWCQeLvo8nXZwPNNblvFj/XSXhF0NWZEnDohbsk=
 github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+oQHNcck=
+github.com/klauspost/compress v1.16.4 h1:91KN02FnsOYhuunwU4ssRe8lc2JosWmizWa91B5v1PU=
+github.com/klauspost/compress v1.16.4/go.mod h1:ntbaceVETuRiXiv4DpjP66DpAtAGkEQskQzEyD//IeE=
 github.com/kr/fs v0.1.0/go.mod h1:FFnZGqtBN9Gxj7eW1uZ42v5BccTP0vu6NEaFoC2HwRg=
 github.com/kr/pretty v0.1.0/go.mod h1:dAy3ld7l9f0ibDNOQOHHMYYIIbhfbHSm3C4ZsoJORNo=
 github.com/kr/pretty v0.3.0 h1:WgNl7dwNpEZ6jJ9k1snq4pZsg7DOEN8hP9Xw0Tsjwk0=
