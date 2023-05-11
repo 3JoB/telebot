@@ -5,18 +5,19 @@ go 1.20
 require (
 	github.com/3JoB/nhtp v0.0.3
 	github.com/3JoB/resty-ilo v1.1.3
-	github.com/3JoB/unsafeConvert v1.3.0
+	github.com/3JoB/unsafeConvert v1.4.0
 	github.com/goccy/go-json v0.10.2
 	github.com/goccy/go-yaml v1.11.0
 	github.com/grafana/regexp v0.0.0-20221122212121-6b5c0a4cb7fd
 	github.com/spf13/cast v1.5.0
 	github.com/spf13/viper v1.15.0
 	github.com/stretchr/testify v1.8.2
-	golang.org/x/text v0.8.0
+	golang.org/x/text v0.9.0
 )
 
 require (
-	github.com/3JoB/ulib v1.25.0 // indirect
+	github.com/3JoB/go-reflect v1.0.1 // indirect
+	github.com/3JoB/ulib v1.30.0 // indirect
 	github.com/aead/chacha20 v0.0.0-20180709150244-8b13a72661da // indirect
 	github.com/andybalholm/brotli v1.0.5 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
@@ -43,11 +44,11 @@ require (
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/subosito/gotenv v1.4.2 // indirect
-	golang.org/x/crypto v0.7.0 // indirect
+	golang.org/x/crypto v0.8.0 // indirect
 	golang.org/x/exp v0.0.0-20230321023759-10a507213a29 // indirect
 	golang.org/x/mod v0.8.0 // indirect
-	golang.org/x/net v0.8.0 // indirect
-	golang.org/x/sys v0.6.0 // indirect
+	golang.org/x/net v0.9.0 // indirect
+	golang.org/x/sys v0.7.0 // indirect
 	golang.org/x/tools v0.6.0 // indirect
 	golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
