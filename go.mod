@@ -9,7 +9,7 @@ require (
 	github.com/goccy/go-json v0.10.2
 	github.com/goccy/go-yaml v1.11.0
 	github.com/grafana/regexp v0.0.0-20221122212121-6b5c0a4cb7fd
-	github.com/spf13/cast v1.5.0
+	github.com/spf13/cast v1.5.1
 	github.com/spf13/viper v1.15.0
 	github.com/stretchr/testify v1.8.2
 	golang.org/x/text v0.9.0
@@ -40,7 +40,6 @@ require (
 	github.com/quic-go/qtls-go1-19 v0.2.1 // indirect
 	github.com/quic-go/qtls-go1-20 v0.1.1 // indirect
 	github.com/quic-go/quic-go v0.33.0 // indirect
-	github.com/rogpeppe/go-internal v1.9.0 // indirect
 	github.com/spf13/afero v1.9.3 // indirect
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
