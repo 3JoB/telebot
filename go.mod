@@ -11,7 +11,7 @@ require (
 	github.com/grafana/regexp v0.0.0-20221122212121-6b5c0a4cb7fd
 	github.com/spf13/cast v1.5.0
 	github.com/spf13/viper v1.15.0
-	github.com/stretchr/testify v1.8.2
+	github.com/stretchr/testify v1.8.3
 	golang.org/x/text v0.9.0
 )
 
