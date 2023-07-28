@@ -6,7 +6,8 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/3JoB/nhtp"
+	"net/http"
+
 	"github.com/3JoB/unsafeConvert"
 	"github.com/goccy/go-json"
 )

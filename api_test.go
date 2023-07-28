@@ -6,8 +6,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/3JoB/nhtp"
-	"github.com/3JoB/nhtp/httptest"
+	"net/http"
+	"net/http/httptest"
+
 	"github.com/3JoB/unsafeConvert"
 	"github.com/goccy/go-json"
 	"github.com/stretchr/testify/assert"

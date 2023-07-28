@@ -10,7 +10,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/3JoB/nhtp"
+	"net/http"
+
 	"github.com/3JoB/resty-ilo"
 	"github.com/3JoB/unsafeConvert"
 	"github.com/goccy/go-json"
@@ -261,7 +262,7 @@ func (b *Bot) NewContext(u Update) Context {
 // Use this method to change the bot's name. Returns True on success.
 func (b *Bot) SetMyName(name, language_code string) error {
 	d := map[string]string{
-		"name": name,
+		"name":          name,
 		"language_code": language_code,
 	}
 	if _, err := b.Raw("setMyName", d); err != nil {
