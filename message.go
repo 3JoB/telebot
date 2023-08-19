@@ -257,8 +257,29 @@ type Message struct {
 	// Inline keyboard attached to the message.
 	ReplyMarkup *ReplyMarkup `json:"reply_markup,omitempty"`
 
+	// Service message: forum topic created
+	TopicCreated *TopicCreated `json:"forum_topic_created,omitempty"`
+
+	// Service message: forum topic closed
+	TopicClosed *TopicClosed `json:"forum_topic_closed,omitempty"`
+
+	// Service message: forum topic reopened
+	TopicReopened *TopicReopened `json:"forum_topic_reopened,omitempty"`
+
+	// Service message: forum topic deleted
+	TopicEdited *TopicEdited `json:"forum_topic_edited,omitempty"`
+
+	// Service message: general forum topic hidden
+	GeneralTopicHidden *GeneralTopicHidden `json:"general_topic_hidden,omitempty"`
+
+	// Service message: general forum topic unhidden
+	GeneralTopicUnhidden *GeneralTopicUnhidden `json:"general_topic_unhidden,omitempty"`
+
+	// Service message: the user allowed the bot added to the attachment menu to write messages
+	WriteAccessAllowed *WriteAccessAllowed `json:"write_access_allowed,omitempty"`
+
 	// True, if the message media is covered by a spoiler animation
-	IsMediaSpoiler bool `json:"has_media_spoiler"`
+	HasMediaSpoiler bool `json:"has_media_spoiler"`
 
 	IsTopicMessage bool `json:"is_topic_message"`
 }

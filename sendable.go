@@ -32,7 +32,7 @@ func (p *Photo) Send(b *Bot, to Recipient, opt *SendOptions) (*Message, error) {
 	}
 	b.embedSendOptions(params, opt)
 
-	if p.IsSpoiler {
+	if p.HasSpoiler {
 		params["has_spoiler"] = "true"
 	}
 
@@ -44,7 +44,7 @@ func (p *Photo) Send(b *Bot, to Recipient, opt *SendOptions) (*Message, error) {
 	msg.Photo.File.stealRef(&p.File)
 	*p = *msg.Photo
 	p.Caption = msg.Caption
-	p.IsSpoiler = msg.IsMediaSpoiler
+	p.HasSpoiler = msg.HasMediaSpoiler
 
 	return msg, nil
 }
@@ -157,7 +157,7 @@ func (v *Video) Send(b *Bot, to Recipient, opt *SendOptions) (*Message, error) {
 	if v.Streaming {
 		params["supports_streaming"] = "true"
 	}
-	if v.IsSpoiler {
+	if v.HasSpoiler {
 		params["has_spoiler"] = "true"
 	}
 
@@ -179,7 +179,7 @@ func (v *Video) Send(b *Bot, to Recipient, opt *SendOptions) (*Message, error) {
 		v.Thumbnail = doc.Thumbnail
 	}
 
-	v.IsSpoiler = msg.IsMediaSpoiler
+	v.HasSpoiler = msg.HasMediaSpoiler
 
 	return msg, nil
 }
@@ -202,7 +202,7 @@ func (a *Animation) Send(b *Bot, to Recipient, opt *SendOptions) (*Message, erro
 	if a.Height != 0 {
 		params["height"] = strconv.Itoa(a.Height)
 	}
-	if a.IsSpoiler {
+	if a.HasSpoiler {
 		params["has_spoiler"] = "true"
 	}
 
@@ -228,7 +228,7 @@ func (a *Animation) Send(b *Bot, to Recipient, opt *SendOptions) (*Message, erro
 		}
 	}
 
-	a.IsSpoiler = msg.IsMediaSpoiler
+	a.HasSpoiler = msg.HasMediaSpoiler
 	a.Caption = msg.Caption
 	return msg, nil
 }

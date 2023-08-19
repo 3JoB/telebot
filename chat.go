@@ -11,26 +11,21 @@ import (
 type User struct {
 	ID int64 `json:"id"`
 
-	FirstName    string `json:"first_name"`
-	LastName     string `json:"last_name"`
-	Username     string `json:"username"`
-	LanguageCode string `json:"language_code"`
-	IsBot        bool   `json:"is_bot"`
-	IsPremium    bool   `json:"is_premium"`
-	AddedToMenu  bool   `json:"added_to_attachment_menu"`
+	FirstName           string   `json:"first_name"`
+	LastName            string   `json:"last_name"`
+	Username            string   `json:"username"`
+	LanguageCode        string   `json:"language_code"`
+	IsBot               bool     `json:"is_bot"`
+	IsPremium           bool     `json:"is_premium"`
+	AddedToMenu         bool     `json:"added_to_attachment_menu"`
+	Usernames           []string `json:"active_usernames"`
+	CustomEmojiStatusID string   `json:"emoji_status_custom_emoji_id"`
 
 	// Returns only in getMe
 	CanJoinGroups bool `json:"can_join_groups"`
 
 	CanReadMessages bool `json:"can_read_all_group_messages"`
 	SupportsInline  bool `json:"supports_inline_queries"`
-}
-
-type Topic struct {
-	ThreadID  int64  `json:"message_thread_id,omitempty"`
-	Name      string `json:"name,omitempty"`
-	IconColor int64  `json:"icon_color,omitempty"`
-	IconEmoji string `json:"icon_custom_emoji_id,omitempty"`
 }
 
 // Recipient returns user ID (see Recipient interface).
@@ -73,8 +68,8 @@ type Chat struct {
 	IsForum                   bool          `json:"is_forum,omitempty"`
 	Protected                 bool          `json:"has_protected_content,omitempty"`
 	NoVoiceAndVideo           bool          `json:"has_restricted_voice_and_video_messages"`
-	HasHiddenMembers          bool          `json:"has_hidden_members,omitempty"`
-	HasAntiSpam               bool          `json:"has_aggressive_anti_spam_enabled,omitempty"`
+	HiddenMembers             bool          `json:"has_hidden_members,omitempty"`
+	AggressiveAntiSpam        bool          `json:"has_aggressive_anti_spam_enabled,omitempty"`
 }
 
 // Recipient returns chat ID (see Recipient interface).

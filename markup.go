@@ -54,6 +54,9 @@ type ReplyMarkup struct {
 
 	// Placeholder will be shown in the input field when the reply is active.
 	Placeholder string `json:"input_field_placeholder,omitempty"`
+
+	// IsPersistent allows to control when the keyboard is shown.
+	IsPersistent bool `json:"is_persistent,omitempty"`
 }
 
 func (r *ReplyMarkup) copy() *ReplyMarkup {

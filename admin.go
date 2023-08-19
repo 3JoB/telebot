@@ -63,6 +63,7 @@ func NoRestrictions() Rights {
 		CanAddPreviews:      true,
 		CanManageVideoChats: false,
 		CanManageChat:       false,
+		CanManageTopics:     false,
 	}
 }
 
@@ -85,6 +86,7 @@ func AdminRights() Rights {
 		CanAddPreviews:      true,
 		CanManageVideoChats: true,
 		CanManageChat:       true,
+		CanManageTopics:     true,
 	}
 }
 

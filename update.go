@@ -65,9 +65,11 @@ func (b *Bot) ProcessUpdate(u Update) {
 			b.handle(OnText, c)
 			return
 		}
+
 		if b.handleMedia(c) {
 			return
 		}
+
 		if m.Contact != nil {
 			b.handle(OnContact, c)
 			return
@@ -94,6 +96,34 @@ func (b *Bot) ProcessUpdate(u Update) {
 		}
 		if m.Payment != nil {
 			b.handle(OnPayment, c)
+			return
+		}
+		if m.TopicClosed != nil {
+			b.handle(OnTopicCreated, c)
+			return
+		}
+		if m.TopicReopened != nil {
+			b.handle(OnTopicReopened, c)
+			return
+		}
+		if m.TopicClosed != nil {
+			b.handle(OnTopicClosed, c)
+			return
+		}
+		if m.TopicEdited != nil {
+			b.handle(OnTopicEdited, c)
+			return
+		}
+		if m.GeneralTopicHidden != nil {
+			b.handle(OnGeneralTopicHidden, c)
+			return
+		}
+		if m.GeneralTopicUnhidden != nil {
+			b.handle(OnGeneralTopicUnhidden, c)
+			return
+		}
+		if m.WriteAccessAllowed != nil {
+			b.handle(OnWriteAccessAllowed, c)
 			return
 		}
 

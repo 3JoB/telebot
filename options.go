@@ -1,6 +1,8 @@
 package telebot
 
 import (
+	"strconv"
+
 	"github.com/3JoB/unsafeConvert"
 	"github.com/goccy/go-json"
 )
@@ -78,8 +80,11 @@ type SendOptions struct {
 	// Protected protects the contents of the sent message from forwarding and saving
 	Protected bool
 
-	// Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
-	Thread *Topic
+	// ThreadID supports sending messages to a thread.
+	ThreadID int
+
+	// HasSpoiler marks the message as containing a spoiler.
+	HasSpoiler bool
 }
 
 func (og *SendOptions) copy() *SendOptions {
@@ -166,10 +171,6 @@ func (b *Bot) embedSendOptions(params map[string]any, opt *SendOptions) {
 		params["parse_mode"] = opt.ParseMode
 	}
 
-	if opt.Thread != nil {
-		params["message_thread_id"] = opt.Thread.ThreadID
-	}
-
 	if len(opt.Entities) > 0 {
 		delete(params, "parse_mode")
 		entities, _ := json.Marshal(opt.Entities)
@@ -193,6 +194,14 @@ func (b *Bot) embedSendOptions(params map[string]any, opt *SendOptions) {
 
 	if opt.Protected {
 		params["protect_content"] = "true"
+	}
+
+	if opt.ThreadID != 0 {
+		params["message_thread_id"] = strconv.Itoa(opt.ThreadID)
+	}
+
+	if opt.HasSpoiler {
+		params["spoiler"] = "true"
 	}
 }
 
