@@ -50,6 +50,7 @@ type PollOption struct {
 // PollAnswer represents an answer of a user in a non-anonymous poll.
 type PollAnswer struct {
 	PollID  string `json:"poll_id"`
+	Voter   *Chat  `json:"voter_chat"`
 	Sender  *User  `json:"user"`
 	Options []int  `json:"option_ids"`
 }

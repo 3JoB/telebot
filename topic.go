@@ -177,3 +177,15 @@ func (b *Bot) UnhideGeneralTopic(chat *Chat, forum *Topic) error {
 	_, err := b.Raw("unhideGeneralForumTopic", params)
 	return err
 }
+
+// Use this method to clear the list of pinned messages in a General forum topic.
+// The bot must be an administrator in the chat for this to work and must have the
+// can_pin_messages administrator right in the supergroup.
+func (b *Bot) UnpinAllGeneralForumTopicMessages(chat *Chat) error {
+	params := map[string]any{
+		"chat_id": chat.Recipient(),
+	}
+
+	_, err := b.Raw("unpinAllGeneralForumTopicMessages", params)
+	return err
+}
