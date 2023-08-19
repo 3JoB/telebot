@@ -4,9 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"strconv"
-
 	"net/http"
+	"strconv"
 
 	"github.com/3JoB/unsafeConvert"
 	"github.com/goccy/go-json"
@@ -94,7 +93,7 @@ func (h *Webhook) getParams() map[string]any {
 	}
 	if len(h.AllowedUpdates) > 0 {
 		data, _ := json.Marshal(h.AllowedUpdates)
-		params["allowed_updates"] = unsafeConvert.StringReflect(data)
+		params["allowed_updates"] = unsafeConvert.StringSlice(data)
 	}
 	if h.IP != "" {
 		params["ip_address"] = h.IP

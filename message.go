@@ -220,6 +220,9 @@ type Message struct {
 	// if it is itself a reply.
 	PinnedMessage *Message `json:"pinned_message"`
 
+	// This object represents a message about a forwarded story in the chat. Currently holds no information.
+	Story *StoryEntity `json:"stroy,omitempty"`
+
 	// Message is an invoice for a payment.
 	Invoice *Invoice `json:"invoice"`
 
@@ -258,6 +261,9 @@ type Message struct {
 	IsMediaSpoiler bool `json:"has_media_spoiler"`
 
 	IsTopicMessage bool `json:"is_topic_message"`
+}
+
+type StoryEntity struct {
 }
 
 // MessageEntity object represents "special" parts of text messages,

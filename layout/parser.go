@@ -140,7 +140,7 @@ func (lt *Layout) UnmarshalYAML(data []byte) error {
 				return err
 			}
 
-			tmpl, err := template.New(k).Funcs(lt.funcs).Parse(unsafeConvert.StringReflect(data))
+			tmpl, err := template.New(k).Funcs(lt.funcs).Parse(unsafeConvert.StringSlice(data))
 			if err != nil {
 				return err
 			}
@@ -190,7 +190,7 @@ func (lt *Layout) UnmarshalYAML(data []byte) error {
 				return err
 			}
 
-			tmpl, err := template.New(k).Funcs(lt.funcs).Parse(unsafeConvert.StringReflect(data))
+			tmpl, err := template.New(k).Funcs(lt.funcs).Parse(unsafeConvert.StringSlice(data))
 			if err != nil {
 				return err
 			}
@@ -210,7 +210,7 @@ func (lt *Layout) UnmarshalYAML(data []byte) error {
 			return err
 		}
 
-		tmpl, err := template.New(k).Funcs(lt.funcs).Parse(unsafeConvert.StringReflect(data))
+		tmpl, err := template.New(k).Funcs(lt.funcs).Parse(unsafeConvert.StringSlice(data))
 		if err != nil {
 			return err
 		}

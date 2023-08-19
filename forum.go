@@ -31,7 +31,7 @@ func (c *Forum) New(r *Forum) error {
 		return Err("Not Forum")
 	}
 	data, _ := json.Marshal(r)
-	_, err := c.ctx.b.Raw("createForumTopic", unsafeConvert.StringReflect(data))
+	_, err := c.ctx.b.Raw("createForumTopic", unsafeConvert.StringSlice(data))
 	return err
 }
 
@@ -46,7 +46,7 @@ func (c *Forum) Edit(r *Forum) error {
 		r.ThreadID = c.ctx.Message().ThreadID
 	}
 	data, _ := json.Marshal(r)
-	_, err := c.ctx.b.Raw("editForumTopic", unsafeConvert.StringReflect(data))
+	_, err := c.ctx.b.Raw("editForumTopic", unsafeConvert.StringSlice(data))
 	return err
 }
 
@@ -58,7 +58,7 @@ func (c *Forum) Delete(r *Forum) error {
 		r.ID = c.ctx.Chat().ID
 	}
 	data, _ := json.Marshal(r)
-	_, err := c.ctx.b.Raw("deleteForumTopic", unsafeConvert.StringReflect(data))
+	_, err := c.ctx.b.Raw("deleteForumTopic", unsafeConvert.StringSlice(data))
 	return err
 }
 
@@ -70,7 +70,7 @@ func (c *Forum) ReOpen(r *Forum) error {
 		r.ID = c.ctx.Chat().ID
 	}
 	data, _ := json.Marshal(r)
-	_, err := c.ctx.b.Raw("reopenForumTopic", unsafeConvert.StringReflect(data))
+	_, err := c.ctx.b.Raw("reopenForumTopic", unsafeConvert.StringSlice(data))
 	return err
 }
 
@@ -85,7 +85,7 @@ func (c *Forum) Close(r *Forum) error {
 		r.ThreadID = c.ctx.Message().ThreadID
 	}
 	data, _ := json.Marshal(r)
-	_, err := c.ctx.b.Raw("closeForumTopic", unsafeConvert.StringReflect(data))
+	_, err := c.ctx.b.Raw("closeForumTopic", unsafeConvert.StringSlice(data))
 	return err
 }
 
@@ -100,7 +100,7 @@ func (c *Forum) UnpinAllMessages(r *Forum) error {
 		r.ThreadID = c.ctx.Message().ThreadID
 	}
 	data, _ := json.Marshal(r)
-	_, err := c.ctx.b.Raw("unpinAllForumTopicMessages", unsafeConvert.StringReflect(data))
+	_, err := c.ctx.b.Raw("unpinAllForumTopicMessages", unsafeConvert.StringSlice(data))
 	return err
 }
 
@@ -115,7 +115,7 @@ func (c *Forum) GeneralNameEdit(r *Forum) error {
 		r.Name = "GTopic"
 	}
 	data, _ := json.Marshal(r)
-	_, err := c.ctx.b.Raw("editGeneralForumTopic", unsafeConvert.StringReflect(data))
+	_, err := c.ctx.b.Raw("editGeneralForumTopic", unsafeConvert.StringSlice(data))
 	return err
 }
 
@@ -127,7 +127,7 @@ func (c *Forum) GeneralClose(r *Forum) error {
 		r.ID = c.ctx.Chat().ID
 	}
 	data, _ := json.Marshal(r)
-	_, err := c.ctx.b.Raw("closeGeneralForumTopic", unsafeConvert.StringReflect(data))
+	_, err := c.ctx.b.Raw("closeGeneralForumTopic", unsafeConvert.StringSlice(data))
 	return err
 }
 
@@ -139,7 +139,7 @@ func (c *Forum) GeneralReOpen(r *Forum) error {
 		r.ID = c.ctx.Chat().ID
 	}
 	data, _ := json.Marshal(r)
-	_, err := c.ctx.b.Raw("reopenGeneralForumTopic", unsafeConvert.StringReflect(data))
+	_, err := c.ctx.b.Raw("reopenGeneralForumTopic", unsafeConvert.StringSlice(data))
 	return err
 }
 
@@ -151,7 +151,7 @@ func (c *Forum) GeneralHide(r *Forum) error {
 		r.ID = c.ctx.Chat().ID
 	}
 	data, _ := json.Marshal(r)
-	_, err := c.ctx.b.Raw("hideGeneralForumTopic", unsafeConvert.StringReflect(data))
+	_, err := c.ctx.b.Raw("hideGeneralForumTopic", unsafeConvert.StringSlice(data))
 	return err
 }
 
@@ -163,6 +163,6 @@ func (c *Forum) GeneralUnHide(r *Forum) error {
 		r.ID = c.ctx.Chat().ID
 	}
 	data, _ := json.Marshal(r)
-	_, err := c.ctx.b.Raw("unhideGeneralForumTopic", unsafeConvert.StringReflect(data))
+	_, err := c.ctx.b.Raw("unhideGeneralForumTopic", unsafeConvert.StringSlice(data))
 	return err
 }

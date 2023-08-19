@@ -22,7 +22,7 @@ func Logger(logger ...*log.Logger) tele.MiddlewareFunc {
 	return func(next tele.HandlerFunc) tele.HandlerFunc {
 		return func(c tele.Context) error {
 			data, _ := json.MarshalIndent(c.Update(), "", "  ")
-			l.Println(unsafeConvert.StringReflect(data))
+			l.Println(unsafeConvert.StringSlice(data))
 			return next(c)
 		}
 	}

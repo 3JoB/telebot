@@ -373,7 +373,7 @@ func (p *Poll) Send(b *Bot, to Recipient, opt *SendOptions) (*Message, error) {
 	}
 
 	opts, _ := json.Marshal(options)
-	params["options"] = unsafeConvert.StringReflect(opts)
+	params["options"] = unsafeConvert.StringSlice(opts)
 
 	data, err := b.Raw("sendPoll", params)
 	if err != nil {

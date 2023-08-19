@@ -214,7 +214,7 @@ func (b *Bot) getUpdates(offset, limit int, timeout time.Duration, allowed []str
 		"timeout": strconv.Itoa(int(timeout / time.Second)),
 	}
 	data, _ := json.Marshal(allowed)
-	params["allowed_updates"] = unsafeConvert.StringReflect(data)
+	params["allowed_updates"] = unsafeConvert.StringSlice(data)
 
 	if limit != 0 {
 		params["limit"] = unsafeConvert.IntToString(limit)
@@ -309,9 +309,9 @@ func extractMessage(data []byte) (*Message, error) {
 
 func verbose(method string, payload any, data []byte) {
 	body, _ := json.Marshal(payload)
-	body = bytes.ReplaceAll(body, unsafeConvert.BytesReflect(`\"`), unsafeConvert.BytesReflect(`"`))
-	body = bytes.ReplaceAll(body, unsafeConvert.BytesReflect(`"{`), unsafeConvert.BytesReflect(`{`))
-	body = bytes.ReplaceAll(body, unsafeConvert.BytesReflect(`}"`), unsafeConvert.BytesReflect(`}`))
+	body = bytes.ReplaceAll(body, unsafeConvert.ByteSlice(`\"`), unsafeConvert.ByteSlice(`"`))
+	body = bytes.ReplaceAll(body, unsafeConvert.ByteSlice(`"{`), unsafeConvert.ByteSlice(`{`))
+	body = bytes.ReplaceAll(body, unsafeConvert.ByteSlice(`}"`), unsafeConvert.ByteSlice(`}`))
 
 	indent := func(b []byte) string {
 		var buf bytes.Buffer

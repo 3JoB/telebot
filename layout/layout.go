@@ -337,7 +337,7 @@ func (lt *Layout) ButtonLocale(locale, k string, args ...any) *tele.Btn {
 		return nil
 	}
 
-	tmpl, err := lt.template(template.New(k).Funcs(lt.funcs), locale).Parse(unsafeConvert.StringReflect(data))
+	tmpl, err := lt.template(template.New(k).Funcs(lt.funcs), locale).Parse(unsafeConvert.StringSlice(data))
 	if err != nil {
 		log.Println("telebot/layout:", err)
 		return nil

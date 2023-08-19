@@ -114,7 +114,7 @@ func (b *Bot) CreateStickerSet(to Recipient, s StickerSet) error {
 
 	if s.MaskPosition != nil {
 		data, _ := json.Marshal(&s.MaskPosition)
-		params["mask_position"] = unsafeConvert.StringReflect(data)
+		params["mask_position"] = unsafeConvert.StringSlice(data)
 	}
 
 	_, err := b.sendFiles("createNewStickerSet", files, params)
@@ -146,7 +146,7 @@ func (b *Bot) AddSticker(to Recipient, s StickerSet) error {
 
 	if s.MaskPosition != nil {
 		data, _ := json.Marshal(&s.MaskPosition)
-		params["mask_position"] = unsafeConvert.StringReflect(data)
+		params["mask_position"] = unsafeConvert.StringSlice(data)
 	}
 
 	_, err := b.sendFiles("addStickerToSet", files, params)
@@ -200,7 +200,7 @@ func (b *Bot) CustomEmojiStickers(ids []string) ([]Sticker, error) {
 	data, _ := json.Marshal(ids)
 
 	params := map[string]string{
-		"custom_emoji_ids": unsafeConvert.StringReflect(data),
+		"custom_emoji_ids": unsafeConvert.StringSlice(data),
 	}
 
 	data, err := b.Raw("getCustomEmojiStickers", params)

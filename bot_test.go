@@ -3,13 +3,12 @@ package telebot
 import (
 	"errors"
 	"io"
+	"net/http"
 	"os"
 	"strconv"
 	"strings"
 	"testing"
 	"time"
-
-	"net/http"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"

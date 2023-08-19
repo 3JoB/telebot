@@ -5,12 +5,11 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"net/http"
 	"os"
 	"strconv"
 	"strings"
 	"time"
-
-	"net/http"
 
 	"github.com/3JoB/resty-ilo"
 	"github.com/3JoB/unsafeConvert"
@@ -423,7 +422,7 @@ func (b *Bot) SendAlbum(to Recipient, a Album, opts ...any) ([]Message, error) {
 		}
 
 		data, _ = json.Marshal(im)
-		media[i] = unsafeConvert.StringReflect(data)
+		media[i] = unsafeConvert.StringSlice(data)
 	}
 
 	params := map[string]any{
@@ -620,7 +619,7 @@ func (b *Bot) EditReplyMarkup(msg Editable, markup *ReplyMarkup) (*Message, erro
 
 	processButtons(markup.InlineKeyboard)
 	data, _ := json.Marshal(markup)
-	params["reply_markup"] = unsafeConvert.StringReflect(data)
+	params["reply_markup"] = unsafeConvert.StringSlice(data)
 
 	data, err := b.Raw("editMessageReplyMarkup", params)
 	if err != nil {
@@ -731,7 +730,7 @@ func (b *Bot) EditMedia(msg Editable, media Inputtable, opts ...any) (*Message, 
 	}
 
 	data, _ := json.Marshal(im)
-	params["media"] = unsafeConvert.StringReflect(data)
+	params["media"] = unsafeConvert.StringSlice(data)
 
 	if chatID == 0 { // if inline message
 		params["inline_message_id"] = msgID
@@ -824,7 +823,7 @@ func (b *Bot) Ship(query *ShippingQuery, what ...any) error {
 
 		params["ok"] = "true"
 		data, _ := json.Marshal(opts)
-		params["shipping_options"] = unsafeConvert.StringReflect(data)
+		params["shipping_options"] = unsafeConvert.StringSlice(data)
 	}
 
 	_, err := b.Raw("answerShippingQuery", params)
