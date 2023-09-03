@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/3JoB/resty-ilo"
+	"github.com/3JoB/ulib/litefmt"
 	"github.com/3JoB/unsafeConvert"
 	"github.com/goccy/go-json"
 	"github.com/spf13/cast"
@@ -64,7 +65,7 @@ func (b *Bot) Raw(method string, payload any) ([]byte, error) {
 }
 
 func (b *Bot) buildUrl(method string) string {
-	return fmt.Sprintf("%v/bot%v/%v", b.URL, b.Token, method)
+	return litefmt.Sprint(b.URL, "/bot", b.Token, "/", method)
 }
 
 func (b *Bot) sendFiles(method string, files map[string]File, params map[string]any) ([]byte, error) {

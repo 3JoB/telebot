@@ -1,10 +1,12 @@
 module github.com/3JoB/telebot
 
-go 1.20
+go 1.21.0
 
 require (
-	github.com/3JoB/resty-ilo v1.1.8
+	github.com/3JoB/resty-ilo v1.1.9
+	github.com/3JoB/ulib v1.31.0
 	github.com/3JoB/unsafeConvert v1.5.0
+	github.com/cornelk/hashmap v1.0.8
 	github.com/goccy/go-json v0.10.2
 	github.com/goccy/go-yaml v1.11.0
 	github.com/grafana/regexp v0.0.0-20221122212121-6b5c0a4cb7fd
@@ -17,7 +19,6 @@ require (
 require (
 	github.com/3JoB/brotli v0.0.1 // indirect
 	github.com/3JoB/go-reflect v1.0.1 // indirect
-	github.com/3JoB/ulib v1.31.0 // indirect
 	github.com/aead/chacha20 v0.0.0-20180709150244-8b13a72661da // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/fatih/color v1.13.0 // indirect
@@ -36,8 +37,8 @@ require (
 	github.com/pelletier/go-toml/v2 v2.0.6 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/quic-go/qpack v0.4.0 // indirect
-	github.com/quic-go/qtls-go1-20 v0.3.0 // indirect
-	github.com/quic-go/quic-go v0.37.0 // indirect
+	github.com/quic-go/qtls-go1-20 v0.3.2 // indirect
+	github.com/quic-go/quic-go v0.38.0 // indirect
 	github.com/rogpeppe/go-internal v1.9.0 // indirect
 	github.com/spf13/afero v1.9.3 // indirect
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect

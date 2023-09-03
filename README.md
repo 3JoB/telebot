@@ -1,6 +1,8 @@
 # Telebot • Telebot Expansion Pack
 >"I never knew creating Telegram bots could be so _sexy_!"
 
+**We may launch a new branch using fasthttp, in which you should avoid receiving or sending files that are too large to avoid panics due to insufficient memory.**
+
 
 Use this branch if you want to try out the latest features.
 If you're after stability, then use the [original project](https://github.com/tucnak/telebot).
@@ -9,7 +11,7 @@ If you're after stability, then use the [original project](https://github.com/tu
 If you need some examples, I'll put them in this [organization](https://github.com/gotelebot/).
 
 
-This is a fork of https://github.com/tucnak/telebot . This library requires minimum go1.20
+This is a fork of https://github.com/tucnak/telebot . This library requires minimum go1.21.0
 
 
 

@@ -3,8 +3,9 @@ package telebot
 import (
 	"errors"
 	"strings"
-	"sync"
 	"time"
+
+	"github.com/cornelk/hashmap"
 )
 
 // HandlerFunc represents a handler function, which is
@@ -161,8 +162,7 @@ type Context interface {
 type nativeContext struct {
 	b     *Bot
 	u     Update
-	lock  sync.RWMutex
-	store map[string]any
+	store *hashmap.Map[string, any]
 }
 
 func (c *nativeContext) Bot() *Bot {
@@ -469,18 +469,14 @@ func (c *nativeContext) Answer(resp *QueryResponse) error {
 	return c.b.Answer(c.u.Query, resp)
 }
 
-func (c *nativeContext) Set(key string, value any) {
-	c.lock.Lock()
-	defer c.lock.Unlock()
-
+func (c *nativeContext) Set(k string, v any) {
 	if c.store == nil {
-		c.store = make(map[string]any)
+		c.store = hashmap.New[string, any]()
 	}
-	c.store[key] = value
+	c.store.Set(k, v)
 }
 
-func (c *nativeContext) Get(key string) any {
-	c.lock.RLock()
-	defer c.lock.RUnlock()
-	return c.store[key]
+func (c *nativeContext) Get(k string) any {
+	v, _ := c.store.Get(k)
+	return v
 }
