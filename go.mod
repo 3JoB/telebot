@@ -3,7 +3,6 @@ module github.com/3JoB/telebot
 go 1.21.0
 
 require (
-	github.com/3JoB/resty-ilo v1.1.9
 	github.com/3JoB/ulib v1.32.0
 	github.com/3JoB/unsafeConvert v1.5.0
 	github.com/cornelk/hashmap v1.0.8
