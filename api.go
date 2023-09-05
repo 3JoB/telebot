@@ -2,7 +2,6 @@ package telebot
 
 import (
 	"bytes"
-	"context"
 	"fmt"
 	"io"
 	"log"
@@ -11,7 +10,6 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/3JoB/resty-ilo"
 	"github.com/3JoB/ulib/litefmt"
 	"github.com/3JoB/unsafeConvert"
 	"github.com/goccy/go-json"
@@ -30,10 +28,11 @@ func (b *Bot) Raw(method string, payload any) ([]byte, error) {
 	if err := json.NewEncoder(&buf).Encode(payload); err != nil {
 		return nil, err
 	}
+	defer buf.Reset()
 
 	// Cancel the request immediately without waiting for the timeout  when bot is about to stop.
 	// This may become important if doing long polling with long timeout.
-	exit := make(chan struct{})
+	/*exit := make(chan struct{})
 	defer close(exit)
 	ctx, cancel := context.WithCancel(context.Background())
 
@@ -45,16 +44,18 @@ func (b *Bot) Raw(method string, payload any) ([]byte, error) {
 			cancel()
 		case <-exit:
 		}
-	}()
+	}()*/
+	req, resp := acquire()
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("User-Agent", "Mozilla/5.0(compatible; Telebot-Expansion-Pack/v1; +https://github.com/3JoB/telebot)")
+	req.SetBody(buf.Bytes())
+	req.SetRequestURI(url)
+	req.Header.SetMethod("POST")
+	defer release(req, resp)
 
-	resp, err := resty.New().R().SetContext(ctx).SetHeaders(map[string]string{
-		"Content-Type": "application/json",
-		"User-Agent":   "Mozilla/5.0(compatible; Telebot-Expansion-Pack/v1; +https://github.com/3JoB/telebot)",
-	}).SetBody(&buf).Post(url)
-	if err != nil {
+	if err := b.client.Do(req, resp); err != nil {
 		return nil, wrapError(err)
 	}
-	defer resp.RawBody().Close()
 
 	if b.verbose {
 		verbose(method, payload, resp.Body())
@@ -115,19 +116,21 @@ func (b *Bot) sendFiles(method string, files map[string]File, params map[string]
 
 	url := b.buildUrl(method)
 	// url := b.URL + "/bot" + b.Token + "/" + method
-	resp, err := resty.NewWithClient(b.client).R().SetHeaders(map[string]string{
-		"User-Agent":   "Mozilla/5.0(compatible; Telebot-Expansion-Pack/v1; +https://github.com/3JoB/telebot)",
-		"Content-Type": writer.FormDataContentType(),
-	}).SetBody(pipeReader).Post(url)
+	req, resp := acquire()
+	defer release(req, resp)
+	req.Header.Set("User-Agent", "Mozilla/5.0(compatible; Telebot-Expansion-Pack/v1; +https://github.com/3JoB/telebot)")
+	req.Header.Set("Content-Type", writer.FormDataContentType())
+	req.Header.SetMethod("POST")
+	req.SetRequestURI(url)
+	io.Copy(req.BodyWriter(), pipeReader)
 
-	if err != nil {
+	if err := b.client.Do(req, resp); err != nil {
 		err = wrapError(err)
 		pipeReader.CloseWithError(err)
 		return nil, err
 	}
-	defer resp.RawBody().Close()
 
-	if resp.IsStatusCode(500) {
+	if resp.StatusCode() == 500 {
 		return nil, ErrInternal
 	}
 

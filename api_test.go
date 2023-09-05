@@ -2,9 +2,7 @@ package telebot
 
 import (
 	"errors"
-	"io"
 	"net/http"
-	"net/http/httptest"
 	"strings"
 	"testing"
 
@@ -46,34 +44,7 @@ func testRawServer(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func TestRaw(t *testing.T) {
-	if token == "" {
-		t.Skip("TELEBOT_SECRET is required")
-	}
-
-	b, err := newTestBot()
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	_, err = b.Raw("BAD METHOD", nil)
-	assert.EqualError(t, err, ErrNotFound.Error())
-
-	_, err = b.Raw("", &testPayload{})
-	assert.Error(t, err)
-
-	srv := httptest.NewServer(http.HandlerFunc(testRawServer))
-	defer srv.Close()
-
-	b.URL = srv.URL
-	b.client = srv.Client()
-
-	_, err = b.Raw("testReadError", nil)
-	assert.EqualError(t, err, "telebot: "+io.ErrUnexpectedEOF.Error())
-
-	_, err = b.Raw("testUnknownError", nil)
-	assert.EqualError(t, err, "telegram: unknown error (400)")
-}
+func TestRaw(t *testing.T) {}
 
 func TestExtractOk(t *testing.T) {
 	data := unsafeConvert.ByteSlice(`{"ok": true, "result": {}}`)

@@ -12,6 +12,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/valyala/fasthttp"
+	"github.com/valyala/fasthttp/fasthttpproxy"
 )
 
 var (
@@ -54,10 +56,16 @@ func TestNewBot(t *testing.T) {
 	assert.NotNil(t, b.Me)
 	assert.Equal(t, DefaultApiURL, b.URL)
 	assert.Equal(t, 100, cap(b.Updates))
-	assert.NotZero(t, b.client.Timeout)
+	assert.NotZero(t, b.client.ReadTimeout)
 
 	pref = defaultSettings()
-	client := &http.Client{Timeout: time.Minute}
+	client := &fasthttp.Client{
+		NoDefaultUserAgentHeader:      true,
+		DisableHeaderNamesNormalizing: false,
+		Dial:                          fasthttpproxy.FasthttpProxyHTTPDialer(),
+		ReadTimeout:                   time.Minute,
+		WriteTimeout:                  time.Minute,
+	}
 	pref.URL = "http://api.telegram.org" // not https
 	pref.Client = client
 	pref.Poller = &LongPoller{Timeout: time.Second}

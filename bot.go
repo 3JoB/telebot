@@ -5,16 +5,16 @@ import (
 	"fmt"
 	"io"
 	"log"
-	"net/http"
 	"os"
 	"strconv"
 	"strings"
 	"time"
 
-	"github.com/3JoB/resty-ilo"
 	"github.com/3JoB/unsafeConvert"
 	"github.com/goccy/go-json"
 	"github.com/grafana/regexp"
+	"github.com/valyala/fasthttp"
+	"github.com/valyala/fasthttp/fasthttpproxy"
 )
 
 // NewBot does try to build a Bot with token `token`, which
@@ -26,7 +26,13 @@ func NewBot(pref Settings) (*Bot, error) {
 
 	client := pref.Client
 	if client == nil {
-		client = &http.Client{Timeout: time.Minute}
+		client = &fasthttp.Client{
+			NoDefaultUserAgentHeader:      true,
+			DisableHeaderNamesNormalizing: false,
+			Dial:                          fasthttpproxy.FasthttpProxyHTTPDialer(),
+			ReadTimeout:                   time.Minute,
+			WriteTimeout:                  time.Minute,
+		}
 	}
 
 	if pref.URL == "" {
@@ -85,7 +91,7 @@ type Bot struct {
 	local       bool
 	parseMode   ParseMode
 	stop        chan chan struct{}
-	client      *http.Client
+	client      *fasthttp.Client
 	stopClient  chan struct{}
 }
 
@@ -124,7 +130,7 @@ type Settings struct {
 	OnError func(error, Context)
 
 	// HTTP Client used to make requests to telegram api
-	Client *http.Client
+	Client *fasthttp.Client
 
 	// Offline allows to create a bot without network for testing purposes.
 	Offline bool
@@ -948,7 +954,6 @@ func (b *Bot) Download(file *File, localFilename string) error {
 	if err != nil {
 		return err
 	}
-	defer reader.Close()
 
 	out, err := os.Create(localFilename)
 	if err != nil {
@@ -956,7 +961,7 @@ func (b *Bot) Download(file *File, localFilename string) error {
 	}
 	defer out.Close()
 
-	_, err = io.Copy(out, reader)
+	_, err = out.Write(reader)
 	if err != nil {
 		return wrapError(err)
 	}
@@ -970,7 +975,7 @@ func (b *Bot) buildFileUrl(filepath string) string {
 }
 
 // File gets a file from Telegram servers.
-func (b *Bot) File(file *File) (io.ReadCloser, error) {
+func (b *Bot) File(file *File) ([]byte, error) {
 	if b.local {
 		localPath := file.FilePath
 		if file.FilePath == "" {
@@ -983,7 +988,16 @@ func (b *Bot) File(file *File) (io.ReadCloser, error) {
 			file.FilePath = localPath
 		}
 
-		return os.Open(localPath)
+		fe, err := os.Open(localPath)
+		if err != nil {
+			return nil, err
+		}
+		defer fe.Close()
+		b, err := io.ReadAll(fe)
+		if err != nil {
+			return nil, err
+		}
+		return b, nil
 	}
 	f, err := b.FileByID(file.FileID)
 	if err != nil {
@@ -992,20 +1006,21 @@ func (b *Bot) File(file *File) (io.ReadCloser, error) {
 
 	url := b.buildFileUrl(f.FilePath)
 	file.FilePath = f.FilePath // saving file path
-	resp, err := resty.NewWithClient(b.client).R().SetHeaders(map[string]string{
-		"User-Agent": "Mozilla/5.0(compatible; Telebot-Expansion-Pack/v1; +https://github.com/3JoB/telebot)",
-	}).Get(url)
+	req, resp := acquire()
+	defer release(req, resp)
+	req.Header.Set("User-Agent", "Mozilla/5.0(compatible; Telebot-Expansion-Pack/v1; +https://github.com/3JoB/telebot)")
+	req.Header.SetMethod("GET")
+	req.SetRequestURI(url)
 
-	if err != nil {
+	if err := b.client.Do(req, resp); err != nil {
 		return nil, wrapError(err)
 	}
 
-	if !resp.IsStatusCode(200) {
-		resp.RawBody().Close()
-		return nil, fmt.Errorf("telebot: expected status 200 but got %s", resp.Status())
+	if resp.StatusCode() != 200 {
+		return nil, fmt.Errorf("telebot: expected status 200 but got %v", resp.StatusCode())
 	}
 
-	return resp.RawBody(), nil
+	return resp.Body(), nil
 }
 
 // StopLiveLocation stops broadcasting live message location
