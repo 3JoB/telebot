@@ -1,5 +1,3 @@
 package net
 
-type NetFrame interface{
-	
-}
+type NetFrame any

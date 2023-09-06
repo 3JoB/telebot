@@ -1,22 +1,20 @@
-//go:build !(sonic && avx && (linux || windows || darwin) && amd64)
-
 package json
 
-import "github.com/goccy/go-json"
+import "io"
 
-var (
-	// Marshal is exported by gin/json package.
-	Marshal = json.Marshal
+type Json interface {
+	Marshal(v any) ([]byte, error)
+	MarshalIndent(v any, prefix string, indent string) ([]byte, error)
+	Unmarshal(buf []byte, v any) error
+	NewEncoder(w io.Writer) Encoder
+	NewDecoder(r io.Reader) Decoder
+}
 
-	// Unmarshal is exported by gin/json package.
-	Unmarshal = json.Unmarshal
+type Encoder interface {
+	Encode(v any) error
+}
 
-	// MarshalIndent is exported by gin/json package.
-	MarshalIndent = json.MarshalIndent
-
-	// NewDecoder is exported by gin/json package.
-	NewDecoder = json.NewDecoder
-
-	// NewEncoder is exported by gin/json package.
-	NewEncoder = json.NewEncoder
-)
+type Decoder interface {
+	Decode(v any) error  // Decode reads the next JSON-encoded value from its input and stores it in the value pointed to by v.
+	Buffered() io.Reader // Buffered returns a reader of the data remaining in the Decoder's buffer. The reader is valid until the next call to Decode.
+}
