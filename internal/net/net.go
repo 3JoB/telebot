@@ -1,21 +1,24 @@
 // net package is a dedicated hybrid network wrapper for TEP.
+//
+// It may have some impact on performance due to one or more additional allocations. 
 package net
 
 import (
 	"io"
-
-	"github.com/cornelk/hashmap"
+	"sync"
 
 	"github.com/3JoB/telebot/internal/json"
 )
 
+const UA = "Mozilla/5.0(compatible; Telebot-Expansion-Pack/v1; +https://github.com/3JoB/telebot)"
+
+var (
+	requestPool  sync.Pool
+	responsePool sync.Pool
+)
+
 type NetFrame interface {
-	Header() *Header
 	SetJsonProcessor(v json.Json)
-	GETFile()
-	POSTFile()
-	GETJson()
-	POSTJson()
 	Acquire() NetRequest // Create a new request object
 }
 
@@ -23,13 +26,15 @@ type NetRequest interface {
 	MethodPOST()
 	MethodGET()
 	AddHeader(k, v string)
-	AddHeaders(m *hashmap.Map[string, string])
+	AddHeaders(m map[string]string)
 	SetHeader(k, v string)
-	SetHeaders(m *hashmap.Map[string, string])
+	SetHeaders(m map[string]string)
 	SetRequestURI(v string)
-	SendJson(v any) NetResponse
+	Body() io.Writer
+	SendJson() NetResponse
 	SendFile() NetResponse
 	SendAny() NetResponse
+	Reset()
 	Release()
 }
 
@@ -38,9 +43,6 @@ type NetResponse interface {
 	IsStatusCode(v int) bool
 	Reader() io.ReadCloser
 	Bytes() []byte
+	Reset()
 	Release()
-}
-
-type Header struct {
-	m *hashmap.Map[string, string]
 }
