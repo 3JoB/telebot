@@ -10,6 +10,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/3JoB/telebot/internal/net"
 	"github.com/3JoB/unsafeConvert"
 	"github.com/goccy/go-json"
 	"github.com/grafana/regexp"
@@ -91,7 +92,7 @@ type Bot struct {
 	local       bool
 	parseMode   ParseMode
 	stop        chan chan struct{}
-	client      *fasthttp.Client
+	client      net.NetFrame
 	stopClient  chan struct{}
 }
 
@@ -119,6 +120,12 @@ type Settings struct {
 	// learn more about it: https://github.com/tdlib/telegram-bot-api
 	Local bool
 
+	// When this value is true, the network library will be switched to fasthttp, 
+	// otherwise net/http will be used. The current network interface is in beta version, 
+	// stability is not guaranteed, and the fasthttp interface may not be able to handle
+	// large files (if there is too little memory).
+	FastHTTP bool
+
 	// ParseMode used to set default parse mode of all sent messages.
 	// It attaches to every send, edit or whatever method. You also
 	// will be able to override the default mode by passing a new one.
@@ -130,7 +137,7 @@ type Settings struct {
 	OnError func(error, Context)
 
 	// HTTP Client used to make requests to telegram api
-	Client *fasthttp.Client
+	Client net.NetFrame
 
 	// Offline allows to create a bot without network for testing purposes.
 	Offline bool
