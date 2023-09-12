@@ -1,42 +1,44 @@
 package net
 
 import (
-	"github.com/3JoB/telebot/internal/json"
 	"github.com/valyala/fasthttp"
 	"github.com/valyala/fasthttp/fasthttpproxy"
+
+	"github.com/3JoB/telebot/internal/json"
 )
 
 type FastHTTP struct {
 	client *fasthttp.Client
-	json json.Json
+	json   json.Json
 }
 
-func NewFastHTTPClient() {
-	_ = &FastHTTP{
+func NewFastHTTPClient() NetFrame {
+	f := &FastHTTP{
 		client: &fasthttp.Client{
 			NoDefaultUserAgentHeader:      true,
 			DisableHeaderNamesNormalizing: false,
 			Dial:                          fasthttpproxy.FasthttpProxyHTTPDialer(),
 		},
 	}
+	f.json = json.NewGoJson()
+	return f
 }
 
 func (f *FastHTTP) SetJsonProcessor(v json.Json) {
 	f.json = v
 }
 
-func (f *FastHTTP) Acquire() *FastHTTPRequest {
-	var r *FastHTTPRequest
+func (f *FastHTTP) AcquireRequest() NetRequest {
 	v := requestPool.Get()
 	if v == nil {
-		r = &FastHTTPRequest{}
-	} else {
-		r = v.(*FastHTTPRequest)
-	}
-	if f.json == nil {
-		r.json = json.NewGoJson()
-	} else {
+		r := &FastHTTPRequest{}
 		r.json = f.json
+		r.client = f.client
+		r.acquire()
+		return r
 	}
+	r := v.(*FastHTTPRequest)
+	r.client = f.client
+	r.acquire()
 	return r
 }

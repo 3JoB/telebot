@@ -1,6 +1,6 @@
 // net package is a dedicated hybrid network wrapper for TEP.
 //
-// It may have some impact on performance due to one or more additional allocations. 
+// It may have some impact on performance due to one or more additional allocations.
 package net
 
 import (
@@ -19,21 +19,20 @@ var (
 
 type NetFrame interface {
 	SetJsonProcessor(v json.Json)
-	Acquire() NetRequest // Create a new request object
+	AcquireRequest() NetRequest // Create a new request object
 }
 
 type NetRequest interface {
 	MethodPOST()
 	MethodGET()
-	AddHeader(k, v string)
-	AddHeaders(m map[string]string)
-	SetHeader(k, v string)
-	SetHeaders(m map[string]string)
-	SetRequestURI(v string)
 	Body() io.Writer
-	SendJson() NetResponse
-	SendFile() NetResponse
-	SendAny() NetResponse
+	SetContentType(v string)
+	SetRequestURI(v string)
+	SetWriter(w io.Writer)
+	Write(b []byte)
+	WriteFile(content string, r io.Reader) error
+	WriteJson(v any) error
+	Do() (NetResponse, error)
 	Reset()
 	Release()
 }
@@ -41,7 +40,6 @@ type NetRequest interface {
 type NetResponse interface {
 	StatusCode() int
 	IsStatusCode(v int) bool
-	Reader() io.ReadCloser
 	Bytes() []byte
 	Reset()
 	Release()
