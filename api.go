@@ -24,12 +24,6 @@ import (
 func (b *Bot) Raw(method string, payload any) ([]byte, error) {
 	url := b.buildUrl(method)
 
-	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(payload); err != nil {
-		return nil, err
-	}
-	defer buf.Reset()
-
 	// Cancel the request immediately without waiting for the timeout  when bot is about to stop.
 	// This may become important if doing long polling with long timeout.
 	/*exit := make(chan struct{})
@@ -45,24 +39,21 @@ func (b *Bot) Raw(method string, payload any) ([]byte, error) {
 		case <-exit:
 		}
 	}()*/
-	req, resp := acquire()
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("User-Agent", "Mozilla/5.0(compatible; Telebot-Expansion-Pack/v1; +https://github.com/3JoB/telebot)")
-	req.SetBody(buf.Bytes())
+	req := b.client.AcquireRequest()
+	req.WriteJson(payload)
 	req.SetRequestURI(url)
-	req.Header.SetMethod("POST")
-	defer release(req, resp)
-
-	if err := b.client.Do(req, resp); err != nil {
+	req.MethodPOST()
+	resp, err := req.Do()
+	defer resp.Release()
+	if err != nil {
 		return nil, wrapError(err)
 	}
-
 	if b.verbose {
-		verbose(method, payload, resp.Body())
+		verbose(method, payload, resp.Bytes())
 	}
 
 	// returning data as well
-	return resp.Body(), extractOk(resp.Body())
+	return resp.Bytes(), extractOk(resp.Bytes())
 }
 
 func (b *Bot) buildUrl(method string) string {
@@ -116,25 +107,22 @@ func (b *Bot) sendFiles(method string, files map[string]File, params map[string]
 
 	url := b.buildUrl(method)
 	// url := b.URL + "/bot" + b.Token + "/" + method
-	req, resp := acquire()
-	defer release(req, resp)
-	req.Header.Set("User-Agent", "Mozilla/5.0(compatible; Telebot-Expansion-Pack/v1; +https://github.com/3JoB/telebot)")
-	req.Header.Set("Content-Type", writer.FormDataContentType())
-	req.Header.SetMethod("POST")
+	req := b.client.AcquireRequest()
+	req.WriteFile(writer.FormDataContentType(), pipeReader)
 	req.SetRequestURI(url)
-	io.Copy(req.BodyWriter(), pipeReader)
-
-	if err := b.client.Do(req, resp); err != nil {
+	resp, err := req.Do()
+	defer resp.Release()
+	if err != nil {
 		err = wrapError(err)
 		pipeReader.CloseWithError(err)
 		return nil, err
 	}
 
-	if resp.StatusCode() == 500 {
+	if resp.IsStatusCode(500) {
 		return nil, ErrInternal
 	}
 
-	return resp.Body(), extractOk(resp.Body())
+	return resp.Bytes(), extractOk(resp.Bytes())
 }
 
 func addFileToWriter(writer *multipart.Writer, filename, field string, file any) error {

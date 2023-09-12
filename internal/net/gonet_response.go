@@ -1,6 +1,6 @@
 package net
 
-type GoNetResponse struct{
+type GoNetResponse struct {
 	code int
 	body []byte
 }

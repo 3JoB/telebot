@@ -6,7 +6,7 @@
 //
 //	import (
 //		"time"
-//		tele "goreflects.in/telebot.v3"
+//		tele "github.com/3JoB/telebot"
 //	)
 //
 //	func main() {

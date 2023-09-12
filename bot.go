@@ -8,14 +8,13 @@ import (
 	"os"
 	"strconv"
 	"strings"
-	"time"
 
-	"github.com/3JoB/telebot/internal/net"
 	"github.com/3JoB/unsafeConvert"
 	"github.com/goccy/go-json"
 	"github.com/grafana/regexp"
-	"github.com/valyala/fasthttp"
-	"github.com/valyala/fasthttp/fasthttpproxy"
+
+	"github.com/3JoB/telebot/internal/bPool"
+	"github.com/3JoB/telebot/internal/net"
 )
 
 // NewBot does try to build a Bot with token `token`, which
@@ -27,12 +26,10 @@ func NewBot(pref Settings) (*Bot, error) {
 
 	client := pref.Client
 	if client == nil {
-		client = &fasthttp.Client{
-			NoDefaultUserAgentHeader:      true,
-			DisableHeaderNamesNormalizing: false,
-			Dial:                          fasthttpproxy.FasthttpProxyHTTPDialer(),
-			ReadTimeout:                   time.Minute,
-			WriteTimeout:                  time.Minute,
+		if pref.FastHTTP {
+			client = net.NewFastHTTPClient()
+		} else {
+			client = net.NewHTTPClient()
 		}
 	}
 
@@ -120,8 +117,8 @@ type Settings struct {
 	// learn more about it: https://github.com/tdlib/telegram-bot-api
 	Local bool
 
-	// When this value is true, the network library will be switched to fasthttp, 
-	// otherwise net/http will be used. The current network interface is in beta version, 
+	// When this value is true, the network library will be switched to fasthttp,
+	// otherwise net/http will be used. The current network interface is in beta version,
 	// stability is not guaranteed, and the fasthttp interface may not be able to handle
 	// large files (if there is too little memory).
 	FastHTTP bool
@@ -961,6 +958,7 @@ func (b *Bot) Download(file *File, localFilename string) error {
 	if err != nil {
 		return err
 	}
+	defer reader.Close()
 
 	out, err := os.Create(localFilename)
 	if err != nil {
@@ -968,7 +966,7 @@ func (b *Bot) Download(file *File, localFilename string) error {
 	}
 	defer out.Close()
 
-	_, err = out.Write(reader)
+	_, err = io.Copy(out, reader)
 	if err != nil {
 		return wrapError(err)
 	}
@@ -982,7 +980,7 @@ func (b *Bot) buildFileUrl(filepath string) string {
 }
 
 // File gets a file from Telegram servers.
-func (b *Bot) File(file *File) ([]byte, error) {
+func (b *Bot) File(file *File) (io.ReadCloser, error) {
 	if b.local {
 		localPath := file.FilePath
 		if file.FilePath == "" {
@@ -995,16 +993,7 @@ func (b *Bot) File(file *File) ([]byte, error) {
 			file.FilePath = localPath
 		}
 
-		fe, err := os.Open(localPath)
-		if err != nil {
-			return nil, err
-		}
-		defer fe.Close()
-		b, err := io.ReadAll(fe)
-		if err != nil {
-			return nil, err
-		}
-		return b, nil
+		return os.Open(localPath)
 	}
 	f, err := b.FileByID(file.FileID)
 	if err != nil {
@@ -1013,21 +1002,20 @@ func (b *Bot) File(file *File) ([]byte, error) {
 
 	url := b.buildFileUrl(f.FilePath)
 	file.FilePath = f.FilePath // saving file path
-	req, resp := acquire()
-	defer release(req, resp)
-	req.Header.Set("User-Agent", "Mozilla/5.0(compatible; Telebot-Expansion-Pack/v1; +https://github.com/3JoB/telebot)")
-	req.Header.SetMethod("GET")
+	fp := bPool.New()
+	req := b.client.AcquireRequest()
+	req.MethodGET()
 	req.SetRequestURI(url)
-
-	if err := b.client.Do(req, resp); err != nil {
+	req.SetWriter(fp)
+	resp, err := req.Do()
+	defer resp.Release()
+	if err != nil {
 		return nil, wrapError(err)
 	}
-
-	if resp.StatusCode() != 200 {
+	if !resp.IsStatusCode(200) {
 		return nil, fmt.Errorf("telebot: expected status 200 but got %v", resp.StatusCode())
 	}
-
-	return resp.Body(), nil
+	return fp, nil
 }
 
 // StopLiveLocation stops broadcasting live message location

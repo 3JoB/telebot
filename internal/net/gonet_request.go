@@ -4,6 +4,7 @@ import (
 	"io"
 
 	"github.com/3JoB/resty-ilo"
+
 	"github.com/3JoB/telebot/internal/json"
 )
 
@@ -51,7 +52,7 @@ func (g *GoNetRequest) Write(b []byte) {
 func (g *GoNetRequest) WriteFile(content string, r io.Reader) error {
 	g.SetContentType(content)
 	g.MethodPOST()
-	g.r = g.r.SetBody(g.Body())
+	g.r = g.r.SetBody(r)
 	return nil
 }
 
@@ -76,10 +77,14 @@ func (g *GoNetRequest) Do() (NetResponse, error) {
 	}
 	resp := g.acquireResponse()
 	resp.code = response.StatusCode()
-	if g.w != nil {
-		_, err = io.Copy(g.w, response.RawBody())
-	} else {
+	if !response.IsStatusCode(200) {
 		resp.body = response.Body()
+	} else {
+		if g.w != nil {
+			_, err = io.Copy(g.w, response.RawBody())
+		} else {
+			resp.body = response.Body()
+		}
 	}
 	_ = response.RawBody().Close()
 	return resp, err

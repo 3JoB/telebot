@@ -83,11 +83,16 @@ func (f *FastHTTPRequest) Do() (NetResponse, error) {
 	}
 	resp := f.acquireResponse()
 	resp.code = f.response.StatusCode()
-	if f.w != nil {
-		err = f.response.BodyWriteTo(f.w)
-	} else {
+	if f.response.StatusCode() != 200 {
 		resp.body = f.response.Body()
+	} else {
+		if f.w != nil {
+			err = f.response.BodyWriteTo(f.w)
+		} else {
+			resp.body = f.response.Body()
+		}
 	}
+
 	return resp, err
 }
 

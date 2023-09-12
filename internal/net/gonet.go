@@ -4,6 +4,7 @@ import (
 	"os"
 
 	"github.com/3JoB/resty-ilo"
+
 	"github.com/3JoB/telebot/internal/json"
 )
 
