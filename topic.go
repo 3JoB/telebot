@@ -2,8 +2,6 @@ package telebot
 
 import (
 	"strconv"
-
-	"github.com/goccy/go-json"
 )
 
 type Topic struct {
@@ -121,7 +119,7 @@ func (b *Bot) TopicIconStickers() ([]Sticker, error) {
 	var resp struct {
 		Result []Sticker
 	}
-	if err := json.Unmarshal(data, &resp); err != nil {
+	if err := b.json.Unmarshal(data, &resp); err != nil {
 		return nil, wrapError(err)
 	}
 	return resp.Result, nil

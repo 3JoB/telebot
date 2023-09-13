@@ -194,7 +194,7 @@ func (b *Bot) getMe() (*User, error) {
 	var resp struct {
 		Result *User
 	}
-	if err := json.Unmarshal(data, &resp); err != nil {
+	if err := b.json.Unmarshal(data, &resp); err != nil {
 		return nil, wrapError(err)
 	}
 	return resp.Result, nil
@@ -205,7 +205,7 @@ func (b *Bot) getUpdates(offset, limit int, timeout time.Duration, allowed []str
 		"offset":  strconv.Itoa(offset),
 		"timeout": strconv.Itoa(int(timeout / time.Second)),
 	}
-	data, _ := json.Marshal(allowed)
+	data, _ := b.json.Marshal(allowed)
 	params["allowed_updates"] = unsafeConvert.StringSlice(data)
 
 	if limit != 0 {
@@ -220,7 +220,7 @@ func (b *Bot) getUpdates(offset, limit int, timeout time.Duration, allowed []str
 	var resp struct {
 		Result []Update
 	}
-	if err := json.Unmarshal(data, &resp); err != nil {
+	if err := b.json.Unmarshal(data, &resp); err != nil {
 		return nil, wrapError(err)
 	}
 	return resp.Result, nil

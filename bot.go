@@ -10,10 +10,10 @@ import (
 	"strings"
 
 	"github.com/3JoB/unsafeConvert"
-	"github.com/goccy/go-json"
 	"github.com/grafana/regexp"
 
 	"github.com/3JoB/telebot/internal/bPool"
+	"github.com/3JoB/telebot/internal/json"
 	"github.com/3JoB/telebot/internal/net"
 )
 
@@ -31,6 +31,11 @@ func NewBot(pref Settings) (*Bot, error) {
 		} else {
 			client = net.NewHTTPClient()
 		}
+	}
+
+	ijson := pref.Json
+	if ijson == nil {
+		ijson = json.NewSonic()
 	}
 
 	if pref.URL == "" {
@@ -57,6 +62,7 @@ func NewBot(pref Settings) (*Bot, error) {
 		verbose:     pref.Verbose,
 		parseMode:   pref.ParseMode,
 		client:      client,
+		json:        ijson,
 	}
 
 	if pref.Offline {
@@ -83,6 +89,7 @@ type Bot struct {
 	onError func(error, Context)
 
 	group       *Group
+	json        json.Json
 	handlers    map[string]HandlerFunc
 	synchronous bool
 	verbose     bool
@@ -122,6 +129,8 @@ type Settings struct {
 	// stability is not guaranteed, and the fasthttp interface may not be able to handle
 	// large files (if there is too little memory).
 	FastHTTP bool
+
+	Json json.Json
 
 	// ParseMode used to set default parse mode of all sent messages.
 	// It attaches to every send, edit or whatever method. You also
@@ -326,8 +335,8 @@ func (b *Bot) GetMyDescription(lang string) (string, error) {
 		var resp struct {
 			Result Description
 		}
-		json.Unmarshal(r, &resp)
-		return resp.Result.Description, nil
+		err := b.json.Unmarshal(r, &resp)
+		return resp.Result.Description, err
 	}
 }
 
@@ -345,7 +354,7 @@ func (b *Bot) GetMyShortDescription(lang string) (string, error) {
 		var resp struct {
 			Result ShortDescription
 		}
-		json.Unmarshal(r, &resp)
+		b.json.Unmarshal(r, &resp)
 		return resp.Result.ShortDescription, nil
 	}
 }
@@ -436,7 +445,7 @@ func (b *Bot) SendAlbum(to Recipient, a Album, opts ...any) ([]Message, error) {
 			im.ParseMode = sendOpts.ParseMode
 		}
 
-		data, _ = json.Marshal(im)
+		data, _ = b.json.Marshal(im)
 		media[i] = unsafeConvert.StringSlice(data)
 	}
 
@@ -454,7 +463,7 @@ func (b *Bot) SendAlbum(to Recipient, a Album, opts ...any) ([]Message, error) {
 	var resp struct {
 		Result []Message
 	}
-	if err := json.Unmarshal(data, &resp); err != nil {
+	if err := b.json.Unmarshal(data, &resp); err != nil {
 		return nil, wrapError(err)
 	}
 
@@ -633,7 +642,7 @@ func (b *Bot) EditReplyMarkup(msg Editable, markup *ReplyMarkup) (*Message, erro
 	}
 
 	processButtons(markup.InlineKeyboard)
-	data, _ := json.Marshal(markup)
+	data, _ := b.json.Marshal(markup)
 	params["reply_markup"] = unsafeConvert.StringSlice(data)
 
 	data, err := b.Raw("editMessageReplyMarkup", params)
@@ -744,7 +753,7 @@ func (b *Bot) EditMedia(msg Editable, media Inputtable, opts ...any) (*Message, 
 		files[thumbName] = *thumb.MediaFile()
 	}
 
-	data, _ := json.Marshal(im)
+	data, _ := b.json.Marshal(im)
 	params["media"] = unsafeConvert.StringSlice(data)
 
 	if chatID == 0 { // if inline message
@@ -841,7 +850,7 @@ func (b *Bot) Ship(query *ShippingQuery, what ...any) error {
 		}
 
 		params["ok"] = "true"
-		data, _ := json.Marshal(opts)
+		data, _ := b.json.Marshal(opts)
 		params["shipping_options"] = unsafeConvert.StringSlice(data)
 	}
 
@@ -919,7 +928,7 @@ func (b *Bot) AnswerWebApp(query *Query, r Result) (*WebAppMessage, error) {
 	var resp struct {
 		Result *WebAppMessage
 	}
-	if err := json.Unmarshal(data, &resp); err != nil {
+	if err := b.json.Unmarshal(data, &resp); err != nil {
 		return nil, wrapError(err)
 	}
 
@@ -944,7 +953,7 @@ func (b *Bot) FileByID(fileID string) (File, error) {
 	var resp struct {
 		Result File
 	}
-	if err := json.Unmarshal(data, &resp); err != nil {
+	if err := b.json.Unmarshal(data, &resp); err != nil {
 		return File{}, wrapError(err)
 	}
 	return resp.Result, nil
@@ -1069,7 +1078,7 @@ func (b *Bot) StopPoll(msg Editable, opts ...any) (*Poll, error) {
 	var resp struct {
 		Result *Poll
 	}
-	if err := json.Unmarshal(data, &resp); err != nil {
+	if err := b.json.Unmarshal(data, &resp); err != nil {
 		return nil, wrapError(err)
 	}
 	return resp.Result, nil
@@ -1151,7 +1160,7 @@ func (b *Bot) ChatByUsername(name string) (*Chat, error) {
 	var resp struct {
 		Result *Chat
 	}
-	if err := json.Unmarshal(data, &resp); err != nil {
+	if err := b.json.Unmarshal(data, &resp); err != nil {
 		return nil, wrapError(err)
 	}
 	if resp.Result.Type == ChatChannel && resp.Result.Username == "" {
@@ -1177,7 +1186,7 @@ func (b *Bot) ProfilePhotosOf(user *User) ([]Photo, error) {
 			Photos []Photo `json:"photos"`
 		}
 	}
-	if err := json.Unmarshal(data, &resp); err != nil {
+	if err := b.json.Unmarshal(data, &resp); err != nil {
 		return nil, wrapError(err)
 	}
 	return resp.Result.Photos, nil
@@ -1198,7 +1207,7 @@ func (b *Bot) ChatMemberOf(chat, user Recipient) (*ChatMember, error) {
 	var resp struct {
 		Result *ChatMember
 	}
-	if err := json.Unmarshal(data, &resp); err != nil {
+	if err := b.json.Unmarshal(data, &resp); err != nil {
 		return nil, wrapError(err)
 	}
 	return resp.Result, nil
@@ -1219,7 +1228,7 @@ func (b *Bot) MenuButton(chat *User) (*MenuButton, error) {
 	var resp struct {
 		Result *MenuButton
 	}
-	if err := json.Unmarshal(data, &resp); err != nil {
+	if err := b.json.Unmarshal(data, &resp); err != nil {
 		return nil, wrapError(err)
 	}
 	return resp.Result, nil
@@ -1258,7 +1267,7 @@ func (b *Bot) Logout() (bool, error) {
 	var resp struct {
 		Result bool `json:"result"`
 	}
-	if err := json.Unmarshal(data, &resp); err != nil {
+	if err := b.json.Unmarshal(data, &resp); err != nil {
 		return false, wrapError(err)
 	}
 
@@ -1275,7 +1284,7 @@ func (b *Bot) Close() (bool, error) {
 	var resp struct {
 		Result bool `json:"result"`
 	}
-	if err := json.Unmarshal(data, &resp); err != nil {
+	if err := b.json.Unmarshal(data, &resp); err != nil {
 		return false, wrapError(err)
 	}
 

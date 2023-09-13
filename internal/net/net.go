@@ -27,16 +27,20 @@ type NetFrame interface {
 type NetRequest interface {
 	MethodPOST()
 	MethodGET()
+
 	// Only fasthttp
 	Body() io.Writer
+
 	SetContentType(v string)
 	SetRequestURI(v string)
 	SetWriter(w io.Writer)
 	Write(b []byte)
 	WriteFile(content string, r io.Reader) error
-	// Write the structure directly to the Body as json, 
+
+	// Write the structure directly to the Body as json,
 	// which will be processed by the interface.
 	WriteJson(v any) error
+
 	// Execute request.
 	Do() (NetResponse, error)
 

@@ -4,7 +4,6 @@ import (
 	"strconv"
 
 	"github.com/3JoB/unsafeConvert"
-	"github.com/goccy/go-json"
 )
 
 type StickerSetType = string
@@ -68,7 +67,7 @@ func (b *Bot) UploadSticker(to Recipient, png *File) (*File, error) {
 	var resp struct {
 		Result File
 	}
-	if err := json.Unmarshal(data, &resp); err != nil {
+	if err := b.json.Unmarshal(data, &resp); err != nil {
 		return nil, wrapError(err)
 	}
 	return &resp.Result, nil
@@ -84,7 +83,7 @@ func (b *Bot) StickerSet(name string) (*StickerSet, error) {
 	var resp struct {
 		Result *StickerSet
 	}
-	if err := json.Unmarshal(data, &resp); err != nil {
+	if err := b.json.Unmarshal(data, &resp); err != nil {
 		return nil, wrapError(err)
 	}
 	return resp.Result, nil
@@ -113,7 +112,7 @@ func (b *Bot) CreateStickerSet(to Recipient, s StickerSet) error {
 	}
 
 	if s.MaskPosition != nil {
-		data, _ := json.Marshal(&s.MaskPosition)
+		data, _ := b.json.Marshal(&s.MaskPosition)
 		params["mask_position"] = unsafeConvert.StringSlice(data)
 	}
 
@@ -145,7 +144,7 @@ func (b *Bot) AddSticker(to Recipient, s StickerSet) error {
 	}
 
 	if s.MaskPosition != nil {
-		data, _ := json.Marshal(&s.MaskPosition)
+		data, _ := b.json.Marshal(&s.MaskPosition)
 		params["mask_position"] = unsafeConvert.StringSlice(data)
 	}
 
@@ -197,7 +196,7 @@ func (b *Bot) SetStickerSetThumbnail(to Recipient, s StickerSet) error {
 
 // CustomEmojiStickers returns the information about custom emoji stickers by their ids.
 func (b *Bot) CustomEmojiStickers(ids []string) ([]Sticker, error) {
-	data, _ := json.Marshal(ids)
+	data, _ := b.json.Marshal(ids)
 
 	params := map[string]string{
 		"custom_emoji_ids": unsafeConvert.StringSlice(data),
@@ -211,7 +210,7 @@ func (b *Bot) CustomEmojiStickers(ids []string) ([]Sticker, error) {
 	var resp struct {
 		Result []Sticker
 	}
-	if err := json.Unmarshal(data, &resp); err != nil {
+	if err := b.json.Unmarshal(data, &resp); err != nil {
 		return nil, wrapError(err)
 	}
 	return resp.Result, nil

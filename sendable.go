@@ -6,7 +6,6 @@ import (
 	"strconv"
 
 	"github.com/3JoB/unsafeConvert"
-	"github.com/goccy/go-json"
 )
 
 // Recipient is any possible endpoint you can send
@@ -372,7 +371,7 @@ func (p *Poll) Send(b *Bot, to Recipient, opt *SendOptions) (*Message, error) {
 		options = append(options, o.Text)
 	}
 
-	opts, _ := json.Marshal(options)
+	opts, _ := b.json.Marshal(options)
 	params["options"] = unsafeConvert.StringSlice(opts)
 
 	data, err := b.Raw("sendPoll", params)

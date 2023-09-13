@@ -2,8 +2,6 @@ package telebot
 
 import (
 	"strconv"
-
-	"github.com/goccy/go-json"
 )
 
 // Game object represents a game.
@@ -64,7 +62,7 @@ func (b *Bot) GameScores(user Recipient, msg Editable) ([]GameHighScore, error) 
 	var resp struct {
 		Result []GameHighScore
 	}
-	if err := json.Unmarshal(data, &resp); err != nil {
+	if err := b.json.Unmarshal(data, &resp); err != nil {
 		return nil, err
 	}
 	return resp.Result, nil

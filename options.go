@@ -4,7 +4,6 @@ import (
 	"strconv"
 
 	"github.com/3JoB/unsafeConvert"
-	"github.com/goccy/go-json"
 )
 
 // Option is a shortcut flag type for certain message features
@@ -173,7 +172,7 @@ func (b *Bot) embedSendOptions(params map[string]any, opt *SendOptions) {
 
 	if len(opt.Entities) > 0 {
 		delete(params, "parse_mode")
-		entities, _ := json.Marshal(opt.Entities)
+		entities, _ := b.json.Marshal(opt.Entities)
 
 		if params["caption"] != "" {
 			params["caption_entities"] = unsafeConvert.StringSlice(entities)
@@ -188,7 +187,7 @@ func (b *Bot) embedSendOptions(params map[string]any, opt *SendOptions) {
 
 	if opt.ReplyMarkup != nil {
 		processButtons(opt.ReplyMarkup.InlineKeyboard)
-		replyMarkup, _ := json.Marshal(opt.ReplyMarkup)
+		replyMarkup, _ := b.json.Marshal(opt.ReplyMarkup)
 		params["reply_markup"] = unsafeConvert.StringSlice(replyMarkup)
 	}
 

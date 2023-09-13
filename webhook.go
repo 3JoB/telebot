@@ -8,7 +8,6 @@ import (
 	"strconv"
 
 	"github.com/3JoB/unsafeConvert"
-	"github.com/goccy/go-json"
 )
 
 // A WebhookTLS specifies the path to a key and a cert so the poller can open
@@ -92,7 +91,7 @@ func (h *Webhook) getParams() map[string]any {
 		params["max_connections"] = strconv.Itoa(h.MaxConnections)
 	}
 	if len(h.AllowedUpdates) > 0 {
-		data, _ := json.Marshal(h.AllowedUpdates)
+		data, _ := h.bot.json.Marshal(h.AllowedUpdates)
 		params["allowed_updates"] = unsafeConvert.StringSlice(data)
 	}
 	if h.IP != "" {
@@ -167,7 +166,7 @@ func (h *Webhook) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var update Update
-	if err := json.NewDecoder(r.Body).Decode(&update); err != nil {
+	if err := h.bot.json.NewDecoder(r.Body).Decode(&update); err != nil {
 		h.bot.debug(fmt.Errorf("cannot decode update: %v", err))
 		return
 	}
@@ -184,7 +183,7 @@ func (b *Bot) Webhook() (*Webhook, error) {
 	var resp struct {
 		Result Webhook
 	}
-	if err := json.Unmarshal(data, &resp); err != nil {
+	if err := b.json.Unmarshal(data, &resp); err != nil {
 		return nil, wrapError(err)
 	}
 	return &resp.Result, nil
