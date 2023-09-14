@@ -116,9 +116,7 @@ func (b *Bot) TopicIconStickers() ([]Sticker, error) {
 		return nil, err
 	}
 
-	var resp struct {
-		Result []Sticker
-	}
+	var resp Response[[]Sticker]
 	if err := b.json.Unmarshal(data, &resp); err != nil {
 		return nil, wrapError(err)
 	}

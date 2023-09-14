@@ -180,9 +180,7 @@ func (b *Bot) CreateInvoiceLink(i Invoice) (string, error) {
 		return "", err
 	}
 
-	var resp struct {
-		Result string
-	}
+	var resp Response[string]
 	if err := b.json.Unmarshal(data, &resp); err != nil {
 		return "", wrapError(err)
 	}

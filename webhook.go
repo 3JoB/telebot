@@ -180,9 +180,7 @@ func (b *Bot) Webhook() (*Webhook, error) {
 		return nil, err
 	}
 
-	var resp struct {
-		Result Webhook
-	}
+	var resp Response[Webhook]
 	if err := b.json.Unmarshal(data, &resp); err != nil {
 		return nil, wrapError(err)
 	}

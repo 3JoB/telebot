@@ -188,9 +188,7 @@ func (b *Bot) AdminsOf(chat *Chat) ([]ChatMember, error) {
 		return nil, err
 	}
 
-	var resp struct {
-		Result []ChatMember
-	}
+	var resp Response[[]ChatMember]
 	if err := b.json.Unmarshal(data, &resp); err != nil {
 		return nil, wrapError(err)
 	}
@@ -208,9 +206,7 @@ func (b *Bot) Len(chat *Chat) (int, error) {
 		return 0, err
 	}
 
-	var resp struct {
-		Result int
-	}
+	var resp Response[int]
 	if err := b.json.Unmarshal(data, &resp); err != nil {
 		return 0, wrapError(err)
 	}
@@ -266,9 +262,7 @@ func (b *Bot) DefaultRights(forChannels bool) (*Rights, error) {
 		return nil, err
 	}
 
-	var resp struct {
-		Result *Rights
-	}
+	var resp Response[*Rights]
 	if err := b.json.Unmarshal(data, &resp); err != nil {
 		return nil, wrapError(err)
 	}

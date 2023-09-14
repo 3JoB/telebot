@@ -46,9 +46,7 @@ func (b *Bot) Commands(opts ...any) ([]Command, error) {
 		return nil, err
 	}
 
-	var resp struct {
-		Result []Command
-	}
+	var resp Response[[]Command]
 	if err := json.Unmarshal(data, &resp); err != nil {
 		return nil, wrapError(err)
 	}

@@ -191,9 +191,7 @@ func (b *Bot) getMe() (*User, error) {
 		return nil, err
 	}
 
-	var resp struct {
-		Result *User
-	}
+	var resp Response[*User]
 	if err := b.json.Unmarshal(data, &resp); err != nil {
 		return nil, wrapError(err)
 	}
@@ -217,9 +215,8 @@ func (b *Bot) getUpdates(offset, limit int, timeout time.Duration, allowed []str
 		return nil, err
 	}
 
-	var resp struct {
-		Result []Update
-	}
+	var resp Response[[]Update]
+
 	if err := b.json.Unmarshal(data, &resp); err != nil {
 		return nil, wrapError(err)
 	}
@@ -281,13 +278,9 @@ func extractOk(data []byte) error {
 // extractMessage extracts common Message result from given data.
 // Should be called after extractOk or b.Raw() to handle possible errors.
 func extractMessage(data []byte) (*Message, error) {
-	var resp struct {
-		Result *Message
-	}
+	var resp Response[*Message]
 	if err := json.Unmarshal(data, &resp); err != nil {
-		var resp struct {
-			Result bool
-		}
+		var resp Response[bool]
 		if err := json.Unmarshal(data, &resp); err != nil {
 			return nil, wrapError(err)
 		}

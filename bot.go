@@ -8,13 +8,20 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"sync"
 
+	"github.com/3JoB/ulib/litefmt"
 	"github.com/3JoB/unsafeConvert"
 	"github.com/grafana/regexp"
+	"github.com/valyala/fastjson"
 
 	"github.com/3JoB/telebot/internal/bPool"
 	"github.com/3JoB/telebot/internal/json"
 	"github.com/3JoB/telebot/internal/net"
+)
+
+var (
+	ctxPool sync.Pool
 )
 
 // NewBot does try to build a Bot with token `token`, which
@@ -63,6 +70,7 @@ func NewBot(pref Settings) (*Bot, error) {
 		parseMode:   pref.ParseMode,
 		client:      client,
 		json:        ijson,
+		fjson:       fastjson.ParserPool{},
 	}
 
 	if pref.Offline {
@@ -90,6 +98,7 @@ type Bot struct {
 
 	group       *Group
 	json        json.Json
+	fjson       fastjson.ParserPool
 	handlers    map[string]HandlerFunc
 	synchronous bool
 	verbose     bool
@@ -282,6 +291,27 @@ func (b *Bot) NewContext(u Update) Context {
 	}
 }
 
+// Get a Context from the pool.
+func (b *Bot) AcquireContext() *nativeContext {
+	n := ctxPool.Get()
+	if n == nil {
+		return &nativeContext{}
+	}
+	return n.(*nativeContext)
+}
+
+// Release the Context. After it is released,
+// the previous Context should not be continued to be used.
+func (b *Bot) ReleaseContext(n *nativeContext) {
+	if n == nil {
+		return
+	}
+	n.store = nil
+	n.b = nil
+	n.u = Update{}
+	ctxPool.Put(n)
+}
+
 // Use this method to change the bot's name. Returns True on success.
 func (b *Bot) SetMyName(name, language_code string) error {
 	d := map[string]string{
@@ -300,12 +330,9 @@ func (b *Bot) SetMyName(name, language_code string) error {
 func (b *Bot) SetShortDescription(description, lang string) error {
 	d := map[string]string{
 		"short_description": description,
-		"language_code":     lang,
 	}
-	if lang == "" {
-		d = map[string]string{
-			"description": description,
-		}
+	if lang != "" {
+		d["language_code"] = lang
 	}
 	if _, err := b.Raw("setMyShortDescription", d); err != nil {
 		return err
@@ -323,18 +350,14 @@ type ShortDescription struct {
 
 // Use this method to get the current bot description for the given user language.
 func (b *Bot) GetMyDescription(lang string) (string, error) {
-	d := map[string]string{
-		"language_code": lang,
-	}
-	if lang == "" {
-		d = nil
+	d := map[string]string{}
+	if lang != "" {
+		d["language_code"] = lang
 	}
 	if r, err := b.Raw("getMyDescription", d); err != nil {
 		return "", err
 	} else {
-		var resp struct {
-			Result Description
-		}
+		var resp Response[Description]
 		err := b.json.Unmarshal(r, &resp)
 		return resp.Result.Description, err
 	}
@@ -342,18 +365,14 @@ func (b *Bot) GetMyDescription(lang string) (string, error) {
 
 // Use this method to get the current bot short description for the given user language.
 func (b *Bot) GetMyShortDescription(lang string) (string, error) {
-	d := map[string]string{
-		"language_code": lang,
-	}
-	if lang == "" {
-		d = nil
+	d := map[string]string{}
+	if lang != "" {
+		d["language_code"] = lang
 	}
 	if r, err := b.Raw("getMyShortDescription", d); err != nil {
 		return "", err
 	} else {
-		var resp struct {
-			Result ShortDescription
-		}
+		var resp Response[ShortDescription]
 		b.json.Unmarshal(r, &resp)
 		return resp.Result.ShortDescription, nil
 	}
@@ -361,13 +380,10 @@ func (b *Bot) GetMyShortDescription(lang string) (string, error) {
 
 func (b *Bot) SetDescription(description, lang string) error {
 	d := map[string]string{
-		"description":   description,
-		"language_code": lang,
+		"description": description,
 	}
-	if lang == "" {
-		d = map[string]string{
-			"description": description,
-		}
+	if lang != "" {
+		d["language_code"] = lang
 	}
 	if _, err := b.Raw("setMyDescription", d); err != nil {
 		return err
@@ -430,7 +446,7 @@ func (b *Bot) SendAlbum(to Recipient, a Album, opts ...any) ([]Message, error) {
 		case file.FileURL != "":
 			repr = file.FileURL
 		case file.OnDisk() || file.FileReader != nil:
-			repr = fmt.Sprintf("attach://%v", unsafeConvert.IntToString(i))
+			repr = litefmt.Sprint("attach://", unsafeConvert.IntToString(i))
 			files[unsafeConvert.IntToString(i)] = *file
 		default:
 			return nil, fmt.Errorf("telebot: album entry #%d does not exist", i)
@@ -451,7 +467,7 @@ func (b *Bot) SendAlbum(to Recipient, a Album, opts ...any) ([]Message, error) {
 
 	params := map[string]any{
 		"chat_id": to.Recipient(),
-		"media":   fmt.Sprintf("[%v]", strings.Join(media, ",")),
+		"media":   litefmt.Sprint("[", strings.Join(media, ","), "]"),
 	}
 	b.embedSendOptions(params, sendOpts)
 
@@ -460,9 +476,7 @@ func (b *Bot) SendAlbum(to Recipient, a Album, opts ...any) ([]Message, error) {
 		return nil, err
 	}
 
-	var resp struct {
-		Result []Message
-	}
+	var resp Response[[]Message]
 	if err := b.json.Unmarshal(data, &resp); err != nil {
 		return nil, wrapError(err)
 	}
@@ -925,9 +939,7 @@ func (b *Bot) AnswerWebApp(query *Query, r Result) (*WebAppMessage, error) {
 		return nil, err
 	}
 
-	var resp struct {
-		Result *WebAppMessage
-	}
+	var resp Response[*WebAppMessage]
 	if err := b.json.Unmarshal(data, &resp); err != nil {
 		return nil, wrapError(err)
 	}
@@ -950,9 +962,7 @@ func (b *Bot) FileByID(fileID string) (File, error) {
 		return File{}, err
 	}
 
-	var resp struct {
-		Result File
-	}
+	var resp Response[File]
 	if err := b.json.Unmarshal(data, &resp); err != nil {
 		return File{}, wrapError(err)
 	}
@@ -1075,9 +1085,7 @@ func (b *Bot) StopPoll(msg Editable, opts ...any) (*Poll, error) {
 		return nil, err
 	}
 
-	var resp struct {
-		Result *Poll
-	}
+	var resp Response[*Poll]
 	if err := b.json.Unmarshal(data, &resp); err != nil {
 		return nil, wrapError(err)
 	}
@@ -1157,9 +1165,7 @@ func (b *Bot) ChatByUsername(name string) (*Chat, error) {
 		return nil, err
 	}
 
-	var resp struct {
-		Result *Chat
-	}
+	var resp Response[*Chat]
 	if err := b.json.Unmarshal(data, &resp); err != nil {
 		return nil, wrapError(err)
 	}
@@ -1180,12 +1186,7 @@ func (b *Bot) ProfilePhotosOf(user *User) ([]Photo, error) {
 		return nil, err
 	}
 
-	var resp struct {
-		Result struct {
-			Count  int     `json:"total_count"`
-			Photos []Photo `json:"photos"`
-		}
-	}
+	var resp Response[ProfileStr]
 	if err := b.json.Unmarshal(data, &resp); err != nil {
 		return nil, wrapError(err)
 	}
@@ -1204,9 +1205,7 @@ func (b *Bot) ChatMemberOf(chat, user Recipient) (*ChatMember, error) {
 		return nil, err
 	}
 
-	var resp struct {
-		Result *ChatMember
-	}
+	var resp Response[*ChatMember]
 	if err := b.json.Unmarshal(data, &resp); err != nil {
 		return nil, wrapError(err)
 	}
@@ -1225,9 +1224,7 @@ func (b *Bot) MenuButton(chat *User) (*MenuButton, error) {
 		return nil, err
 	}
 
-	var resp struct {
-		Result *MenuButton
-	}
+	var resp Response[*MenuButton]
 	if err := b.json.Unmarshal(data, &resp); err != nil {
 		return nil, wrapError(err)
 	}
@@ -1264,9 +1261,7 @@ func (b *Bot) Logout() (bool, error) {
 		return false, err
 	}
 
-	var resp struct {
-		Result bool `json:"result"`
-	}
+	var resp Response[bool]
 	if err := b.json.Unmarshal(data, &resp); err != nil {
 		return false, wrapError(err)
 	}
@@ -1281,9 +1276,7 @@ func (b *Bot) Close() (bool, error) {
 		return false, err
 	}
 
-	var resp struct {
-		Result bool `json:"result"`
-	}
+	var resp Response[bool]
 	if err := b.json.Unmarshal(data, &resp); err != nil {
 		return false, wrapError(err)
 	}

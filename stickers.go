@@ -64,9 +64,7 @@ func (b *Bot) UploadSticker(to Recipient, png *File) (*File, error) {
 		return nil, err
 	}
 
-	var resp struct {
-		Result File
-	}
+	var resp Response[File]
 	if err := b.json.Unmarshal(data, &resp); err != nil {
 		return nil, wrapError(err)
 	}
@@ -80,9 +78,7 @@ func (b *Bot) StickerSet(name string) (*StickerSet, error) {
 		return nil, err
 	}
 
-	var resp struct {
-		Result *StickerSet
-	}
+	var resp Response[*StickerSet]
 	if err := b.json.Unmarshal(data, &resp); err != nil {
 		return nil, wrapError(err)
 	}
@@ -207,9 +203,7 @@ func (b *Bot) CustomEmojiStickers(ids []string) ([]Sticker, error) {
 		return nil, err
 	}
 
-	var resp struct {
-		Result []Sticker
-	}
+	var resp Response[[]Sticker]
 	if err := b.json.Unmarshal(data, &resp); err != nil {
 		return nil, wrapError(err)
 	}

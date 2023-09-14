@@ -59,9 +59,7 @@ func (b *Bot) GameScores(user Recipient, msg Editable) ([]GameHighScore, error) 
 		return nil, err
 	}
 
-	var resp struct {
-		Result []GameHighScore
-	}
+	var resp Response[[]GameHighScore]
 	if err := b.json.Unmarshal(data, &resp); err != nil {
 		return nil, err
 	}
