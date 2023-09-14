@@ -1,28 +1,31 @@
 package middleware
 
 import (
-	"log"
+	"io"
+	"os"
 
 	"github.com/3JoB/unsafeConvert"
 	"github.com/goccy/go-json"
+	"github.com/rs/zerolog"
 
 	tele "github.com/3JoB/telebot"
 )
 
 // Logger returns a middleware that logs incoming updates.
 // If no custom logger provided, log.Default() will be used.
-func Logger(logger ...*log.Logger) tele.MiddlewareFunc {
-	var l *log.Logger
-	if len(logger) > 0 {
-		l = logger[0]
+func Logger(writers ...io.Writer) tele.MiddlewareFunc {
+	var w io.Writer
+	if len(writers) > 0 {
+		w = zerolog.MultiLevelWriter(writers...)
 	} else {
-		l = log.Default()
+		w = zerolog.ConsoleWriter{Out: os.Stdout}
 	}
+	l := zerolog.New(w).With().Timestamp().Logger()
 
 	return func(next tele.HandlerFunc) tele.HandlerFunc {
 		return func(c tele.Context) error {
 			data, _ := json.MarshalIndent(c.Update(), "", "  ")
-			l.Println(unsafeConvert.StringSlice(data))
+			l.Info().Msg(unsafeConvert.StringSlice(data))
 			return next(c)
 		}
 	}

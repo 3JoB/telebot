@@ -11,11 +11,11 @@ require (
 	github.com/goccy/go-json v0.10.2
 	github.com/goccy/go-yaml v1.11.0
 	github.com/grafana/regexp v0.0.0-20221122212121-6b5c0a4cb7fd
+	github.com/rs/zerolog v1.30.0
 	github.com/spf13/cast v1.5.0
 	github.com/spf13/viper v1.15.0
 	github.com/stretchr/testify v1.8.2
 	github.com/valyala/fasthttp v1.49.0
-	github.com/valyala/fastjson v1.6.4
 	golang.org/x/text v0.13.0
 )
 
