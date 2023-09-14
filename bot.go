@@ -299,7 +299,7 @@ func (b *Bot) AcquireContext() *nativeContext {
 
 // Release the Context. After it is released,
 // the previous Context should not be continued to be used.
-func (b *Bot) ReleaseContext(n *nativeContext) {
+func (n *nativeContext) ReleaseContext() {
 	if n == nil {
 		return
 	}
@@ -1024,10 +1024,10 @@ func (b *Bot) File(file *File) (io.ReadCloser, error) {
 	req.SetRequestURI(url)
 	req.SetWriter(fp)
 	resp, err := req.Do()
-	defer resp.Release()
 	if err != nil {
 		return nil, wrapError(err)
 	}
+	defer resp.Release()
 	if !resp.IsStatusCode(200) {
 		return nil, fmt.Errorf("telebot: expected status 200 but got %v", resp.StatusCode())
 	}

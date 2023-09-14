@@ -155,6 +155,9 @@ type Context interface {
 
 	// Set saves data in the context.
 	Set(key string, val any)
+
+	// Release Context
+	ReleaseContext()
 }
 
 // nativeContext is a native implementation of the Context interface.

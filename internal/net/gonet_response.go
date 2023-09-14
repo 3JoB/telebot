@@ -19,7 +19,7 @@ func (g *GoNetResponse) Bytes() []byte {
 
 func (g *GoNetResponse) Reset() {
 	g.code = 0
-	g.body = nil
+	g.body = []byte{}
 }
 
 func (g *GoNetResponse) Release() {

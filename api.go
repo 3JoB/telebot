@@ -40,14 +40,16 @@ func (b *Bot) Raw(method string, payload any) ([]byte, error) {
 		}
 	}()*/
 	req := b.client.AcquireRequest()
-	req.WriteJson(payload)
+	if payload != nil {
+		req.WriteJson(payload)
+	}
 	req.SetRequestURI(url)
 	req.MethodPOST()
 	resp, err := req.Do()
-	defer resp.Release()
 	if err != nil {
 		return nil, wrapError(err)
 	}
+	defer resp.Release()
 	if b.verbose {
 		verbose(method, payload, resp.Bytes())
 	}
@@ -111,12 +113,12 @@ func (b *Bot) sendFiles(method string, files map[string]File, params map[string]
 	req.WriteFile(writer.FormDataContentType(), pipeReader)
 	req.SetRequestURI(url)
 	resp, err := req.Do()
-	defer resp.Release()
 	if err != nil {
 		err = wrapError(err)
 		pipeReader.CloseWithError(err)
 		return nil, err
 	}
+	defer resp.Release()
 
 	if resp.IsStatusCode(500) {
 		return nil, ErrInternal
