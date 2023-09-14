@@ -13,7 +13,6 @@ import (
 	"github.com/3JoB/ulib/litefmt"
 	"github.com/3JoB/unsafeConvert"
 	"github.com/grafana/regexp"
-	"github.com/valyala/fastjson"
 
 	"github.com/3JoB/telebot/internal/bPool"
 	"github.com/3JoB/telebot/internal/json"
@@ -70,7 +69,6 @@ func NewBot(pref Settings) (*Bot, error) {
 		parseMode:   pref.ParseMode,
 		client:      client,
 		json:        ijson,
-		fjson:       fastjson.ParserPool{},
 	}
 
 	if pref.Offline {
@@ -98,7 +96,6 @@ type Bot struct {
 
 	group       *Group
 	json        json.Json
-	fjson       fastjson.ParserPool
 	handlers    map[string]HandlerFunc
 	synchronous bool
 	verbose     bool
