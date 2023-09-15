@@ -57,7 +57,7 @@ func (f *FastHTTPRequest) Write(b []byte) {
 func (f *FastHTTPRequest) WriteFile(content string, r io.Reader) error {
 	f.SetContentType(content)
 	f.MethodPOST()
-	_, err := io.Copy(f.Body(), r)
+	_, err := io.Copy(f.request.BodyWriter(), r)
 	return err
 }
 
@@ -99,7 +99,10 @@ func (f *FastHTTPRequest) Do() (NetResponse, error) {
 func (f *FastHTTPRequest) Reset() {
 	fasthttp.ReleaseRequest(f.request)
 	fasthttp.ReleaseResponse(f.response)
+	f.request = nil
+	f.response = nil
 	f.client = nil
+	f.w = nil
 }
 
 func (f *FastHTTPRequest) Release() {

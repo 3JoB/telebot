@@ -99,6 +99,7 @@ func (g *GoNetRequest) Do() (NetResponse, error) {
 func (g *GoNetRequest) Reset() {
 	g.r = nil
 	g.uri = ""
+	g.method = ""
 	g.w = nil
 }
 
