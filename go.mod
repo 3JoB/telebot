@@ -7,7 +7,7 @@ require (
 	github.com/3JoB/ulib v1.32.0
 	github.com/3JoB/unsafeConvert v1.5.0
 	github.com/bytedance/sonic v1.10.1
-	github.com/cornelk/hashmap v1.0.8
+	github.com/colega/zeropool v0.0.0-20230505084239-6fb4a4f75381
 	github.com/goccy/go-json v0.10.2
 	github.com/goccy/go-yaml v1.11.0
 	github.com/grafana/regexp v0.0.0-20221122212121-6b5c0a4cb7fd

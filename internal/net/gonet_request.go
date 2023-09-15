@@ -5,14 +5,15 @@ import (
 
 	"github.com/3JoB/resty-ilo"
 
-	"github.com/3JoB/telebot/internal/json"
+	"github.com/3JoB/telebot/json"
 )
 
 type GoNetRequest struct {
-	json json.Json
-	uri  string
-	r    *resty.Request
-	w    io.Writer
+	json   json.Json
+	uri    string
+	method string
+	r      *resty.Request
+	w      io.Writer
 }
 
 func (g *GoNetRequest) acquireResponse() *GoNetResponse {
@@ -24,11 +25,11 @@ func (g *GoNetRequest) acquireResponse() *GoNetResponse {
 }
 
 func (g *GoNetRequest) MethodGET() {
-	g.r.Method = "GET"
+	g.method = "GET"
 }
 
 func (g *GoNetRequest) MethodPOST() {
-	g.r.Method = "POST"
+	g.method = "POST"
 }
 
 func (g *GoNetRequest) SetRequestURI(v string) {
@@ -71,7 +72,12 @@ func (g *GoNetRequest) Do() (NetResponse, error) {
 	defer g.Release()
 	var err error
 	g.r = g.r.SetHeader("User-Agent", "Mozilla/5.0(compatible; Telebot-Expansion-Pack/v1; +https://github.com/3JoB/telebot)")
-	response, err := g.r.Send()
+	var response *resty.Response
+	if g.method == "POST" {
+		response, err = g.r.Post(g.uri)
+	} else {
+		response, err = g.r.Get(g.uri)
+	}
 	if err != nil {
 		return nil, err
 	}

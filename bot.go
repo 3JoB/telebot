@@ -14,9 +14,9 @@ import (
 	"github.com/3JoB/unsafeConvert"
 	"github.com/grafana/regexp"
 
-	"github.com/3JoB/telebot/internal/bPool"
-	"github.com/3JoB/telebot/internal/json"
 	"github.com/3JoB/telebot/internal/net"
+	"github.com/3JoB/telebot/internal/pool"
+	"github.com/3JoB/telebot/json"
 )
 
 var (
@@ -41,7 +41,7 @@ func NewBot(pref Settings) (*Bot, error) {
 
 	ijson := pref.Json
 	if ijson == nil {
-		ijson = json.NewSonic()
+		ijson = json.NewGoJson()
 	}
 
 	if pref.URL == "" {
@@ -303,7 +303,7 @@ func (n *nativeContext) ReleaseContext() {
 	if n == nil {
 		return
 	}
-	n.store = nil
+	pool.ReleaseMapper(n.store)
 	n.b = nil
 	n.u = Update{}
 	ctxPool.Put(n)
@@ -1018,11 +1018,11 @@ func (b *Bot) File(file *File) (io.ReadCloser, error) {
 
 	url := b.buildFileUrl(f.FilePath)
 	file.FilePath = f.FilePath // saving file path
-	fp := bPool.New()
+	buffer := pool.NewBuffer()
 	req := b.client.AcquireRequest()
 	req.MethodGET()
 	req.SetRequestURI(url)
-	req.SetWriter(fp)
+	req.SetWriter(buffer)
 	resp, err := req.Do()
 	if err != nil {
 		return nil, wrapError(err)
@@ -1031,7 +1031,7 @@ func (b *Bot) File(file *File) (io.ReadCloser, error) {
 	if !resp.IsStatusCode(200) {
 		return nil, fmt.Errorf("telebot: expected status 200 but got %v", resp.StatusCode())
 	}
-	return fp, nil
+	return buffer, nil
 }
 
 // StopLiveLocation stops broadcasting live message location

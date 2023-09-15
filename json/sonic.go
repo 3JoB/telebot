@@ -4,8 +4,6 @@ import (
 	"io"
 
 	"github.com/bytedance/sonic"
-	"github.com/bytedance/sonic/decoder"
-	"github.com/bytedance/sonic/encoder"
 )
 
 type Sonic struct {
@@ -14,7 +12,7 @@ type Sonic struct {
 
 func NewSonic() Json {
 	return &Sonic{
-		std: sonic.ConfigStd,
+		std: sonic.ConfigFastest,
 	}
 }
 
@@ -31,9 +29,9 @@ func (s *Sonic) MarshalIndent(v any, prefix, indent string) ([]byte, error) {
 }
 
 func (s *Sonic) NewDecoder(r io.Reader) Decoder {
-	return decoder.NewStreamDecoder(r)
+	return s.std.NewDecoder(r)
 }
 
 func (s *Sonic) NewEncoder(w io.Writer) Encoder {
-	return encoder.NewStreamEncoder(w)
+	return s.std.NewEncoder(w)
 }

@@ -5,7 +5,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/cornelk/hashmap"
+	"github.com/3JoB/telebot/internal/pool"
 )
 
 // HandlerFunc represents a handler function, which is
@@ -165,7 +165,7 @@ type Context interface {
 type nativeContext struct {
 	b     *Bot
 	u     Update
-	store *hashmap.Map[string, any]
+	store map[string]any
 }
 
 func (c *nativeContext) Bot() *Bot {
@@ -474,12 +474,11 @@ func (c *nativeContext) Answer(resp *QueryResponse) error {
 
 func (c *nativeContext) Set(k string, v any) {
 	if c.store == nil {
-		c.store = hashmap.New[string, any]()
+		c.store = pool.NewMapper()
 	}
-	c.store.Set(k, v)
+	c.store[k] = v
 }
 
 func (c *nativeContext) Get(k string) any {
-	v, _ := c.store.Get(k)
-	return v
+	return c.store[k]
 }
