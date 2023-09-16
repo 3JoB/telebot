@@ -16,6 +16,8 @@ import (
 	"github.com/spf13/cast"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
+
+	"github.com/3JoB/telebot/internal/pool"
 )
 
 // Raw lets you call any method of Bot API manually.
@@ -54,12 +56,16 @@ func (b *Bot) Raw(method string, payload any) ([]byte, error) {
 		verbose(method, payload, resp.Bytes())
 	}
 
+	if !resp.IsStatusCode(200) {
+		return resp.Bytes(), extractOk(resp.Bytes())
+	}
+
 	// returning data as well
-	return resp.Bytes(), extractOk(resp.Bytes())
+	return resp.Bytes(), nil
 }
 
 func (b *Bot) buildUrl(method string) string {
-	return litefmt.Sprint(b.URL, "/bot", b.Token, "/", method)
+	return litefmt.PSprintP(b.URL, "/bot", b.Token, "/", method)
 }
 
 func (b *Bot) sendFiles(method string, files map[string]File, params map[string]any) ([]byte, error) {
@@ -124,7 +130,11 @@ func (b *Bot) sendFiles(method string, files map[string]File, params map[string]
 		return nil, ErrInternal
 	}
 
-	return resp.Bytes(), extractOk(resp.Bytes())
+	if !resp.IsStatusCode(200) {
+		return resp.Bytes(), extractOk(resp.Bytes())
+	}
+
+	return resp.Bytes(), nil
 }
 
 func addFileToWriter(writer *multipart.Writer, filename, field string, file any) error {
@@ -225,17 +235,22 @@ func (b *Bot) getUpdates(offset, limit int, timeout time.Duration, allowed []str
 	return resp.Result, nil
 }
 
+type extracts struct {
+	Ok          bool           `json:"ok"`
+	Code        int            `json:"error_code"`
+	Description string         `json:"description"`
+	Parameters  map[string]any `json:"parameters"`
+}
+
 // extractOk checks given result for error. If result is ok returns nil.
 // In other cases it extracts API error. If error is not presented
 // in errors.go, it will be prefixed with `unknown` keyword.
 func extractOk(data []byte) error {
-	var e struct {
-		Ok          bool           `json:"ok"`
-		Code        int            `json:"error_code"`
-		Description string         `json:"description"`
-		Parameters  map[string]any `json:"parameters"`
-	}
-	if json.NewDecoder(bytes.NewReader(data)).Decode(&e) != nil {
+	var e extracts
+	read := pool.NewBuffer()
+	_, _ = read.Write(data)
+	defer read.Close()
+	if json.NewDecoder(read).Decode(&e) != nil {
 		return nil // FIXME
 	}
 	if e.Ok {

@@ -42,8 +42,8 @@ github.com/3JoB/go-reflect v1.0.2 h1:1vjO7yj0k9Hr4pAKh2ngQ5nKHSqeJJmMlSr8MRmau7o
 github.com/3JoB/go-reflect v1.0.2/go.mod h1:+y2dG7y2l5DPG6Vsl2xFGxVysLfjnuJKCeSCd6RwISA=
 github.com/3JoB/resty-ilo v1.1.9 h1:2keP748KJLJ4dZZ1mkzHMzTnEv2CZy025D/43dDvao4=
 github.com/3JoB/resty-ilo v1.1.9/go.mod h1:vTxyPa9lO44kvagHQ17NoRGzIysX93OMxF8APAUNaGU=
-github.com/3JoB/ulib v1.32.0 h1:p57TEdDpA4R3slg1ARAw6lqlE7Rwey3Q2nhaQQJqdNA=
-github.com/3JoB/ulib v1.32.0/go.mod h1:PHHpvLGBN5+eSH7vC+kThW4HWfodX3qMVZ2Y4bRIvuU=
+github.com/3JoB/ulib v1.33.0 h1:CusLKQmPqBLPVSSIEXY0H/HaezO7n3Gkgt+2xuJ03B0=
+github.com/3JoB/ulib v1.33.0/go.mod h1:rvE2K+LprlGigfnL25i+ty+hp0D/+Mi4AVBwROZHexQ=
 github.com/3JoB/unsafeConvert v1.5.0 h1:zZGo8G/+yQu2h53GR2h0T+0VlD1uXEZgZIBH5ehjTgk=
 github.com/3JoB/unsafeConvert v1.5.0/go.mod h1:eSOZxiCOcyEi0vBO56ULYtfXJEn4vafvkebEfI0pYoE=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=

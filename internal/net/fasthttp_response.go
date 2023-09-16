@@ -19,7 +19,7 @@ func (r *FastHTTPResponse) Bytes() []byte {
 
 func (r *FastHTTPResponse) Reset() {
 	r.code = 0
-	r.body = []byte{}
+	r.body = nil
 }
 
 func (r *FastHTTPResponse) Release() {

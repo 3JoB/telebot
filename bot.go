@@ -443,7 +443,7 @@ func (b *Bot) SendAlbum(to Recipient, a Album, opts ...any) ([]Message, error) {
 		case file.FileURL != "":
 			repr = file.FileURL
 		case file.OnDisk() || file.FileReader != nil:
-			repr = litefmt.Sprint("attach://", unsafeConvert.IntToString(i))
+			repr = litefmt.PSprintP("attach://", unsafeConvert.IntToString(i))
 			files[unsafeConvert.IntToString(i)] = *file
 		default:
 			return nil, fmt.Errorf("telebot: album entry #%d does not exist", i)
@@ -464,7 +464,7 @@ func (b *Bot) SendAlbum(to Recipient, a Album, opts ...any) ([]Message, error) {
 
 	params := map[string]any{
 		"chat_id": to.Recipient(),
-		"media":   litefmt.Sprint("[", strings.Join(media, ","), "]"),
+		"media":   litefmt.PSprintP("[", strings.Join(media, ","), "]"),
 	}
 	b.embedSendOptions(params, sendOpts)
 
@@ -520,11 +520,11 @@ func (b *Bot) Forward(to Recipient, msg Editable, opts ...any) (*Message, error)
 	}
 	msgID, chatID := msg.MessageSig()
 
-	params := map[string]any{
-		"chat_id":      to.Recipient(),
-		"from_chat_id": strconv.FormatInt(chatID, 10),
-		"message_id":   msgID,
-	}
+	params := pool.NewMapper()
+	defer pool.ReleaseMapper(params)
+	params["chat_id"] = to.Recipient()
+	params["from_chat_id"] = strconv.FormatInt(chatID, 10)
+	params["message_id"] = msgID
 
 	sendOpts := extractOptions(opts)
 	b.embedSendOptions(params, sendOpts)
@@ -546,11 +546,11 @@ func (b *Bot) Copy(to Recipient, msg Editable, options ...any) (*Message, error)
 	}
 	msgID, chatID := msg.MessageSig()
 
-	params := map[string]any{
-		"chat_id":      to.Recipient(),
-		"from_chat_id": strconv.FormatInt(chatID, 10),
-		"message_id":   msgID,
-	}
+	params := pool.NewMapper()
+	defer pool.ReleaseMapper(params)
+	params["chat_id"] = to.Recipient()
+	params["from_chat_id"] = strconv.FormatInt(chatID, 10)
+	params["message_id"] = msgID
 
 	sendOpts := extractOptions(options)
 	b.embedSendOptions(params, sendOpts)
@@ -579,10 +579,10 @@ func (b *Bot) Copy(to Recipient, msg Editable, options ...any) (*Message, error)
 //	b.Edit(c, "edit inline message from the callback")
 //	b.Edit(r, "edit message from chosen inline result")
 func (b *Bot) Edit(msg Editable, what any, opts ...any) (*Message, error) {
-	var (
-		method string
-		params = make(map[string]any)
-	)
+	var method string
+
+	params := pool.NewMapper()
+	defer pool.ReleaseMapper(params)
 
 	switch v := what.(type) {
 	case *ReplyMarkup:
@@ -672,9 +672,9 @@ func (b *Bot) EditReplyMarkup(msg Editable, markup *ReplyMarkup) (*Message, erro
 func (b *Bot) EditCaption(msg Editable, caption string, opts ...any) (*Message, error) {
 	msgID, chatID := msg.MessageSig()
 
-	params := map[string]any{
-		"caption": caption,
-	}
+	params := pool.NewMapper()
+	defer pool.ReleaseMapper(params)
+	params["caption"] = caption
 
 	if chatID == 0 { // if inline message
 		params["inline_message_id"] = msgID
@@ -727,7 +727,7 @@ func (b *Bot) EditMedia(msg Editable, media Inputtable, opts ...any) (*Message, 
 			thumbName = "thumbnail2"
 		}
 
-		repr = fmt.Sprintf("attach://%v", s)
+		repr = litefmt.PSprintP("attach://", s)
 		files[s] = *file
 	default:
 		return nil, errors.New("telebot: cannot edit media, it does not exist")
@@ -745,7 +745,8 @@ func (b *Bot) EditMedia(msg Editable, media Inputtable, opts ...any) (*Message, 
 	}
 
 	msgID, chatID := msg.MessageSig()
-	params := make(map[string]any)
+	params := pool.NewMapper()
+	defer pool.ReleaseMapper(params)
 
 	sendOpts := extractOptions(opts)
 	b.embedSendOptions(params, sendOpts)
@@ -760,7 +761,7 @@ func (b *Bot) EditMedia(msg Editable, media Inputtable, opts ...any) (*Message, 
 	}
 
 	if thumb != nil {
-		im.Thumbnail = fmt.Sprintf("attach://%v", thumbName)
+		im.Thumbnail = litefmt.PSprintP("attach://%v", thumbName)
 		files[thumbName] = *thumb.MediaFile()
 	}
 
@@ -819,10 +820,10 @@ func (b *Bot) Notify(to Recipient, action ChatAction, threadID ...int) error {
 		return ErrBadRecipient
 	}
 
-	params := map[string]string{
-		"chat_id": to.Recipient(),
-		"action":  string(action),
-	}
+	params := pool.NewMapper()
+	defer pool.ReleaseMapper(params)
+	params["chat_id"] = to.Recipient()
+	params["action"] = unsafeConvert.STBPointer(action)
 
 	if len(threadID) > 0 {
 		params["message_thread_id"] = strconv.Itoa(threadID[0])
