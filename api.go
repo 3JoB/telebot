@@ -7,7 +7,6 @@ import (
 	"log"
 	"mime/multipart"
 	"os"
-	"strconv"
 	"time"
 
 	"github.com/3JoB/ulib/litefmt"
@@ -211,15 +210,15 @@ func (b *Bot) getMe() (*User, error) {
 }
 
 func (b *Bot) getUpdates(offset, limit int, timeout time.Duration, allowed []string) ([]Update, error) {
-	params := map[string]string{
-		"offset":  strconv.Itoa(offset),
-		"timeout": strconv.Itoa(int(timeout / time.Second)),
+	params := map[string]any{
+		"offset":  offset,
+		"timeout": int(timeout / time.Second),
 	}
 	data, _ := b.json.Marshal(allowed)
 	params["allowed_updates"] = unsafeConvert.StringSlice(data)
 
 	if limit != 0 {
-		params["limit"] = unsafeConvert.IntToString(limit)
+		params["limit"] = limit
 	}
 
 	data, err := b.Raw("getUpdates", params)

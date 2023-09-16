@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"strconv"
 
 	"github.com/3JoB/unsafeConvert"
 )
@@ -88,7 +87,7 @@ func (h *Webhook) getParams() map[string]any {
 	params := make(map[string]any)
 
 	if h.MaxConnections != 0 {
-		params["max_connections"] = strconv.Itoa(h.MaxConnections)
+		params["max_connections"] = h.MaxConnections
 	}
 	if len(h.AllowedUpdates) > 0 {
 		data, _ := h.bot.json.Marshal(h.AllowedUpdates)
@@ -98,7 +97,7 @@ func (h *Webhook) getParams() map[string]any {
 		params["ip_address"] = h.IP
 	}
 	if h.DropUpdates {
-		params["drop_pending_updates"] = strconv.FormatBool(h.DropUpdates)
+		params["drop_pending_updates"] = h.DropUpdates
 	}
 	if h.SecretToken != "" {
 		params["secret_token"] = h.SecretToken

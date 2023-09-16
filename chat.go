@@ -273,19 +273,19 @@ func (b *Bot) InviteLink(chat *Chat) (string, error) {
 
 // CreateInviteLink creates an additional invite link for a chat.
 func (b *Bot) CreateInviteLink(chat Recipient, link *ChatInviteLink) (*ChatInviteLink, error) {
-	params := map[string]string{
+	params := map[string]any{
 		"chat_id": chat.Recipient(),
 	}
 	if link != nil {
 		params["name"] = link.Name
 
 		if link.ExpireUnixtime != 0 {
-			params["expire_date"] = strconv.FormatInt(link.ExpireUnixtime, 10)
+			params["expire_date"] = link.ExpireUnixtime
 		}
 		if link.MemberLimit > 0 {
-			params["member_limit"] = strconv.Itoa(link.MemberLimit)
+			params["member_limit"] = link.MemberLimit
 		} else if link.JoinRequest {
-			params["creates_join_request"] = "true"
+			params["creates_join_request"] = true
 		}
 	}
 
@@ -304,7 +304,7 @@ func (b *Bot) CreateInviteLink(chat Recipient, link *ChatInviteLink) (*ChatInvit
 
 // EditInviteLink edits a non-primary invite link created by the bot.
 func (b *Bot) EditInviteLink(chat Recipient, link *ChatInviteLink) (*ChatInviteLink, error) {
-	params := map[string]string{
+	params := map[string]any{
 		"chat_id": chat.Recipient(),
 	}
 	if link != nil {
@@ -312,12 +312,12 @@ func (b *Bot) EditInviteLink(chat Recipient, link *ChatInviteLink) (*ChatInviteL
 		params["name"] = link.Name
 
 		if link.ExpireUnixtime != 0 {
-			params["expire_date"] = strconv.FormatInt(link.ExpireUnixtime, 10)
+			params["expire_date"] = link.ExpireUnixtime
 		}
 		if link.MemberLimit > 0 {
-			params["member_limit"] = strconv.Itoa(link.MemberLimit)
+			params["member_limit"] = link.MemberLimit
 		} else if link.JoinRequest {
-			params["creates_join_request"] = "true"
+			params["creates_join_request"] = true
 		}
 	}
 

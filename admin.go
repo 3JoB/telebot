@@ -215,9 +215,9 @@ func (b *Bot) Len(chat *Chat) (int, error) {
 // SetAdminTitle sets a custom title for an administrator.
 // A title should be 0-16 characters length, emoji are not allowed.
 func (b *Bot) SetAdminTitle(chat *Chat, user *User, title string) error {
-	params := map[string]string{
-		"chat_id":      chat.Recipient(),
-		"user_id":      user.Recipient(),
+	params := map[string]any{
+		"chat_id":      chat.ID,
+		"user_id":      user.ID,
 		"custom_title": title,
 	}
 

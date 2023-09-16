@@ -2,7 +2,6 @@ package telebot
 
 import (
 	"math"
-	"strconv"
 
 	"github.com/3JoB/unsafeConvert"
 	"github.com/goccy/go-json"
@@ -105,27 +104,27 @@ func (i Invoice) params() map[string]any {
 		"provider_token":                i.Token,
 		"provider_data":                 i.Data,
 		"currency":                      i.Currency,
-		"max_tip_amount":                strconv.Itoa(i.MaxTipAmount),
-		"need_name":                     strconv.FormatBool(i.NeedName),
-		"need_phone_number":             strconv.FormatBool(i.NeedPhoneNumber),
-		"need_email":                    strconv.FormatBool(i.NeedEmail),
-		"need_shipping_address":         strconv.FormatBool(i.NeedShippingAddress),
-		"send_phone_number_to_provider": strconv.FormatBool(i.SendPhoneNumber),
-		"send_email_to_provider":        strconv.FormatBool(i.SendEmail),
-		"is_flexible":                   strconv.FormatBool(i.Flexible),
+		"max_tip_amount":                i.MaxTipAmount,
+		"need_name":                     i.NeedName,
+		"need_phone_number":             i.NeedPhoneNumber,
+		"need_email":                    i.NeedEmail,
+		"need_shipping_address":         i.NeedShippingAddress,
+		"send_phone_number_to_provider": i.SendPhoneNumber,
+		"send_email_to_provider":        i.SendEmail,
+		"is_flexible":                   i.Flexible,
 	}
 	if i.Photo != nil {
 		if i.Photo.FileURL != "" {
 			params["photo_url"] = i.Photo.FileURL
 		}
 		if i.PhotoSize > 0 {
-			params["photo_size"] = strconv.Itoa(i.PhotoSize)
+			params["photo_size"] = i.PhotoSize
 		}
 		if i.Photo.Width > 0 {
-			params["photo_width"] = strconv.Itoa(i.Photo.Width)
+			params["photo_width"] = i.Photo.Width
 		}
 		if i.Photo.Height > 0 {
-			params["photo_height"] = strconv.Itoa(i.Photo.Height)
+			params["photo_height"] = i.Photo.Height
 		}
 	}
 	if len(i.Prices) > 0 {
@@ -133,12 +132,7 @@ func (i Invoice) params() map[string]any {
 		params["prices"] = unsafeConvert.StringSlice(data)
 	}
 	if len(i.SuggestedTipAmounts) > 0 {
-		var amounts []string
-		for _, n := range i.SuggestedTipAmounts {
-			amounts = append(amounts, strconv.Itoa(n))
-		}
-
-		data, _ := json.Marshal(amounts)
+		data, _ := json.Marshal(i.SuggestedTipAmounts)
 		params["suggested_tip_amounts"] = unsafeConvert.StringSlice(data)
 	}
 	return params

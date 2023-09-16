@@ -1,9 +1,7 @@
 package telebot
 
 import (
-	"fmt"
 	"path/filepath"
-	"strconv"
 
 	"github.com/3JoB/unsafeConvert"
 )
@@ -60,7 +58,7 @@ func (a *Audio) Send(b *Bot, to Recipient, opt *SendOptions) (*Message, error) {
 	b.embedSendOptions(params, opt)
 
 	if a.Duration != 0 {
-		params["duration"] = strconv.Itoa(a.Duration)
+		params["duration"] = a.Duration
 	}
 
 	msg, err := b.sendMedia(a, params, thumbnailToFilemap(a.Thumbnail))
@@ -92,10 +90,10 @@ func (d *Document) Send(b *Bot, to Recipient, opt *SendOptions) (*Message, error
 	b.embedSendOptions(params, opt)
 
 	if d.FileSize != 0 {
-		params["file_size"] = strconv.FormatInt(d.FileSize, 10)
+		params["file_size"] = d.FileSize
 	}
 	if d.DisableTypeDetection {
-		params["disable_content_type_detection"] = "true"
+		params["disable_content_type_detection"] = true
 	}
 
 	msg, err := b.sendMedia(d, params, thumbnailToFilemap(d.Thumbnail))
@@ -145,19 +143,19 @@ func (v *Video) Send(b *Bot, to Recipient, opt *SendOptions) (*Message, error) {
 	b.embedSendOptions(params, opt)
 
 	if v.Duration != 0 {
-		params["duration"] = strconv.Itoa(v.Duration)
+		params["duration"] = v.Duration
 	}
 	if v.Width != 0 {
-		params["width"] = strconv.Itoa(v.Width)
+		params["width"] = v.Width
 	}
 	if v.Height != 0 {
-		params["height"] = strconv.Itoa(v.Height)
+		params["height"] = v.Height
 	}
 	if v.Streaming {
-		params["supports_streaming"] = "true"
+		params["supports_streaming"] = true
 	}
 	if v.HasSpoiler {
-		params["has_spoiler"] = "true"
+		params["has_spoiler"] = true
 	}
 
 	msg, err := b.sendMedia(v, params, thumbnailToFilemap(v.Thumbnail))
@@ -193,16 +191,16 @@ func (a *Animation) Send(b *Bot, to Recipient, opt *SendOptions) (*Message, erro
 	b.embedSendOptions(params, opt)
 
 	if a.Duration != 0 {
-		params["duration"] = strconv.Itoa(a.Duration)
+		params["duration"] = a.Duration
 	}
 	if a.Width != 0 {
-		params["width"] = strconv.Itoa(a.Width)
+		params["width"] = a.Width
 	}
 	if a.Height != 0 {
-		params["height"] = strconv.Itoa(a.Height)
+		params["height"] = a.Height
 	}
 	if a.HasSpoiler {
-		params["has_spoiler"] = "true"
+		params["has_spoiler"] = true
 	}
 
 	// file_name is required, without it animation sends as a document
@@ -241,7 +239,7 @@ func (v *Voice) Send(b *Bot, to Recipient, opt *SendOptions) (*Message, error) {
 	b.embedSendOptions(params, opt)
 
 	if v.Duration != 0 {
-		params["duration"] = strconv.Itoa(v.Duration)
+		params["duration"] = v.Duration
 	}
 
 	msg, err := b.sendMedia(v, params, nil)
@@ -263,10 +261,10 @@ func (v *VideoNote) Send(b *Bot, to Recipient, opt *SendOptions) (*Message, erro
 	b.embedSendOptions(params, opt)
 
 	if v.Duration != 0 {
-		params["duration"] = strconv.Itoa(v.Duration)
+		params["duration"] = v.Duration
 	}
 	if v.Length != 0 {
-		params["length"] = strconv.Itoa(v.Length)
+		params["length"] = v.Length
 	}
 
 	msg, err := b.sendMedia(v, params, thumbnailToFilemap(v.Thumbnail))
@@ -284,18 +282,18 @@ func (v *VideoNote) Send(b *Bot, to Recipient, opt *SendOptions) (*Message, erro
 func (x *Location) Send(b *Bot, to Recipient, opt *SendOptions) (*Message, error) {
 	params := map[string]any{
 		"chat_id":     to.Recipient(),
-		"latitude":    fmt.Sprintf("%f", x.Lat),
-		"longitude":   fmt.Sprintf("%f", x.Lng),
-		"live_period": strconv.Itoa(x.LivePeriod),
+		"latitude":    x.Lat,
+		"longitude":   x.Lng,
+		"live_period": x.LivePeriod,
 	}
 	if x.HorizontalAccuracy != nil {
-		params["horizontal_accuracy"] = fmt.Sprintf("%f", *x.HorizontalAccuracy)
+		params["horizontal_accuracy"] = *x.HorizontalAccuracy
 	}
 	if x.Heading != 0 {
-		params["heading"] = strconv.Itoa(x.Heading)
+		params["heading"] = x.Heading
 	}
 	if x.AlertRadius != 0 {
-		params["proximity_alert_radius"] = strconv.Itoa(x.Heading)
+		params["proximity_alert_radius"] = x.Heading
 	}
 	b.embedSendOptions(params, opt)
 
@@ -311,8 +309,8 @@ func (x *Location) Send(b *Bot, to Recipient, opt *SendOptions) (*Message, error
 func (v *Venue) Send(b *Bot, to Recipient, opt *SendOptions) (*Message, error) {
 	params := map[string]any{
 		"chat_id":           to.Recipient(),
-		"latitude":          fmt.Sprintf("%f", v.Location.Lat),
-		"longitude":         fmt.Sprintf("%f", v.Location.Lng),
+		"latitude":          v.Location.Lat,
+		"longitude":         v.Location.Lng,
 		"title":             v.Title,
 		"address":           v.Address,
 		"foursquare_id":     v.FoursquareID,
@@ -349,20 +347,20 @@ func (p *Poll) Send(b *Bot, to Recipient, opt *SendOptions) (*Message, error) {
 	params := map[string]any{
 		"chat_id":                 to.Recipient(),
 		"question":                p.Question,
-		"type":                    string(p.Type),
-		"is_closed":               strconv.FormatBool(p.Closed),
-		"is_anonymous":            strconv.FormatBool(p.Anonymous),
-		"allows_multiple_answers": strconv.FormatBool(p.MultipleAnswers),
-		"correct_option_id":       strconv.Itoa(p.CorrectOption),
+		"type":                    unsafeConvert.AnyString(p.Type),
+		"is_closed":               p.Closed,
+		"is_anonymous":            p.Anonymous,
+		"allows_multiple_answers": p.MultipleAnswers,
+		"correct_option_id":       p.CorrectOption,
 	}
 	if p.Explanation != "" {
 		params["explanation"] = p.Explanation
 		params["explanation_parse_mode"] = p.ParseMode
 	}
 	if p.OpenPeriod != 0 {
-		params["open_period"] = strconv.Itoa(p.OpenPeriod)
+		params["open_period"] = p.OpenPeriod
 	} else if p.CloseUnixdate != 0 {
-		params["close_date"] = strconv.FormatInt(p.CloseUnixdate, 10)
+		params["close_date"] = p.CloseUnixdate
 	}
 	b.embedSendOptions(params, opt)
 
@@ -386,7 +384,7 @@ func (p *Poll) Send(b *Bot, to Recipient, opt *SendOptions) (*Message, error) {
 func (d *Dice) Send(b *Bot, to Recipient, opt *SendOptions) (*Message, error) {
 	params := map[string]any{
 		"chat_id": to.Recipient(),
-		"emoji":   string(d.Type),
+		"emoji":   unsafeConvert.AnyString(d.Type),
 	}
 	b.embedSendOptions(params, opt)
 

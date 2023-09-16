@@ -1,9 +1,5 @@
 package telebot
 
-import (
-	"strconv"
-)
-
 // Game object represents a game.
 // Their short names acts as unique identifiers.
 type Game struct {
@@ -43,14 +39,14 @@ type GameHighScore struct {
 func (b *Bot) GameScores(user Recipient, msg Editable) ([]GameHighScore, error) {
 	msgID, chatID := msg.MessageSig()
 
-	params := map[string]string{
+	params := map[string]any{
 		"user_id": user.Recipient(),
 	}
 
 	if chatID == 0 { // if inline message
 		params["inline_message_id"] = msgID
 	} else {
-		params["chat_id"] = strconv.FormatInt(chatID, 10)
+		params["chat_id"] = chatID
 		params["message_id"] = msgID
 	}
 
@@ -73,17 +69,17 @@ func (b *Bot) GameScores(user Recipient, msg Editable) ([]GameHighScore, error) 
 func (b *Bot) SetGameScore(user Recipient, msg Editable, score GameHighScore) (*Message, error) {
 	msgID, chatID := msg.MessageSig()
 
-	params := map[string]string{
+	params := map[string]any{
 		"user_id":              user.Recipient(),
-		"score":                strconv.Itoa(score.Score),
-		"force":                strconv.FormatBool(score.Force),
-		"disable_edit_message": strconv.FormatBool(score.NoEdit),
+		"score":                score.Score,
+		"force":                score.Force,
+		"disable_edit_message": score.NoEdit,
 	}
 
 	if chatID == 0 { // if inline message
 		params["inline_message_id"] = msgID
 	} else {
-		params["chat_id"] = strconv.FormatInt(chatID, 10)
+		params["chat_id"] = chatID
 		params["message_id"] = msgID
 	}
 

@@ -1,8 +1,6 @@
 package telebot
 
 import (
-	"strconv"
-
 	"github.com/3JoB/unsafeConvert"
 )
 
@@ -155,7 +153,7 @@ func (b *Bot) embedSendOptions(params map[string]any, opt *SendOptions) {
 	}
 
 	if opt.ReplyTo != nil && opt.ReplyTo.ID != 0 {
-		params["reply_to_message_id"] = unsafeConvert.IntToString(opt.ReplyTo.ID)
+		params["reply_to_message_id"] = opt.ReplyTo.ID
 	}
 
 	if opt.DisableWebPagePreview {
@@ -182,7 +180,7 @@ func (b *Bot) embedSendOptions(params map[string]any, opt *SendOptions) {
 	}
 
 	if opt.AllowWithoutReply {
-		params["allow_sending_without_reply"] = "true"
+		params["allow_sending_without_reply"] = true
 	}
 
 	if opt.ReplyMarkup != nil {
@@ -192,15 +190,15 @@ func (b *Bot) embedSendOptions(params map[string]any, opt *SendOptions) {
 	}
 
 	if opt.Protected {
-		params["protect_content"] = "true"
+		params["protect_content"] = true
 	}
 
 	if opt.ThreadID != 0 {
-		params["message_thread_id"] = strconv.Itoa(opt.ThreadID)
+		params["message_thread_id"] = opt.ThreadID
 	}
 
 	if opt.HasSpoiler {
-		params["spoiler"] = "true"
+		params["spoiler"] = true
 	}
 }
 

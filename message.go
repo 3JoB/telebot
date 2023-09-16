@@ -1,9 +1,10 @@
 package telebot
 
 import (
-	"strconv"
 	"time"
 	"unicode/utf16"
+
+	"github.com/3JoB/unsafeConvert"
 )
 
 // Message object represents a message.
@@ -355,7 +356,7 @@ type AutoDeleteTimer struct {
 
 // MessageSig satisfies Editable interface (see Editable.)
 func (m *Message) MessageSig() (string, int64) {
-	return strconv.Itoa(m.ID), m.Chat.ID
+	return unsafeConvert.Itoa(m.ID), m.Chat.ID
 }
 
 // Time returns the moment of message creation in local time.

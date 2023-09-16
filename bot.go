@@ -593,17 +593,17 @@ func (b *Bot) Edit(msg Editable, what any, opts ...any) (*Message, error) {
 		params["text"] = v
 	case Location:
 		method = "editMessageLiveLocation"
-		params["latitude"] = fmt.Sprintf("%f", v.Lat)
-		params["longitude"] = fmt.Sprintf("%f", v.Lng)
+		params["latitude"] = v.Lat
+		params["longitude"] = v.Lng
 
 		if v.HorizontalAccuracy != nil {
-			params["horizontal_accuracy"] = fmt.Sprintf("%f", *v.HorizontalAccuracy)
+			params["horizontal_accuracy"] = *v.HorizontalAccuracy
 		}
 		if v.Heading != 0 {
-			params["heading"] = strconv.Itoa(v.Heading)
+			params["heading"] = v.Heading
 		}
 		if v.AlertRadius != 0 {
-			params["proximity_alert_radius"] = strconv.Itoa(v.AlertRadius)
+			params["proximity_alert_radius"] = v.AlertRadius
 		}
 	default:
 		return nil, ErrUnsupportedWhat
@@ -637,12 +637,12 @@ func (b *Bot) Edit(msg Editable, what any, opts ...any) (*Message, error) {
 // otherwise returns nil and ErrTrueResult.
 func (b *Bot) EditReplyMarkup(msg Editable, markup *ReplyMarkup) (*Message, error) {
 	msgID, chatID := msg.MessageSig()
-	params := make(map[string]string)
+	params := make(map[string]any)
 
 	if chatID == 0 { // if inline message
 		params["inline_message_id"] = msgID
 	} else {
-		params["chat_id"] = strconv.FormatInt(chatID, 10)
+		params["chat_id"] = chatID
 		params["message_id"] = msgID
 	}
 
@@ -769,7 +769,7 @@ func (b *Bot) EditMedia(msg Editable, media Inputtable, opts ...any) (*Message, 
 	if chatID == 0 { // if inline message
 		params["inline_message_id"] = msgID
 	} else {
-		params["chat_id"] = strconv.FormatInt(chatID, 10)
+		params["chat_id"] = chatID
 		params["message_id"] = msgID
 	}
 
@@ -795,8 +795,8 @@ func (b *Bot) EditMedia(msg Editable, media Inputtable, opts ...any) (*Message, 
 func (b *Bot) Delete(msg Editable) error {
 	msgID, chatID := msg.MessageSig()
 
-	params := map[string]string{
-		"chat_id":    strconv.FormatInt(chatID, 10),
+	params := map[string]any{
+		"chat_id":    chatID,
 		"message_id": msgID,
 	}
 
@@ -818,12 +818,12 @@ func (b *Bot) Notify(to Recipient, action ChatAction, threadID ...int) error {
 		return ErrBadRecipient
 	}
 
-	params := map[string]string{
+	params := map[string]any{
 		"chat_id": to.Recipient(),
-		"action":  unsafeConvert.STBPointer(action),
+		"action":  unsafeConvert.AnyString(action),
 	}
 	if len(threadID) > 0 {
-		params["message_thread_id"] = strconv.Itoa(threadID[0])
+		params["message_thread_id"] = threadID[0]
 	}
 
 	_, err := b.Raw("sendChatAction", params)
@@ -839,14 +839,14 @@ func (b *Bot) Notify(to Recipient, action ChatAction, threadID ...int) error {
 //	b.Ship(query, opts...) // OK with options
 //	b.Ship(query, "Oops!") // Error message
 func (b *Bot) Ship(query *ShippingQuery, what ...any) error {
-	params := map[string]string{
+	params := map[string]any{
 		"shipping_query_id": query.ID,
 	}
 
 	if len(what) == 0 {
-		params["ok"] = "true"
+		params["ok"] = true
 	} else if s, ok := what[0].(string); ok {
-		params["ok"] = "false"
+		params["ok"] = false
 		params["error_message"] = s
 	} else {
 		var opts []ShippingOption
@@ -858,7 +858,7 @@ func (b *Bot) Ship(query *ShippingQuery, what ...any) error {
 			opts = append(opts, opt)
 		}
 
-		params["ok"] = "true"
+		params["ok"] = true
 		data, _ := b.json.Marshal(opts)
 		params["shipping_options"] = unsafeConvert.StringSlice(data)
 	}
