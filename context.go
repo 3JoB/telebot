@@ -4,8 +4,6 @@ import (
 	"errors"
 	"strings"
 	"time"
-
-	"github.com/3JoB/telebot/internal/pool"
 )
 
 // HandlerFunc represents a handler function, which is
@@ -474,7 +472,7 @@ func (c *nativeContext) Answer(resp *QueryResponse) error {
 
 func (c *nativeContext) Set(k string, v any) {
 	if c.store == nil {
-		c.store = pool.NewMapper()
+		c.store = make(map[string]any)
 	}
 	c.store[k] = v
 }

@@ -317,6 +317,7 @@ func verbose(method string, payload any, data []byte) {
 
 	indent := func(b []byte) string {
 		var buf bytes.Buffer
+		defer buf.Reset()
 		json.Indent(&buf, b, "", "  ")
 		return buf.String()
 	}

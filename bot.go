@@ -303,7 +303,7 @@ func (n *nativeContext) ReleaseContext() {
 	if n == nil {
 		return
 	}
-	pool.ReleaseMapper(n.store)
+	clear(n.store)
 	n.b = nil
 	n.u = Update{}
 	ctxPool.Put(n)
@@ -520,11 +520,11 @@ func (b *Bot) Forward(to Recipient, msg Editable, opts ...any) (*Message, error)
 	}
 	msgID, chatID := msg.MessageSig()
 
-	params := pool.NewMapper()
-	defer pool.ReleaseMapper(params)
-	params["chat_id"] = to.Recipient()
-	params["from_chat_id"] = strconv.FormatInt(chatID, 10)
-	params["message_id"] = msgID
+	params := map[string]any{
+		"chat_id":      to.Recipient(),
+		"from_chat_id": strconv.FormatInt(chatID, 10),
+		"message_id":   msgID,
+	}
 
 	sendOpts := extractOptions(opts)
 	b.embedSendOptions(params, sendOpts)
@@ -546,11 +546,11 @@ func (b *Bot) Copy(to Recipient, msg Editable, options ...any) (*Message, error)
 	}
 	msgID, chatID := msg.MessageSig()
 
-	params := pool.NewMapper()
-	defer pool.ReleaseMapper(params)
-	params["chat_id"] = to.Recipient()
-	params["from_chat_id"] = strconv.FormatInt(chatID, 10)
-	params["message_id"] = msgID
+	params := map[string]any{
+		"chat_id":      to.Recipient(),
+		"from_chat_id": strconv.FormatInt(chatID, 10),
+		"message_id":   msgID,
+	}
 
 	sendOpts := extractOptions(options)
 	b.embedSendOptions(params, sendOpts)
@@ -581,8 +581,7 @@ func (b *Bot) Copy(to Recipient, msg Editable, options ...any) (*Message, error)
 func (b *Bot) Edit(msg Editable, what any, opts ...any) (*Message, error) {
 	var method string
 
-	params := pool.NewMapper()
-	defer pool.ReleaseMapper(params)
+	params := make(map[string]any)
 
 	switch v := what.(type) {
 	case *ReplyMarkup:
@@ -672,9 +671,9 @@ func (b *Bot) EditReplyMarkup(msg Editable, markup *ReplyMarkup) (*Message, erro
 func (b *Bot) EditCaption(msg Editable, caption string, opts ...any) (*Message, error) {
 	msgID, chatID := msg.MessageSig()
 
-	params := pool.NewMapper()
-	defer pool.ReleaseMapper(params)
-	params["caption"] = caption
+	params := map[string]any{
+		"caption": caption,
+	}
 
 	if chatID == 0 { // if inline message
 		params["inline_message_id"] = msgID
@@ -745,8 +744,7 @@ func (b *Bot) EditMedia(msg Editable, media Inputtable, opts ...any) (*Message, 
 	}
 
 	msgID, chatID := msg.MessageSig()
-	params := pool.NewMapper()
-	defer pool.ReleaseMapper(params)
+	params := make(map[string]any)
 
 	sendOpts := extractOptions(opts)
 	b.embedSendOptions(params, sendOpts)
@@ -820,11 +818,10 @@ func (b *Bot) Notify(to Recipient, action ChatAction, threadID ...int) error {
 		return ErrBadRecipient
 	}
 
-	params := pool.NewMapper()
-	defer pool.ReleaseMapper(params)
-	params["chat_id"] = to.Recipient()
-	params["action"] = unsafeConvert.STBPointer(action)
-
+	params := map[string]string{
+		"chat_id": to.Recipient(),
+		"action":  unsafeConvert.STBPointer(action),
+	}
 	if len(threadID) > 0 {
 		params["message_thread_id"] = strconv.Itoa(threadID[0])
 	}

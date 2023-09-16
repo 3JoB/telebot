@@ -3,13 +3,10 @@ package pool
 import (
 	"bytes"
 	"sync"
-
-	"github.com/colega/zeropool"
 )
 
 var (
 	bufferPool sync.Pool
-	mapPool    zeropool.Pool[map[string]any]
 )
 
 type Buffer struct {
@@ -22,22 +19,6 @@ func NewBuffer() *Buffer {
 		return &Buffer{Buffer: &bytes.Buffer{}}
 	}
 	return p.(*Buffer)
-}
-
-func NewMapper() map[string]any {
-	p := mapPool.Get()
-	if p == nil {
-		return make(map[string]any)
-	}
-	return p
-}
-
-func ReleaseMapper(m map[string]any) {
-	if m == nil {
-		return
-	}
-	clear(m)
-	mapPool.Put(m)
 }
 
 func ReleaseBuffer(b *Buffer) {

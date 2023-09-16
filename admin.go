@@ -1,7 +1,6 @@
 package telebot
 
 import (
-	"strconv"
 	"time"
 
 	"github.com/goccy/go-json"
@@ -97,13 +96,13 @@ func Forever() int64 {
 
 // Ban will ban user from chat until `member.RestrictedUntil`.
 func (b *Bot) Ban(chat *Chat, member *ChatMember, revokeMessages ...bool) error {
-	params := map[string]string{
-		"chat_id":    chat.Recipient(),
-		"user_id":    member.User.Recipient(),
-		"until_date": strconv.FormatInt(member.RestrictedUntil, 10),
+	params := map[string]any{
+		"chat_id":    chat.ID,
+		"user_id":    member.User.ID,
+		"until_date": member.RestrictedUntil,
 	}
 	if len(revokeMessages) > 0 {
-		params["revoke_messages"] = strconv.FormatBool(revokeMessages[0])
+		params["revoke_messages"] = revokeMessages[0]
 	}
 
 	_, err := b.Raw("kickChatMember", params)
@@ -113,13 +112,13 @@ func (b *Bot) Ban(chat *Chat, member *ChatMember, revokeMessages ...bool) error 
 // Unban will unban user from chat, who would have thought eh?
 // forBanned does nothing if the user is not banned.
 func (b *Bot) Unban(chat *Chat, user *User, forBanned ...bool) error {
-	params := map[string]string{
-		"chat_id": chat.Recipient(),
-		"user_id": user.Recipient(),
+	params := map[string]any{
+		"chat_id": chat.ID,
+		"user_id": user.ID,
 	}
 
 	if len(forBanned) > 0 {
-		params["only_if_banned"] = strconv.FormatBool(forBanned[0])
+		params["only_if_banned"] = forBanned[0]
 	}
 
 	_, err := b.Raw("unbanChatMember", params)
@@ -137,9 +136,9 @@ func (b *Bot) Restrict(chat *Chat, member *ChatMember) error {
 	prv, until := member.Rights, member.RestrictedUntil
 
 	params := map[string]any{
-		"chat_id":    chat.Recipient(),
-		"user_id":    member.User.Recipient(),
-		"until_date": strconv.FormatInt(until, 10),
+		"chat_id":    chat.ID,
+		"user_id":    member.User.ID,
+		"until_date": until,
 	}
 	embedRights(params, prv)
 
@@ -161,8 +160,8 @@ func (b *Bot) Promote(chat *Chat, member *ChatMember) error {
 	prv := member.Rights
 
 	params := map[string]any{
-		"chat_id":      chat.Recipient(),
-		"user_id":      member.User.Recipient(),
+		"chat_id":      chat.ID,
+		"user_id":      member.User.ID,
 		"is_anonymous": member.Anonymous,
 	}
 	embedRights(params, prv)

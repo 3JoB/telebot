@@ -136,6 +136,6 @@ const (
 	ModeHTML       ParseMode = "HTML"
 )
 
-// M is a shortcut for map[string]interface{}. Use it for passing
+// M is a shortcut for map[string]any. Use it for passing
 // arguments to the layout functions.
 type M = map[string]any
