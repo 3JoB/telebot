@@ -11,7 +11,7 @@ If you're after stability, then use the [original project](https://github.com/tu
 If you need some examples, I'll put them in this [organization](https://github.com/gotelebot/).
 
 
-This is a fork of https://github.com/tucnak/telebot . This library requires minimum go1.21.0
+This is a fork of https://github.com/tucnak/telebot . This library requires minimum go1.21.1
 
 
 
@@ -85,6 +85,15 @@ func main() {
 
 	b.Handle("/hello", func(c tele.Context) error {
 		c.Send("Hello!")
+	
+		// Recommended use: Correct execution of the release 
+		// method can avoid creating a large number of pointers,
+		// but the corresponding Context should not continue to be 
+		// called after release.
+		//
+		// This method was added in TEP v1.3.0. If not called, it will be the same as 
+		// v1.2.0 and older versions.
+		defer c.ReleaseContext()
 		return nil
 	})
 
