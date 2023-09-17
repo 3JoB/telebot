@@ -30,7 +30,7 @@ func (p *Photo) Send(b *Bot, to Recipient, opt *SendOptions) (*Message, error) {
 	b.embedSendOptions(params, opt)
 
 	if p.HasSpoiler {
-		params["has_spoiler"] = "true"
+		params["has_spoiler"] = true
 	}
 
 	msg, err := b.sendMedia(p, params, nil)
