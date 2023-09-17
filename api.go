@@ -55,12 +55,8 @@ func (b *Bot) Raw(method string, payload any) ([]byte, error) {
 		verbose(method, payload, resp.Bytes())
 	}
 
-	if !resp.IsStatusCode(200) {
-		return resp.Bytes(), extractOk(resp.Bytes())
-	}
-
 	// returning data as well
-	return resp.Bytes(), nil
+	return resp.Bytes(), extractOk(resp.Bytes())
 }
 
 func (b *Bot) buildUrl(method string) string {
@@ -129,11 +125,7 @@ func (b *Bot) sendFiles(method string, files map[string]File, params map[string]
 		return nil, ErrInternal
 	}
 
-	if !resp.IsStatusCode(200) {
-		return resp.Bytes(), extractOk(resp.Bytes())
-	}
-
-	return resp.Bytes(), nil
+	return resp.Bytes(), extractOk(resp.Bytes())
 }
 
 func addFileToWriter(writer *multipart.Writer, filename, field string, file any) error {

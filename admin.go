@@ -97,8 +97,8 @@ func Forever() int64 {
 // Ban will ban user from chat until `member.RestrictedUntil`.
 func (b *Bot) Ban(chat *Chat, member *ChatMember, revokeMessages ...bool) error {
 	params := map[string]any{
-		"chat_id":    chat.ID,
-		"user_id":    member.User.ID,
+		"chat_id":    chat.Recipient(),
+		"user_id":    member.User.Recipient(),
 		"until_date": member.RestrictedUntil,
 	}
 	if len(revokeMessages) > 0 {
@@ -113,8 +113,8 @@ func (b *Bot) Ban(chat *Chat, member *ChatMember, revokeMessages ...bool) error 
 // forBanned does nothing if the user is not banned.
 func (b *Bot) Unban(chat *Chat, user *User, forBanned ...bool) error {
 	params := map[string]any{
-		"chat_id": chat.ID,
-		"user_id": user.ID,
+		"chat_id": chat.Recipient(),
+		"user_id": user.Recipient(),
 	}
 
 	if len(forBanned) > 0 {
@@ -136,8 +136,8 @@ func (b *Bot) Restrict(chat *Chat, member *ChatMember) error {
 	prv, until := member.Rights, member.RestrictedUntil
 
 	params := map[string]any{
-		"chat_id":    chat.ID,
-		"user_id":    member.User.ID,
+		"chat_id":    chat.Recipient(),
+		"user_id":    member.User.Recipient(),
 		"until_date": until,
 	}
 	embedRights(params, prv)
@@ -160,8 +160,8 @@ func (b *Bot) Promote(chat *Chat, member *ChatMember) error {
 	prv := member.Rights
 
 	params := map[string]any{
-		"chat_id":      chat.ID,
-		"user_id":      member.User.ID,
+		"chat_id":      chat.Recipient(),
+		"user_id":      member.User.Recipient(),
 		"is_anonymous": member.Anonymous,
 	}
 	embedRights(params, prv)
@@ -215,9 +215,9 @@ func (b *Bot) Len(chat *Chat) (int, error) {
 // SetAdminTitle sets a custom title for an administrator.
 // A title should be 0-16 characters length, emoji are not allowed.
 func (b *Bot) SetAdminTitle(chat *Chat, user *User, title string) error {
-	params := map[string]any{
-		"chat_id":      chat.ID,
-		"user_id":      user.ID,
+	params := map[string]string{
+		"chat_id":      chat.Recipient(),
+		"user_id":      user.Recipient(),
 		"custom_title": title,
 	}
 

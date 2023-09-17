@@ -614,7 +614,7 @@ func (b *Bot) Edit(msg Editable, what any, opts ...any) (*Message, error) {
 	if chatID == 0 { // if inline message
 		params["inline_message_id"] = msgID
 	} else {
-		params["chat_id"] = strconv.FormatInt(chatID, 10)
+		params["chat_id"] = chatID
 		params["message_id"] = msgID
 	}
 
@@ -678,7 +678,7 @@ func (b *Bot) EditCaption(msg Editable, caption string, opts ...any) (*Message, 
 	if chatID == 0 { // if inline message
 		params["inline_message_id"] = msgID
 	} else {
-		params["chat_id"] = strconv.FormatInt(chatID, 10)
+		params["chat_id"] = chatID
 		params["message_id"] = msgID
 	}
 
@@ -869,14 +869,14 @@ func (b *Bot) Ship(query *ShippingQuery, what ...any) error {
 
 // Accept finalizes the deal.
 func (b *Bot) Accept(query *PreCheckoutQuery, errorMessage ...string) error {
-	params := map[string]string{
+	params := map[string]any{
 		"pre_checkout_query_id": query.ID,
 	}
 
 	if len(errorMessage) == 0 {
-		params["ok"] = "true"
+		params["ok"] = true
 	} else {
-		params["ok"] = "False"
+		params["ok"] = false
 		params["error_message"] = errorMessage[0]
 	}
 
@@ -1044,7 +1044,7 @@ func (b *Bot) StopLiveLocation(msg Editable, opts ...any) (*Message, error) {
 	msgID, chatID := msg.MessageSig()
 
 	params := map[string]any{
-		"chat_id":    strconv.FormatInt(chatID, 10),
+		"chat_id":    chatID,
 		"message_id": msgID,
 	}
 
@@ -1068,7 +1068,7 @@ func (b *Bot) StopPoll(msg Editable, opts ...any) (*Poll, error) {
 	msgID, chatID := msg.MessageSig()
 
 	params := map[string]any{
-		"chat_id":    strconv.FormatInt(chatID, 10),
+		"chat_id":    chatID,
 		"message_id": msgID,
 	}
 
@@ -1105,7 +1105,7 @@ func (b *Bot) Pin(msg Editable, opts ...any) error {
 	msgID, chatID := msg.MessageSig()
 
 	params := map[string]any{
-		"chat_id":    strconv.FormatInt(chatID, 10),
+		"chat_id":    chatID,
 		"message_id": msgID,
 	}
 
@@ -1119,11 +1119,11 @@ func (b *Bot) Pin(msg Editable, opts ...any) error {
 // Unpin unpins a message in a supergroup or a channel.
 // It supports tb.Silent option.
 func (b *Bot) Unpin(chat *Chat, messageID ...int) error {
-	params := map[string]string{
+	params := map[string]any{
 		"chat_id": chat.Recipient(),
 	}
 	if len(messageID) > 0 {
-		params["message_id"] = unsafeConvert.IntToString(messageID[0])
+		params["message_id"] = messageID[0]
 	}
 
 	_, err := b.Raw("unpinChatMessage", params)
