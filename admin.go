@@ -105,7 +105,7 @@ func (b *Bot) Ban(chat *Chat, member *ChatMember, revokeMessages ...bool) error 
 		params["revoke_messages"] = revokeMessages[0]
 	}
 
-	_, err := b.Raw("kickChatMember", params)
+	_, err := Raw(b, "kickChatMember", params)
 	return err
 }
 
@@ -121,7 +121,7 @@ func (b *Bot) Unban(chat *Chat, user *User, forBanned ...bool) error {
 		params["only_if_banned"] = forBanned[0]
 	}
 
-	_, err := b.Raw("unbanChatMember", params)
+	_, err := Raw(b, "unbanChatMember", params)
 	return err
 }
 
@@ -142,7 +142,7 @@ func (b *Bot) Restrict(chat *Chat, member *ChatMember) error {
 	}
 	embedRights(params, prv)
 
-	_, err := b.Raw("restrictChatMember", params)
+	_, err := Raw(b, "restrictChatMember", params)
 	return err
 }
 
@@ -166,7 +166,7 @@ func (b *Bot) Promote(chat *Chat, member *ChatMember) error {
 	}
 	embedRights(params, prv)
 
-	_, err := b.Raw("promoteChatMember", params)
+	_, err := Raw(b, "promoteChatMember", params)
 	return err
 }
 
@@ -182,7 +182,7 @@ func (b *Bot) AdminsOf(chat *Chat) ([]ChatMember, error) {
 		"chat_id": chat.Recipient(),
 	}
 
-	data, err := b.Raw("getChatAdministrators", params)
+	data, err := Raw(b, "getChatAdministrators", params)
 	if err != nil {
 		return nil, err
 	}
@@ -200,7 +200,7 @@ func (b *Bot) Len(chat *Chat) (int, error) {
 		"chat_id": chat.Recipient(),
 	}
 
-	data, err := b.Raw("getChatMembersCount", params)
+	data, err := Raw(b, "getChatMembersCount", params)
 	if err != nil {
 		return 0, err
 	}
@@ -221,7 +221,7 @@ func (b *Bot) SetAdminTitle(chat *Chat, user *User, title string) error {
 		"custom_title": title,
 	}
 
-	_, err := b.Raw("setChatAdministratorCustomTitle", params)
+	_, err := Raw(b, "setChatAdministratorCustomTitle", params)
 	return err
 }
 
@@ -234,7 +234,7 @@ func (b *Bot) BanSenderChat(chat *Chat, sender Recipient) error {
 		"sender_chat_id": sender.Recipient(),
 	}
 
-	_, err := b.Raw("banChatSenderChat", params)
+	_, err := Raw(b, "banChatSenderChat", params)
 	return err
 }
 
@@ -276,7 +276,7 @@ func (b *Bot) SetDefaultRights(rights Rights, forChannels bool) error {
 		"for_channels": forChannels,
 	}
 
-	_, err := b.Raw("setMyDefaultAdministratorRights", params)
+	_, err := Raw(b, "setMyDefaultAdministratorRights", params)
 	return err
 }
 
