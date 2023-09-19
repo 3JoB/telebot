@@ -2,6 +2,7 @@ package telebot
 
 import (
 	"github.com/3JoB/ulib/litefmt"
+	"github.com/3JoB/unsafeConvert"
 	"github.com/rs/zerolog"
 )
 
@@ -15,7 +16,7 @@ type Logger interface {
 	Warnf(format string, a ...any)
 	Errorf(format string, a ...any)
 	Panicf(format string, a ...any)
-	Println(v ...string)
+	OnError(error, Context)
 }
 
 type LoggerZerolog struct {
@@ -68,9 +69,18 @@ func (z *LoggerZerolog) Panicf(format string, a ...any) {
 	z.l.Debug().Msg(format)
 }
 
-func (z *LoggerZerolog) Println(v ...string) {
-	v = append(v, "\n")
+func (z *LoggerZerolog) OnError(err error, c Context) {
+	var message string
+	if c != nil {
+		message = litefmt.PSprint(unsafeConvert.Itoa(c.Update().ID), " ", err.Error())
+	} else {
+		message = err.Error()
+	}
+	z.doPrint(message)
+}
+
+func (z *LoggerZerolog) doPrint(v string) {
 	if e := z.l.Debug(); e.Enabled() {
-		e.CallerSkipFrame(1).Msg(litefmt.PSprint(v...))
+		e.CallerSkipFrame(1).Msg(v)
 	}
 }

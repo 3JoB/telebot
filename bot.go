@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"log"
 	"os"
 	"strconv"
 	"strings"
@@ -56,15 +55,11 @@ func NewBot(pref Settings) (*Bot, error) {
 	if pref.Poller == nil {
 		pref.Poller = &LongPoller{}
 	}
-	if pref.OnError == nil {
-		pref.OnError = defaultOnError
-	}
 
 	bot := &Bot{
-		Token:   pref.Token,
-		URL:     pref.URL,
-		Poller:  pref.Poller,
-		onError: pref.OnError,
+		Token:  pref.Token,
+		URL:    pref.URL,
+		Poller: pref.Poller,
 
 		Updates:  make(chan Update, pref.Updates),
 		handlers: make(map[string]HandlerFunc),
@@ -99,7 +94,6 @@ type Bot struct {
 	URL     string
 	Updates chan Update
 	Poller  Poller
-	onError func(error, Context)
 
 	group       *Group
 	json        json.Json
@@ -162,11 +156,6 @@ type Settings struct {
 	// will be able to override the default mode by passing a new one.
 	ParseMode ParseMode
 
-	// OnError is a callback function that will get called on errors
-	// resulted from the handler. It is used as post-middleware function.
-	// Notice that context can be nil.
-	OnError func(error, Context)
-
 	// HTTP Client used to make requests to telegram api
 	Client net.NetFrame
 
@@ -174,16 +163,12 @@ type Settings struct {
 	Offline bool
 }
 
-var defaultOnError = func(err error, c Context) {
-	if c != nil {
-		log.Println(c.Update().ID, err)
-	} else {
-		log.Println(err)
-	}
+func (b *Bot) Logger() Logger {
+	return b.logger
 }
 
 func (b *Bot) OnError(err error, c Context) {
-	b.onError(err, c)
+	b.logger.OnError(err, c)
 }
 
 func (b *Bot) debug(err error) {
@@ -242,7 +227,7 @@ func (b *Bot) Handle(endpoint any, h HandlerFunc, m ...MiddlewareFunc) {
 	case CallbackEndpoint:
 		b.handlers[end.CallbackUnique()] = handler
 	default:
-		panic("telebot: unsupported endpoint")
+		b.logger.Panicf("telebot: unsupported endpoint")
 	}
 }
 
@@ -250,7 +235,7 @@ func (b *Bot) Handle(endpoint any, h HandlerFunc, m ...MiddlewareFunc) {
 // updates (see Bot.Updates channel).
 func (b *Bot) Start() {
 	if b.Poller == nil {
-		panic("telebot: can't start without a poller")
+		b.logger.Panicf("telebot: can't start without a poller")
 	}
 
 	// do nothing if called twice
