@@ -3,7 +3,7 @@ module github.com/3JoB/telebot
 go 1.21.1
 
 require (
-	github.com/3JoB/resty-ilo v1.1.9
+	github.com/3JoB/resty-ilo v1.2.0
 	github.com/3JoB/ulib v1.33.0
 	github.com/3JoB/unsafeConvert v1.6.0
 	github.com/bytedance/sonic v1.10.1
@@ -46,8 +46,8 @@ require (
 	github.com/pelletier/go-toml/v2 v2.0.6 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/quic-go/qpack v0.4.0 // indirect
-	github.com/quic-go/qtls-go1-20 v0.3.2 // indirect
-	github.com/quic-go/quic-go v0.38.0 // indirect
+	github.com/quic-go/qtls-go1-20 v0.3.3 // indirect
+	github.com/quic-go/quic-go v0.38.1 // indirect
 	github.com/rogpeppe/go-internal v1.9.0 // indirect
 	github.com/spf13/afero v1.9.3 // indirect
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect

@@ -246,7 +246,7 @@ func (b *Bot) UnbanSenderChat(chat *Chat, sender Recipient) error {
 		"sender_chat_id": sender.Recipient(),
 	}
 
-	_, err := b.Raw("unbanChatSenderChat", params)
+	_, err := Raw(b, "unbanChatSenderChat", params)
 	return err
 }
 
@@ -256,7 +256,7 @@ func (b *Bot) DefaultRights(forChannels bool) (*Rights, error) {
 		"for_channels": forChannels,
 	}
 
-	data, err := b.Raw("getMyDefaultAdministratorRights", params)
+	data, err := Raw(b, "getMyDefaultAdministratorRights", params)
 	if err != nil {
 		return nil, err
 	}

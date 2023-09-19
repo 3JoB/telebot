@@ -19,6 +19,27 @@ import (
 	"github.com/3JoB/telebot/internal/pool"
 )
 
+func Raw[T comparable](b *Bot, method string, payload map[string]T) ([]byte, error) {
+	url := b.buildUrl(method)
+	req := b.client.AcquireRequest()
+	if payload != nil {
+		req.WriteJson(payload)
+	}
+	req.SetRequestURI(url)
+	req.MethodPOST()
+	resp, err := req.Do()
+	if err != nil {
+		return nil, wrapError(err)
+	}
+	defer resp.Release()
+	if b.verbose {
+		verbose(method, payload, resp.Bytes())
+	}
+
+	// returning data as well
+	return resp.Bytes(), extractOk(resp.Bytes())
+}
+
 // Raw lets you call any method of Bot API manually.
 // It also handles API errors, so you only need to unwrap
 // result field from json data.
