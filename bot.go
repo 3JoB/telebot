@@ -315,7 +315,7 @@ func (b *Bot) SetMyName(name, language_code string) error {
 		"name":          name,
 		"language_code": language_code,
 	}
-	if _, err := b.Raw("setMyName", d); err != nil {
+	if _, err := Raw(b, "setMyName", d); err != nil {
 		return err
 	}
 	return nil
@@ -331,7 +331,7 @@ func (b *Bot) SetShortDescription(description, lang string) error {
 	if lang != "" {
 		d["language_code"] = lang
 	}
-	if _, err := b.Raw("setMyShortDescription", d); err != nil {
+	if _, err := Raw(b, "setMyShortDescription", d); err != nil {
 		return err
 	}
 	return nil
@@ -351,7 +351,7 @@ func (b *Bot) GetMyDescription(lang string) (string, error) {
 	if lang != "" {
 		d["language_code"] = lang
 	}
-	if r, err := b.Raw("getMyDescription", d); err != nil {
+	if r, err := Raw(b, "getMyDescription", d); err != nil {
 		return "", err
 	} else {
 		var resp Response[Description]
@@ -366,7 +366,7 @@ func (b *Bot) GetMyShortDescription(lang string) (string, error) {
 	if lang != "" {
 		d["language_code"] = lang
 	}
-	if r, err := b.Raw("getMyShortDescription", d); err != nil {
+	if r, err := Raw(b, "getMyShortDescription", d); err != nil {
 		return "", err
 	} else {
 		var resp Response[ShortDescription]
@@ -382,7 +382,7 @@ func (b *Bot) SetDescription(description, lang string) error {
 	if lang != "" {
 		d["language_code"] = lang
 	}
-	if _, err := b.Raw("setMyDescription", d); err != nil {
+	if _, err := Raw(b, "setMyDescription", d); err != nil {
 		return err
 	}
 	return nil
@@ -529,7 +529,7 @@ func (b *Bot) Forward(to Recipient, msg Editable, opts ...any) (*Message, error)
 	sendOpts := extractOptions(opts)
 	b.embedSendOptions(params, sendOpts)
 
-	data, err := b.Raw("forwardMessage", params)
+	data, err := Raw(b, "forwardMessage", params)
 	if err != nil {
 		return nil, err
 	}
@@ -555,7 +555,7 @@ func (b *Bot) Copy(to Recipient, msg Editable, options ...any) (*Message, error)
 	sendOpts := extractOptions(options)
 	b.embedSendOptions(params, sendOpts)
 
-	data, err := b.Raw("copyMessage", params)
+	data, err := Raw(b, "copyMessage", params)
 	if err != nil {
 		return nil, err
 	}
@@ -621,7 +621,7 @@ func (b *Bot) Edit(msg Editable, what any, opts ...any) (*Message, error) {
 	sendOpts := extractOptions(opts)
 	b.embedSendOptions(params, sendOpts)
 
-	data, err := b.Raw(method, params)
+	data, err := Raw(b, method, params)
 	if err != nil {
 		return nil, err
 	}
@@ -655,7 +655,7 @@ func (b *Bot) EditReplyMarkup(msg Editable, markup *ReplyMarkup) (*Message, erro
 	data, _ := b.json.Marshal(markup)
 	params["reply_markup"] = unsafeConvert.StringSlice(data)
 
-	data, err := b.Raw("editMessageReplyMarkup", params)
+	data, err := Raw(b, "editMessageReplyMarkup", params)
 	if err != nil {
 		return nil, err
 	}
@@ -685,7 +685,7 @@ func (b *Bot) EditCaption(msg Editable, caption string, opts ...any) (*Message, 
 	sendOpts := extractOptions(opts)
 	b.embedSendOptions(params, sendOpts)
 
-	data, err := b.Raw("editMessageCaption", params)
+	data, err := Raw(b, "editMessageCaption", params)
 	if err != nil {
 		return nil, err
 	}
@@ -800,7 +800,7 @@ func (b *Bot) Delete(msg Editable) error {
 		"message_id": msgID,
 	}
 
-	_, err := b.Raw("deleteMessage", params)
+	_, err := Raw(b, "deleteMessage", params)
 	return err
 }
 
@@ -826,7 +826,7 @@ func (b *Bot) Notify(to Recipient, action ChatAction, threadID ...int) error {
 		params["message_thread_id"] = threadID[0]
 	}
 
-	_, err := b.Raw("sendChatAction", params)
+	_, err := Raw(b, "sendChatAction", params)
 	return err
 }
 
@@ -863,7 +863,7 @@ func (b *Bot) Ship(query *ShippingQuery, what ...any) error {
 		params["shipping_options"] = unsafeConvert.StringSlice(data)
 	}
 
-	_, err := b.Raw("answerShippingQuery", params)
+	_, err := Raw(b, "answerShippingQuery", params)
 	return err
 }
 
@@ -880,7 +880,7 @@ func (b *Bot) Accept(query *PreCheckoutQuery, errorMessage ...string) error {
 		params["error_message"] = errorMessage[0]
 	}
 
-	_, err := b.Raw("answerPreCheckoutQuery", params)
+	_, err := Raw(b, "answerPreCheckoutQuery", params)
 	return err
 }
 
@@ -901,7 +901,7 @@ func (b *Bot) Respond(c *Callback, resp ...*CallbackResponse) error {
 	}
 
 	r.CallbackID = c.ID
-	_, err := b.Raw("answerCallbackQuery", r)
+	_, err := Raw(b, "answerCallbackQuery", r)
 	return err
 }
 
@@ -915,7 +915,7 @@ func (b *Bot) Answer(query *Query, resp *QueryResponse) error {
 		result.Process(b)
 	}
 
-	_, err := b.Raw("answerInlineQuery", resp)
+	_, err := Raw(b, "answerInlineQuery", resp)
 	return err
 }
 
@@ -929,7 +929,7 @@ func (b *Bot) AnswerWebApp(query *Query, r Result) (*WebAppMessage, error) {
 		"result":           r,
 	}
 
-	data, err := b.Raw("answerWebAppQuery", params)
+	data, err := Raw(b, "answerWebAppQuery", params)
 	if err != nil {
 		return nil, err
 	}
@@ -952,7 +952,7 @@ func (b *Bot) FileByID(fileID string) (File, error) {
 		"file_id": fileID,
 	}
 
-	data, err := b.Raw("getFile", params)
+	data, err := Raw(b, "getFile", params)
 	if err != nil {
 		return File{}, err
 	}
@@ -1051,7 +1051,7 @@ func (b *Bot) StopLiveLocation(msg Editable, opts ...any) (*Message, error) {
 	sendOpts := extractOptions(opts)
 	b.embedSendOptions(params, sendOpts)
 
-	data, err := b.Raw("stopMessageLiveLocation", params)
+	data, err := Raw(b, "stopMessageLiveLocation", params)
 	if err != nil {
 		return nil, err
 	}
@@ -1075,7 +1075,7 @@ func (b *Bot) StopPoll(msg Editable, opts ...any) (*Poll, error) {
 	sendOpts := extractOptions(opts)
 	b.embedSendOptions(params, sendOpts)
 
-	data, err := b.Raw("stopPoll", params)
+	data, err := Raw(b, "stopPoll", params)
 	if err != nil {
 		return nil, err
 	}
@@ -1093,7 +1093,7 @@ func (b *Bot) Leave(chat *Chat) error {
 		"chat_id": chat.Recipient(),
 	}
 
-	_, err := b.Raw("leaveChat", params)
+	_, err := Raw(b, "leaveChat", params)
 	return err
 }
 
@@ -1112,7 +1112,7 @@ func (b *Bot) Pin(msg Editable, opts ...any) error {
 	sendOpts := extractOptions(opts)
 	b.embedSendOptions(params, sendOpts)
 
-	_, err := b.Raw("pinChatMessage", params)
+	_, err := Raw(b, "pinChatMessage", params)
 	return err
 }
 
@@ -1126,7 +1126,7 @@ func (b *Bot) Unpin(chat *Chat, messageID ...int) error {
 		params["message_id"] = messageID[0]
 	}
 
-	_, err := b.Raw("unpinChatMessage", params)
+	_, err := Raw(b, "unpinChatMessage", params)
 	return err
 }
 
@@ -1137,7 +1137,7 @@ func (b *Bot) UnpinAll(chat *Chat) error {
 		"chat_id": chat.Recipient(),
 	}
 
-	_, err := b.Raw("unpinAllChatMessages", params)
+	_, err := Raw(b, "unpinAllChatMessages", params)
 	return err
 }
 
@@ -1155,7 +1155,7 @@ func (b *Bot) ChatByUsername(name string) (*Chat, error) {
 		"chat_id": name,
 	}
 
-	data, err := b.Raw("getChat", params)
+	data, err := Raw(b, "getChat", params)
 	if err != nil {
 		return nil, err
 	}
@@ -1176,7 +1176,7 @@ func (b *Bot) ProfilePhotosOf(user *User) ([]Photo, error) {
 		"user_id": user.Recipient(),
 	}
 
-	data, err := b.Raw("getUserProfilePhotos", params)
+	data, err := Raw(b, "getUserProfilePhotos", params)
 	if err != nil {
 		return nil, err
 	}
@@ -1195,7 +1195,7 @@ func (b *Bot) ChatMemberOf(chat, user Recipient) (*ChatMember, error) {
 		"user_id": user.Recipient(),
 	}
 
-	data, err := b.Raw("getChatMember", params)
+	data, err := Raw(b, "getChatMember", params)
 	if err != nil {
 		return nil, err
 	}
@@ -1214,7 +1214,7 @@ func (b *Bot) MenuButton(chat *User) (*MenuButton, error) {
 		"chat_id": chat.Recipient(),
 	}
 
-	data, err := b.Raw("getChatMenuButton", params)
+	data, err := Raw(b, "getChatMenuButton", params)
 	if err != nil {
 		return nil, err
 	}
@@ -1245,13 +1245,13 @@ func (b *Bot) SetMenuButton(chat *User, mb any) error {
 		params["menu_button"] = v
 	}
 
-	_, err := b.Raw("setChatMenuButton", params)
+	_, err := Raw(b, "setChatMenuButton", params)
 	return err
 }
 
 // Logout logs out from the cloud Bot API server before launching the bot locally.
 func (b *Bot) Logout() (bool, error) {
-	data, err := b.Raw("logOut", nil)
+	data, err := Raw[bool](b, "logOut")
 	if err != nil {
 		return false, err
 	}
@@ -1266,7 +1266,7 @@ func (b *Bot) Logout() (bool, error) {
 
 // Close closes the bot instance before moving it from one local server to another.
 func (b *Bot) Close() (bool, error) {
-	data, err := b.Raw("close", nil)
+	data, err := Raw[bool](b, "close")
 	if err != nil {
 		return false, err
 	}

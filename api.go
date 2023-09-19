@@ -19,11 +19,19 @@ import (
 	"github.com/3JoB/telebot/internal/pool"
 )
 
-func Raw[T comparable](b *Bot, method string, payload map[string]T) ([]byte, error) {
+// Raw lets you call any method of Bot API manually.
+// It also handles API errors, so you only need to unwrap
+// result field from json data.
+//
+// If you do not pass in the payload value, you need to define the type of T.
+//
+//		Example:
+//	    	Raw[int](b, "getMe")
+func Raw[T any](b *Bot, method string, payload ...T) ([]byte, error) {
 	url := b.buildUrl(method)
 	req := b.client.AcquireRequest()
-	if payload != nil {
-		req.WriteJson(payload)
+	if len(payload) > 0 {
+		req.WriteJson(payload[0])
 	}
 	req.SetRequestURI(url)
 	req.MethodPOST()
@@ -43,7 +51,7 @@ func Raw[T comparable](b *Bot, method string, payload map[string]T) ([]byte, err
 // Raw lets you call any method of Bot API manually.
 // It also handles API errors, so you only need to unwrap
 // result field from json data.
-func (b *Bot) Raw(method string, payload any) ([]byte, error) {
+func (b *Bot) Raw(method string, payload ...any) ([]byte, error) {
 	url := b.buildUrl(method)
 
 	// Cancel the request immediately without waiting for the timeout  when bot is about to stop.
@@ -62,9 +70,12 @@ func (b *Bot) Raw(method string, payload any) ([]byte, error) {
 		}
 	}()*/
 	req := b.client.AcquireRequest()
-	if payload != nil {
-		req.WriteJson(payload)
+	if len(payload) > 0 {
+		if payload[0] != nil {
+			req.WriteJson(payload[0])
+		}
 	}
+
 	req.SetRequestURI(url)
 	req.MethodPOST()
 	resp, err := req.Do()
@@ -81,7 +92,7 @@ func (b *Bot) Raw(method string, payload any) ([]byte, error) {
 }
 
 func (b *Bot) buildUrl(method string) string {
-	return litefmt.PSprintP(b.URL, "/bot", b.Token, "/", method)
+	return litefmt.PSprint(b.URL, "/bot", b.Token, "/", method)
 }
 
 func (b *Bot) sendFiles(method string, files map[string]File, params map[string]any) ([]byte, error) {
@@ -102,7 +113,7 @@ func (b *Bot) sendFiles(method string, files map[string]File, params map[string]
 	}
 
 	if len(rawFiles) == 0 {
-		return b.Raw(method, params)
+		return Raw(b, method, params)
 	}
 
 	pipeReader, pipeWriter := io.Pipe()
@@ -180,7 +191,7 @@ func (b *Bot) sendText(to Recipient, text string, opt *SendOptions) (*Message, e
 	}
 	b.embedSendOptions(params, opt)
 
-	data, err := b.Raw("sendMessage", params)
+	data, err := Raw(b, "sendMessage", params)
 	if err != nil {
 		return nil, err
 	}
@@ -210,7 +221,7 @@ func (b *Bot) sendMedia(media Media, params map[string]any, files map[string]Fil
 }
 
 func (b *Bot) getMe() (*User, error) {
-	data, err := b.Raw("getMe", nil)
+	data, err := Raw[bool](b, "getMe")
 	if err != nil {
 		return nil, err
 	}
@@ -234,7 +245,7 @@ func (b *Bot) getUpdates(offset, limit int, timeout time.Duration, allowed []str
 		params["limit"] = limit
 	}
 
-	data, err := b.Raw("getUpdates", params)
+	data, err := Raw(b, "getUpdates", params)
 	if err != nil {
 		return nil, err
 	}

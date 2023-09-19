@@ -41,7 +41,7 @@ type CommandScope struct {
 // Commands returns the current list of the bot's commands for the given scope and user language.
 func (b *Bot) Commands(opts ...any) ([]Command, error) {
 	params := extractCommandsParams(opts...)
-	data, err := b.Raw("getMyCommands", params)
+	data, err := Raw(b, "getMyCommands", params)
 	if err != nil {
 		return nil, err
 	}
@@ -56,14 +56,14 @@ func (b *Bot) Commands(opts ...any) ([]Command, error) {
 // SetCommands changes the list of the bot's commands.
 func (b *Bot) SetCommands(opts ...any) error {
 	params := extractCommandsParams(opts...)
-	_, err := b.Raw("setMyCommands", params)
+	_, err := Raw(b, "setMyCommands", params)
 	return err
 }
 
 // DeleteCommands deletes the list of the bot's commands for the given scope and user language.
 func (b *Bot) DeleteCommands(opts ...any) error {
 	params := extractCommandsParams(opts...)
-	_, err := b.Raw("deleteMyCommands", params)
+	_, err := Raw(b, "deleteMyCommands", params)
 	return err
 }
 

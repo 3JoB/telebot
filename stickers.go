@@ -73,7 +73,7 @@ func (b *Bot) UploadSticker(to Recipient, png *File) (*File, error) {
 
 // StickerSet returns a sticker set on success.
 func (b *Bot) StickerSet(name string) (*StickerSet, error) {
-	data, err := b.Raw("getStickerSet", map[string]string{"name": name})
+	data, err := Raw(b, "getStickerSet", map[string]string{"name": name})
 	if err != nil {
 		return nil, err
 	}
@@ -118,7 +118,7 @@ func (b *Bot) CreateStickerSet(to Recipient, s StickerSet) error {
 
 // Use this method to delete a sticker set that was created by the bot. Returns True on success.
 func (b *Bot) DeleteStickerSet(name string) error {
-	_, err := b.Raw("deleteStickerSet", map[string]string{"name": name})
+	_, err := Raw(b, "deleteStickerSet", map[string]string{"name": name})
 	return err
 }
 
@@ -155,13 +155,13 @@ func (b *Bot) SetStickerPosition(sticker string, position int) error {
 		"position": unsafeConvert.IntToString(position),
 	}
 
-	_, err := b.Raw("setStickerPositionInSet", params)
+	_, err := Raw(b, "setStickerPositionInSet", params)
 	return err
 }
 
 // DeleteSticker deletes a sticker from a set created by the bot.
 func (b *Bot) DeleteSticker(sticker string) error {
-	_, err := b.Raw("deleteStickerFromSet", map[string]string{"sticker": sticker})
+	_, err := Raw(b, "deleteStickerFromSet", map[string]string{"sticker": sticker})
 	return err
 }
 
@@ -198,7 +198,7 @@ func (b *Bot) CustomEmojiStickers(ids []string) ([]Sticker, error) {
 		"custom_emoji_ids": unsafeConvert.StringSlice(data),
 	}
 
-	data, err := b.Raw("getCustomEmojiStickers", params)
+	data, err := Raw(b, "getCustomEmojiStickers", params)
 	if err != nil {
 		return nil, err
 	}

@@ -259,7 +259,7 @@ func (b *Bot) InviteLink(chat *Chat) (string, error) {
 		"chat_id": chat.Recipient(),
 	}
 
-	data, err := b.Raw("exportChatInviteLink", params)
+	data, err := Raw(b, "exportChatInviteLink", params)
 	if err != nil {
 		return "", err
 	}
@@ -289,7 +289,7 @@ func (b *Bot) CreateInviteLink(chat Recipient, link *ChatInviteLink) (*ChatInvit
 		}
 	}
 
-	data, err := b.Raw("createChatInviteLink", params)
+	data, err := Raw(b, "createChatInviteLink", params)
 	if err != nil {
 		return nil, err
 	}
@@ -321,7 +321,7 @@ func (b *Bot) EditInviteLink(chat Recipient, link *ChatInviteLink) (*ChatInviteL
 		}
 	}
 
-	data, err := b.Raw("editChatInviteLink", params)
+	data, err := Raw(b, "editChatInviteLink", params)
 	if err != nil {
 		return nil, err
 	}
@@ -341,7 +341,7 @@ func (b *Bot) RevokeInviteLink(chat Recipient, link string) (*ChatInviteLink, er
 		"invite_link": link,
 	}
 
-	data, err := b.Raw("revokeChatInviteLink", params)
+	data, err := Raw(b, "revokeChatInviteLink", params)
 	if err != nil {
 		return nil, err
 	}
@@ -361,7 +361,7 @@ func (b *Bot) ApproveJoinRequest(chat Recipient, user *User) error {
 		"user_id": user.Recipient(),
 	}
 
-	data, err := b.Raw("approveChatJoinRequest", params)
+	data, err := Raw(b, "approveChatJoinRequest", params)
 	if err != nil {
 		return err
 	}
@@ -376,7 +376,7 @@ func (b *Bot) DeclineJoinRequest(chat Recipient, user *User) error {
 		"user_id": user.Recipient(),
 	}
 
-	data, err := b.Raw("declineChatJoinRequest", params)
+	data, err := Raw(b, "declineChatJoinRequest", params)
 	if err != nil {
 		return err
 	}
@@ -391,7 +391,7 @@ func (b *Bot) SetGroupTitle(chat *Chat, title string) error {
 		"title":   title,
 	}
 
-	_, err := b.Raw("setChatTitle", params)
+	_, err := Raw(b, "setChatTitle", params)
 	return err
 }
 
@@ -402,7 +402,7 @@ func (b *Bot) SetGroupDescription(chat *Chat, description string) error {
 		"description": description,
 	}
 
-	_, err := b.Raw("setChatDescription", params)
+	_, err := Raw(b, "setChatDescription", params)
 	return err
 }
 
@@ -418,12 +418,12 @@ func (b *Bot) SetGroupPhoto(chat *Chat, p *Photo) error {
 
 // SetGroupStickerSet should be used to update group's group sticker set.
 func (b *Bot) SetGroupStickerSet(chat *Chat, setName string) error {
-	params := map[string]any{
+	params := map[string]string{
 		"chat_id":          chat.Recipient(),
 		"sticker_set_name": setName,
 	}
 
-	_, err := b.Raw("setChatStickerSet", params)
+	_, err := Raw(b, "setChatStickerSet", params)
 	return err
 }
 
@@ -434,26 +434,26 @@ func (b *Bot) SetGroupPermissions(chat *Chat, perms Rights) error {
 		"permissions": perms,
 	}
 
-	_, err := b.Raw("setChatPermissions", params)
+	_, err := Raw(b, "setChatPermissions", params)
 	return err
 }
 
 // DeleteGroupPhoto should be used to just remove group photo.
 func (b *Bot) DeleteGroupPhoto(chat *Chat) error {
-	params := map[string]any{
+	params := map[string]string{
 		"chat_id": chat.Recipient(),
 	}
 
-	_, err := b.Raw("deleteChatPhoto", params)
+	_, err := Raw(b, "deleteChatPhoto", params)
 	return err
 }
 
 // DeleteGroupStickerSet should be used to just remove group sticker set.
 func (b *Bot) DeleteGroupStickerSet(chat *Chat) error {
-	params := map[string]any{
+	params := map[string]string{
 		"chat_id": chat.Recipient(),
 	}
 
-	_, err := b.Raw("deleteChatStickerSet", params)
+	_, err := Raw(b, "deleteChatStickerSet", params)
 	return err
 }

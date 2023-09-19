@@ -174,7 +174,7 @@ func (h *Webhook) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 // Webhook returns the current webhook status.
 func (b *Bot) Webhook() (*Webhook, error) {
-	data, err := b.Raw("getWebhookInfo", nil)
+	data, err := Raw[bool](b, "getWebhookInfo")
 	if err != nil {
 		return nil, err
 	}
@@ -199,7 +199,7 @@ func (b *Bot) RemoveWebhook(dropPending ...bool) error {
 	if len(dropPending) > 0 {
 		drop = dropPending[0]
 	}
-	_, err := b.Raw("deleteWebhook", map[string]bool{
+	_, err := Raw(b, "deleteWebhook", map[string]bool{
 		"drop_pending_updates": drop,
 	})
 	return err
