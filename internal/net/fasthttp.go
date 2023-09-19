@@ -24,7 +24,7 @@ func NewFastHTTPClient() NetFrame {
 	return f
 }
 
-func (f *FastHTTP) SetJsonProcessor(v json.Json) {
+func (f *FastHTTP) SetJsonHandle(v json.Json) {
 	f.json = v
 }
 

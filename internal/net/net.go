@@ -18,7 +18,8 @@ var (
 )
 
 type NetFrame interface {
-	SetJsonProcessor(v json.Json)
+	// Set up Json handler
+	SetJsonHandle(v json.Json)
 
 	// Create a new request object
 	AcquireRequest() NetRequest

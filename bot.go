@@ -30,6 +30,11 @@ func NewBot(pref Settings) (*Bot, error) {
 		pref.Updates = 100
 	}
 
+	ijson := pref.Json
+	if ijson == nil {
+		ijson = json.NewGoJson()
+	}
+
 	client := pref.Client
 	if client == nil {
 		if pref.FastHTTP {
@@ -37,11 +42,12 @@ func NewBot(pref Settings) (*Bot, error) {
 		} else {
 			client = net.NewHTTPClient()
 		}
+		client.SetJsonHandle(ijson)
 	}
 
-	ijson := pref.Json
-	if ijson == nil {
-		ijson = json.NewGoJson()
+	logger := pref.Logger
+	if logger == nil {
+		logger = NewZeroLogger()
 	}
 
 	if pref.URL == "" {
@@ -69,6 +75,7 @@ func NewBot(pref Settings) (*Bot, error) {
 		parseMode:   pref.ParseMode,
 		client:      client,
 		json:        ijson,
+		logger:      logger,
 	}
 
 	if pref.Offline {
@@ -96,6 +103,7 @@ type Bot struct {
 
 	group       *Group
 	json        json.Json
+	logger      Logger
 	handlers    map[string]HandlerFunc
 	synchronous bool
 	verbose     bool
@@ -136,7 +144,18 @@ type Settings struct {
 	// large files (if there is too little memory).
 	FastHTTP bool
 
+	// The Json interface is used to customize the json handle.
+	// Five wrappers are provided by default. For detailed documentation,
+	// see: https://pkg.go.dev/github.com/3JoB/telebot/json.
+	//
+	// Some methods use the default go-json because they are not under *Bot.
 	Json json.Json
+
+	// The idea of Logger comes from https://github.com/tucnak/telebot/issues/619.
+	//
+	// The Logger interface allows you to customize log wrappers for TEP,
+	// which uses Zerolog-based wrappers by default.
+	Logger Logger
 
 	// ParseMode used to set default parse mode of all sent messages.
 	// It attaches to every send, edit or whatever method. You also

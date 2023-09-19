@@ -27,7 +27,7 @@ func NewHTTPClient() NetFrame {
 	return g
 }
 
-func (g *GoNet) SetJsonProcessor(v json.Json) {
+func (g *GoNet) SetJsonHandle(v json.Json) {
 	g.client.JSONMarshal = v.Marshal
 	g.client.JSONUnmarshal = v.Unmarshal
 	g.json = v

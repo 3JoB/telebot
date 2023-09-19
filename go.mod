@@ -7,7 +7,6 @@ require (
 	github.com/3JoB/ulib v1.33.0
 	github.com/3JoB/unsafeConvert v1.6.0
 	github.com/bytedance/sonic v1.10.1
-	github.com/dghubble/trie v0.0.0-20230729160116-2bc358f28a8b
 	github.com/goccy/go-json v0.10.2
 	github.com/goccy/go-yaml v1.11.2
 	github.com/grafana/regexp v0.0.0-20221122212121-6b5c0a4cb7fd
