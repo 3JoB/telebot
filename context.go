@@ -4,6 +4,8 @@ import (
 	"errors"
 	"strings"
 	"time"
+
+	"github.com/cornelk/hashmap"
 )
 
 // HandlerFunc represents a handler function, which is
@@ -163,7 +165,7 @@ type Context interface {
 type nativeContext struct {
 	b     *Bot
 	u     Update
-	store map[string]any
+	store *hashmap.Map[string, any]
 }
 
 func (c *nativeContext) Bot() *Bot {
@@ -472,11 +474,12 @@ func (c *nativeContext) Answer(resp *QueryResponse) error {
 
 func (c *nativeContext) Set(k string, v any) {
 	if c.store == nil {
-		c.store = make(map[string]any)
+		c.store = hashmap.New[string, any]()
 	}
-	c.store[k] = v
+	c.store.Set(k, v)
 }
 
 func (c *nativeContext) Get(k string) any {
-	return c.store[k]
+	v, _ := c.store.Get(k)
+	return v
 }

@@ -20,6 +20,7 @@ import (
 
 var (
 	ctxPool sync.Pool
+	EUpdate Update
 )
 
 // NewBot does try to build a Bot with token `token`, which
@@ -307,9 +308,14 @@ func (n *nativeContext) ReleaseContext() {
 	if n == nil {
 		return
 	}
-	clear(n.store)
+	if n.store != nil {
+		n.store.Range(func(k string, v any) bool {
+			n.store.Del(k)
+			return true
+		})
+	}
 	n.b = nil
-	n.u = Update{}
+	n.u = EUpdate
 	ctxPool.Put(n)
 }
 
