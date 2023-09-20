@@ -30,9 +30,9 @@ func NewBot(pref Settings) (*Bot, error) {
 		pref.Updates = 100
 	}
 
-	ijson := pref.Json
-	if ijson == nil {
-		ijson = json.NewGoJson()
+	pref_json := pref.Json
+	if pref_json == nil {
+		pref_json = json.NewGoJson()
 	}
 
 	client := pref.Client
@@ -42,7 +42,7 @@ func NewBot(pref Settings) (*Bot, error) {
 		} else {
 			client = net.NewHTTPClient()
 		}
-		client.SetJsonHandle(ijson)
+		client.SetJsonHandle(pref_json)
 	}
 
 	logger := pref.Logger
@@ -70,7 +70,7 @@ func NewBot(pref Settings) (*Bot, error) {
 		verbose:     pref.Verbose,
 		parseMode:   pref.ParseMode,
 		client:      client,
-		json:        ijson,
+		json:        pref_json,
 		logger:      logger,
 	}
 
@@ -96,6 +96,7 @@ type Bot struct {
 	Updates chan Update
 	Poller  Poller
 
+	client      net.NetFrame
 	group       *Group
 	json        json.Json
 	logger      Logger
@@ -105,7 +106,6 @@ type Bot struct {
 	local       bool
 	parseMode   ParseMode
 	stop        chan chan struct{}
-	client      net.NetFrame
 	stopClient  chan struct{}
 }
 

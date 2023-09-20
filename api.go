@@ -30,16 +30,20 @@ import (
 func Raw[T any](b *Bot, method string, payload ...T) ([]byte, error) {
 	url := b.buildUrl(method)
 	req := b.client.AcquireRequest()
+	req.MethodPOST()
+
 	if len(payload) > 0 {
 		req.WriteJson(payload[0])
 	}
+
 	req.SetRequestURI(url)
-	req.MethodPOST()
+
 	resp, err := req.Do()
 	if err != nil {
 		return nil, wrapError(err)
 	}
 	defer resp.Release()
+
 	if b.verbose {
 		verbose(method, payload, resp.Bytes())
 	}
@@ -297,8 +301,7 @@ func extractOk(data []byte) error {
 		return err
 	}
 
-	switch e.Code {
-	case 429:
+	if e.Code == 429 {
 		retryAfter, ok := e.Parameters["retry_after"]
 		if !ok {
 			return NewError(e.Code, e.Description)
@@ -308,7 +311,7 @@ func extractOk(data []byte) error {
 			err:        NewError(e.Code, e.Description),
 			RetryAfter: int(retryAfter.(float64)),
 		}
-	default:
+	} else {
 		err = fmt.Errorf("telegram: %s (%d)", e.Description, e.Code)
 	}
 

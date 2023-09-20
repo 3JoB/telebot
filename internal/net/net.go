@@ -17,6 +17,8 @@ var (
 	responsePool sync.Pool
 )
 
+// It is forbidden to use multiple Netframe at the same time!
+// It will cause programs to appear Panic!
 type NetFrame interface {
 	// Set up Json handler
 	SetJsonHandle(v json.Json)

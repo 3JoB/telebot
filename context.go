@@ -480,6 +480,9 @@ func (c *nativeContext) Set(k string, v any) {
 }
 
 func (c *nativeContext) Get(k string) any {
+	if c.store == nil {
+		c.store = hashmap.New[string, any]()
+	}
 	v, _ := c.store.Get(k)
 	return v
 }

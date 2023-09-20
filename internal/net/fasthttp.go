@@ -29,15 +29,15 @@ func (f *FastHTTP) SetJsonHandle(v json.Json) {
 }
 
 func (f *FastHTTP) AcquireRequest() NetRequest {
-	v := requestPool.Get()
-	if v == nil {
-		r := &FastHTTPRequest{}
+	var r *FastHTTPRequest
+
+	if v := requestPool.Get(); v == nil {
+		r = &FastHTTPRequest{}
 		r.json = f.json
-		r.client = f.client
-		r.acquire()
-		return r
+	} else {
+		r = v.(*FastHTTPRequest)
 	}
-	r := v.(*FastHTTPRequest)
+
 	r.client = f.client
 	r.acquire()
 	return r

@@ -31,21 +31,19 @@ func (g *GoNet) SetJsonHandle(v json.Json) {
 }
 
 func (g *GoNet) AcquireRequest() NetRequest {
-	v := requestPool.Get()
-	if v == nil {
-		r := &GoNetRequest{}
+	var r *GoNetRequest
+	if v := requestPool.Get(); v == nil {
+		r = &GoNetRequest{}
 		r.json = g.json
-		r.r = g.client.R()
-		return r
+	} else {
+		r = v.(*GoNetRequest)
 	}
-	r := v.(*GoNetRequest)
 	r.r = g.client.R()
 	return r
 }
 
 func (g *GoNet) lookProxyEnv() {
-	http_proxy, ok := os.LookupEnv("http_proxy")
-	if ok {
+	if http_proxy, ok := os.LookupEnv("http_proxy"); ok {
 		g.client = g.client.SetProxy(http_proxy)
 	}
 }
