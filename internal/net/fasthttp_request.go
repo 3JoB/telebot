@@ -3,12 +3,15 @@ package net
 import (
 	"io"
 
+	"github.com/3JoB/ulib/keyword/flash"
+	"github.com/3JoB/unsafeConvert"
 	"github.com/valyala/fasthttp"
 
 	"github.com/3JoB/telebot/json"
 )
 
 type FastHTTPRequest struct {
+	bind     any
 	json     json.Json
 	client   *fasthttp.Client
 	request  *fasthttp.Request
@@ -69,6 +72,12 @@ func (f *FastHTTPRequest) WriteJson(v any) error {
 	return nil
 }
 
+func (f *FastHTTPRequest) SetUnmarshal(v any) {
+	if v != nil {
+		f.bind = v
+	}
+}
+
 // Body returns writer for populating request body.
 func (f *FastHTTPRequest) Body() io.Writer {
 	return f.request.BodyWriter()
@@ -78,27 +87,38 @@ func (f *FastHTTPRequest) Do() (NetResponse, error) {
 	defer f.Release()
 	var err error
 	f.request.Header.Set("User-Agent", "Mozilla/5.0(compatible; Telebot-Expansion-Pack/v1; +https://github.com/3JoB/telebot)")
+
 	if err := f.client.Do(f.request, f.response); err != nil {
 		return nil, err
 	}
+
 	resp := f.acquireResponse()
 	resp.code = f.response.StatusCode()
-	if f.response.StatusCode() != 200 {
-		resp.body = f.response.Body()
-	} else {
-		if f.w != nil {
-			err = f.response.BodyWriteTo(f.w)
-		} else {
-			resp.body = f.response.Body()
+
+	if f.bind != nil {
+		if f.isJson() {
+			err = f.json.Unmarshal(f.response.Body(), f.bind)
+			goto END
 		}
 	}
 
+	if f.response.StatusCode() == 200 {
+		if f.w != nil {
+			err = f.response.BodyWriteTo(f.w)
+			goto END
+		}
+	}
+
+	resp.body = f.response.Body()
+
+END:
 	return resp, err
 }
 
 func (f *FastHTTPRequest) Reset() {
 	fasthttp.ReleaseRequest(f.request)
 	fasthttp.ReleaseResponse(f.response)
+	f.bind = nil
 	f.request = nil
 	f.response = nil
 	f.client = nil
@@ -108,4 +128,8 @@ func (f *FastHTTPRequest) Reset() {
 func (f *FastHTTPRequest) Release() {
 	f.Reset()
 	requestPool.Put(f)
+}
+
+func (f *FastHTTPRequest) isJson() bool {
+	return flash.Search(unsafeConvert.StringSlice(f.response.Header.Peek("Content-Type")), "json")
 }

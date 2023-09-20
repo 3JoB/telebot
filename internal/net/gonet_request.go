@@ -4,11 +4,13 @@ import (
 	"io"
 
 	"github.com/3JoB/resty-ilo"
+	"github.com/3JoB/ulib/keyword/flash"
 
 	"github.com/3JoB/telebot/json"
 )
 
 type GoNetRequest struct {
+	bind   any
 	json   json.Json
 	uri    string
 	method string
@@ -46,6 +48,12 @@ func (g *GoNetRequest) SetWriter(w io.Writer) {
 	g.w = w
 }
 
+func (g *GoNetRequest) SetUnmarshal(v any) {
+	if v != nil {
+		g.bind = v
+	}
+}
+
 func (g *GoNetRequest) Write(b []byte) {
 	g.r = g.r.SetBody(b)
 }
@@ -72,34 +80,48 @@ func (g *GoNetRequest) Do() (NetResponse, error) {
 	defer g.Release()
 	var err error
 	g.r = g.r.SetHeader("User-Agent", "Mozilla/5.0(compatible; Telebot-Expansion-Pack/v1; +https://github.com/3JoB/telebot)")
+
 	var response *resty.Response
 	if g.method == "POST" {
 		response, err = g.r.Post(g.uri)
 	} else {
 		response, err = g.r.Get(g.uri)
 	}
+
 	if err != nil {
 		return nil, err
 	}
+
 	resp := g.acquireResponse()
 	resp.code = response.StatusCode()
-	if !response.IsStatusCode(200) {
-		resp.body = response.Body()
-	} else {
-		if g.w != nil {
-			_, err = io.Copy(g.w, response.RawBody())
-		} else {
-			resp.body = response.Body()
+
+	if g.bind != nil {
+		if flash.Search(response.Header().Get("Content-Type"), "json") {
+			err = g.json.Unmarshal(response.Body(), g.bind)
+			goto END
 		}
 	}
+
+	if response.IsStatusCode(200) {
+		if g.w != nil {
+			_, err = io.Copy(g.w, response.RawBody())
+			goto END
+		}
+	}
+
+	resp.body = response.Body()
+
+END:
+
 	_ = response.RawBody().Close()
 	return resp, err
 }
 
 func (g *GoNetRequest) Reset() {
-	g.r = nil
+	g.bind = nil
 	g.uri = ""
 	g.method = ""
+	g.r = nil
 	g.w = nil
 }
 

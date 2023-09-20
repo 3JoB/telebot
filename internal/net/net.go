@@ -46,6 +46,12 @@ type NetRequest interface {
 	// after the request is completed instead of passing in the Response.
 	SetWriter(w io.Writer)
 
+	// Set an Unmarshal object, which will automatically execute Unmarshal
+	// when the returned result is json (no need to manually execute Unmarshal)
+	//
+	// When Json Unmarshal is successfully executed, the Body content will no longer be returned.
+	SetUnmarshal(v any)
+
 	Write(b []byte)
 	WriteFile(content string, r io.Reader) error
 

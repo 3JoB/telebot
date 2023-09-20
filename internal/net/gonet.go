@@ -16,7 +16,7 @@ type GoNet struct {
 func NewHTTPClient() NetFrame {
 	g := &GoNet{
 		client: resty.New(),
-		json: json.NewGoJson(),
+		json:   json.NewGoJson(),
 	}
 	g.lookProxyEnv()
 	g.client.JSONMarshal = g.json.Marshal
