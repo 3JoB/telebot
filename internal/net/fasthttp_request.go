@@ -86,7 +86,7 @@ func (f *FastHTTPRequest) Body() io.Writer {
 func (f *FastHTTPRequest) Do() (NetResponse, error) {
 	defer f.Release()
 	var err error
-	f.request.Header.Set("User-Agent", "Mozilla/5.0(compatible; Telebot-Expansion-Pack/v1; +https://github.com/3JoB/telebot)")
+	f.request.Header.Set("User-Agent", UA)
 
 	if err := f.client.Do(f.request, f.response); err != nil {
 		return nil, err

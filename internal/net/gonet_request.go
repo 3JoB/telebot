@@ -79,7 +79,7 @@ func (g *GoNetRequest) Body() io.Writer {
 func (g *GoNetRequest) Do() (NetResponse, error) {
 	defer g.Release()
 	var err error
-	g.r = g.r.SetHeader("User-Agent", "Mozilla/5.0(compatible; Telebot-Expansion-Pack/v1; +https://github.com/3JoB/telebot)")
+	g.r = g.r.SetHeader("User-Agent", UA)
 
 	var response *resty.Response
 	if g.method == "POST" {
