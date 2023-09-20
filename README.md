@@ -1,7 +1,7 @@
 # Telebot • Telebot Expansion Pack
 >"I never knew creating Telegram bots could be so _sexy_!"
 
-**We may launch a new branch using fasthttp, in which you should avoid receiving or sending files that are too large to avoid panics due to insufficient memory.**
+Provides fasthttp and net/http dual network libraries at the same time!
 
 
 Use this branch if you want to try out the latest features.
