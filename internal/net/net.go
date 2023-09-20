@@ -26,15 +26,26 @@ type NetFrame interface {
 }
 
 type NetRequest interface {
+	// Set the request method to POST.
 	MethodPOST()
+
+	// Set the request method to GET。
 	MethodGET()
 
 	// Only fasthttp
 	Body() io.Writer
 
+	// Set Content-Type
 	SetContentType(v string)
+
+	// Set the requested URI address。
 	SetRequestURI(v string)
+
+	// Set a Writer. When this Writer is passed in,
+	// the data will be written directly to the Writer
+	// after the request is completed instead of passing in the Response.
 	SetWriter(w io.Writer)
+
 	Write(b []byte)
 	WriteFile(content string, r io.Reader) error
 

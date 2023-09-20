@@ -16,12 +16,9 @@ type GoNet struct {
 func NewHTTPClient() NetFrame {
 	g := &GoNet{
 		client: resty.New(),
+		json: json.NewGoJson(),
 	}
-	http_proxy, ok := os.LookupEnv("http_proxy")
-	if ok {
-		g.client = g.client.SetProxy(http_proxy)
-	}
-	g.json = json.NewGoJson()
+	g.lookProxyEnv()
 	g.client.JSONMarshal = g.json.Marshal
 	g.client.JSONUnmarshal = g.json.Unmarshal
 	return g
@@ -44,4 +41,11 @@ func (g *GoNet) AcquireRequest() NetRequest {
 	r := v.(*GoNetRequest)
 	r.r = g.client.R()
 	return r
+}
+
+func (g *GoNet) lookProxyEnv() {
+	http_proxy, ok := os.LookupEnv("http_proxy")
+	if ok {
+		g.client = g.client.SetProxy(http_proxy)
+	}
 }
