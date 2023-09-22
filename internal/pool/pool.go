@@ -5,9 +5,7 @@ import (
 	"sync"
 )
 
-var (
-	bufferPool sync.Pool
-)
+var bufferPool sync.Pool
 
 type Buffer struct {
 	*bytes.Buffer

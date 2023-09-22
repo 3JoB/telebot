@@ -1,8 +1,6 @@
 package telebot
 
 import (
-	"strconv"
-
 	"github.com/3JoB/unsafeConvert"
 )
 
@@ -16,19 +14,18 @@ const (
 
 // StickerSet represents a sticker set.
 type StickerSet struct {
-	Type          StickerSetType `json:"sticker_type"`
-	Name          string         `json:"name"`
-	Title         string         `json:"title"`
-	Animated      bool           `json:"is_animated"`
-	Video         bool           `json:"is_video"`
-	Stickers      []Sticker      `json:"stickers"`
-	Thumbnail     *Photo         `json:"thumbnail"`
-	PNG           *File          `json:"png_sticker"`
-	TGS           *File          `json:"tgs_sticker"`
-	WebM          *File          `json:"webm_sticker"`
-	Emojis        string         `json:"emojis"`
-	ContainsMasks bool           `json:"contains_masks"` // FIXME: can be removed
-	MaskPosition  *MaskPosition  `json:"mask_position"`
+	Type         StickerSetType `json:"sticker_type"`
+	Name         string         `json:"name"`
+	Title        string         `json:"title"`
+	Animated     bool           `json:"is_animated"`
+	Video        bool           `json:"is_video"`
+	Stickers     []Sticker      `json:"stickers"`
+	Thumbnail    *Photo         `json:"thumbnail"`
+	PNG          *File          `json:"png_sticker"`
+	TGS          *File          `json:"tgs_sticker"`
+	WebM         *File          `json:"webm_sticker"`
+	Emojis       string         `json:"emojis"`
+	MaskPosition *MaskPosition  `json:"mask_position"`
 }
 
 // MaskPosition describes the position on faces where
@@ -99,12 +96,11 @@ func (b *Bot) CreateStickerSet(to Recipient, s StickerSet) error {
 	}
 
 	params := map[string]any{
-		"user_id":        to.Recipient(),
-		"sticker_type":   s.Type,
-		"name":           s.Name,
-		"title":          s.Title,
-		"emojis":         s.Emojis,
-		"contains_masks": strconv.FormatBool(s.ContainsMasks),
+		"user_id":      to.Recipient(),
+		"sticker_type": s.Type,
+		"name":         s.Name,
+		"title":        s.Title,
+		"emojis":       s.Emojis,
 	}
 
 	if s.MaskPosition != nil {

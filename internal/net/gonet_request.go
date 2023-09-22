@@ -78,10 +78,12 @@ func (g *GoNetRequest) Body() io.Writer {
 
 func (g *GoNetRequest) Do() (NetResponse, error) {
 	defer g.Release()
-	var err error
+	var (
+		err error
+		response *resty.Response
+	)
 	g.r = g.r.SetHeader("User-Agent", UA)
 
-	var response *resty.Response
 	if g.method == "POST" {
 		response, err = g.r.Post(g.uri)
 	} else {
