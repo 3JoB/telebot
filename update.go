@@ -274,10 +274,8 @@ func (b *Bot) handle(end string, c Context) bool {
 }
 
 func (b *Bot) handleMedia(c Context) bool {
-	var (
-		m          = c.Message()
-		fired bool = true
-	)
+	m := c.Message()
+	fired := true
 
 	switch {
 	case m.Photo != nil:

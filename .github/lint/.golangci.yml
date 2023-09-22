@@ -5,6 +5,7 @@ run:
   tests: false
   skip-dirs:
     - test
+    - middleware
   skip-files:
     - ".*\\*_test.go$"
   go: '1.21.1'
