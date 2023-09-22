@@ -16,6 +16,7 @@ require (
 	github.com/spf13/cast v1.5.0
 	github.com/spf13/viper v1.15.0
 	github.com/stretchr/testify v1.8.2
+	github.com/sugawarayuuta/sonnet v0.0.0-20230921120721-6f097f6a7e6d
 	github.com/valyala/fasthttp v1.50.0
 	github.com/wI2L/jettison v0.7.4
 	golang.org/x/text v0.13.0
