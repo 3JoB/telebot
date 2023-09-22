@@ -12,7 +12,6 @@ import (
 	"github.com/3JoB/ulib/litefmt"
 	"github.com/3JoB/unsafeConvert"
 	"github.com/goccy/go-json"
-	"github.com/spf13/cast"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 
@@ -132,18 +131,18 @@ func (b *Bot) sendFiles(method string, files map[string]File, params map[string]
 
 		for field, file := range rawFiles {
 			if err := addFileToWriter(writer, files[field].fileName, field, file); err != nil {
-				pipeWriter.CloseWithError(err)
+				_ = pipeWriter.CloseWithError(err)
 				return
 			}
 		}
 		for field, value := range params {
-			if err := writer.WriteField(field, cast.ToString(value)); err != nil {
-				pipeWriter.CloseWithError(err)
+			if err := writer.WriteField(field, value.(string)); err != nil {
+				_ = pipeWriter.CloseWithError(err)
 				return
 			}
 		}
 		if err := writer.Close(); err != nil {
-			pipeWriter.CloseWithError(err)
+			_ = pipeWriter.CloseWithError(err)
 			return
 		}
 	}()

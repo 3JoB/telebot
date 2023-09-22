@@ -5,18 +5,18 @@ import (
 	"sync"
 )
 
-var bufferPool sync.Pool
+var bufferPool = sync.Pool{
+	New: func() any {
+		return &Buffer{Buffer: &bytes.Buffer{}}
+	},
+}
 
 type Buffer struct {
 	*bytes.Buffer
 }
 
 func NewBuffer() *Buffer {
-	p := bufferPool.Get()
-	if p == nil {
-		return &Buffer{Buffer: &bytes.Buffer{}}
-	}
-	return p.(*Buffer)
+	return bufferPool.Get().(*Buffer)
 }
 
 func ReleaseBuffer(b *Buffer) {

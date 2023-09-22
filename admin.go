@@ -272,7 +272,7 @@ func (b *Bot) DefaultRights(forChannels bool) (*Rights, error) {
 
 	var resp Response[*Rights]
 	if err := b.json.Unmarshal(data, &resp); err != nil {
-		return nil, wrapError(err)
+		return nil, err
 	}
 	return resp.Result, nil
 }

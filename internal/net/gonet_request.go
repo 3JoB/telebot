@@ -79,7 +79,7 @@ func (g *GoNetRequest) Body() io.Writer {
 func (g *GoNetRequest) Do() (NetResponse, error) {
 	defer g.Release()
 	var (
-		err error
+		err      error
 		response *resty.Response
 	)
 	g.r = g.r.SetHeader("User-Agent", UA)
