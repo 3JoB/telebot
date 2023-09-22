@@ -1,8 +1,10 @@
-name: Lint
+name: "Lint"
+
 on:
   push:
     branches:
       - v2
+
 jobs:
   lint:
     runs-on: ubuntu-latest
@@ -12,6 +14,7 @@ jobs:
         with:
           go-version: '1.21.1'
           cache: true
+
       - uses: golangci/golangci-lint-action@v3
         with:
           version: v1.54.2
