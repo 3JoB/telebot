@@ -274,8 +274,10 @@ func (b *Bot) handle(end string, c Context) bool {
 }
 
 func (b *Bot) handleMedia(c Context) bool {
-	m := c.Message()
-	fired := true
+	var (
+		m     = c.Message()
+		fired bool
+	)
 
 	switch {
 	case m.Photo != nil:
@@ -295,7 +297,7 @@ func (b *Bot) handleMedia(c Context) bool {
 	case m.VideoNote != nil:
 		fired = b.handle(OnVideoNote, c)
 	default:
-		return false
+		return fired
 	}
 
 	if !fired {
