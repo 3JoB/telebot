@@ -14,8 +14,11 @@ type Rights struct {
 	CanBeEdited         bool `json:"can_be_edited"`
 	CanChangeInfo       bool `json:"can_change_info"`
 	CanPostMessages     bool `json:"can_post_messages"`
+	CanPostStories      bool `json:"can_post_stories"`
 	CanEditMessages     bool `json:"can_edit_messages"`
+	CanEditStories      bool `json:"can_edit_stories"`
 	CanDeleteMessages   bool `json:"can_delete_messages"`
+	CanDeleteStories    bool `json:"can_delete_stories"`
 	CanPinMessages      bool `json:"can_pin_messages"`
 	CanInviteUsers      bool `json:"can_invite_users"`
 	CanRestrictMembers  bool `json:"can_restrict_members"`
@@ -49,8 +52,11 @@ func NoRestrictions() Rights {
 		CanBeEdited:         true,
 		CanChangeInfo:       false,
 		CanPostMessages:     false,
+		CanPostStories:      false,
 		CanEditMessages:     false,
+		CanEditStories:      false,
 		CanDeleteMessages:   false,
+		CanDeleteStories:    false,
 		CanInviteUsers:      false,
 		CanRestrictMembers:  false,
 		CanPinMessages:      false,
@@ -72,8 +78,11 @@ func AdminRights() Rights {
 		CanBeEdited:         true,
 		CanChangeInfo:       true,
 		CanPostMessages:     true,
+		CanPostStories:      true,
 		CanEditMessages:     true,
+		CanEditStories:      true,
 		CanDeleteMessages:   true,
+		CanDeleteStories:    true,
 		CanInviteUsers:      true,
 		CanRestrictMembers:  true,
 		CanPinMessages:      true,
