@@ -33,7 +33,9 @@ func Raw[T any](b *Bot, method string, payload ...T) ([]byte, error) {
 	req.MethodPOST()
 
 	if len(payload) > 0 {
-		req.WriteJson(payload[0])
+		if err := req.WriteJson(payload[0]); err != nil {
+			return nil, err
+		}
 	}
 
 	req.SetRequestURI(url)
@@ -76,7 +78,9 @@ func (b *Bot) Raw(method string, payload ...any) ([]byte, error) {
 	req := b.client.AcquireRequest()
 	if len(payload) > 0 {
 		if payload[0] != nil {
-			req.WriteJson(payload[0])
+			if err := req.WriteJson(payload[0]); err != nil {
+				return nil, err
+			}
 		}
 	}
 
@@ -147,12 +151,17 @@ func (b *Bot) sendFiles(method string, files map[string]File, params map[string]
 	url := b.buildUrl(method)
 	// url := b.URL + "/bot" + b.Token + "/" + method
 	req := b.client.AcquireRequest()
-	req.WriteFile(writer.FormDataContentType(), pipeReader)
+	if err := req.WriteFile(writer.FormDataContentType(), pipeReader); err != nil {
+		err = wrapError(err)
+		_ = pipeReader.CloseWithError(err)
+		return nil, err
+	}
+
 	req.SetRequestURI(url)
 	resp, err := req.Do()
 	if err != nil {
 		err = wrapError(err)
-		pipeReader.CloseWithError(err)
+		_ = pipeReader.CloseWithError(err)
 		return nil, err
 	}
 	defer resp.Release()
@@ -344,7 +353,7 @@ func verbose(method string, payload any, data []byte) {
 	indent := func(b []byte) string {
 		var buf bytes.Buffer
 		defer buf.Reset()
-		json.Indent(&buf, b, "", "  ")
+		_ = json.Indent(&buf, b, "", "  ")
 		return buf.String()
 	}
 

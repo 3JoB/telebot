@@ -380,8 +380,8 @@ func (b *Bot) GetMyShortDescription(lang string) (string, error) {
 		return "", err
 	} else {
 		var resp Response[ShortDescription]
-		b.json.Unmarshal(r, &resp)
-		return resp.Result.ShortDescription, nil
+		err := b.json.Unmarshal(r, &resp)
+		return resp.Result.ShortDescription, err
 	}
 }
 
