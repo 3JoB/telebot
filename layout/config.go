@@ -50,7 +50,7 @@ func (c *Config) Slice(k string) (slice []*Config) {
 		}
 
 		v := viper.New()
-		v.MergeConfigMap(m)
+		_ = v.MergeConfigMap(m)
 		slice = append(slice, &Config{v: v})
 	}
 

@@ -7,3 +7,4 @@ run:
     - test
   skip-files:
     - ".*\\*_test.go$"
+  go: '1.21.1'

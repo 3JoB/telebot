@@ -141,13 +141,13 @@ func (h *Webhook) Poll(b *Bot, dest chan Update, stop chan struct{}) {
 
 	go func(stop chan struct{}) {
 		h.waitForStop(stop)
-		s.Shutdown(context.Background())
+		_ = s.Shutdown(context.Background())
 	}(stop)
 
 	if h.TLS != nil {
-		s.ListenAndServeTLS(h.TLS.Cert, h.TLS.Key)
+		_ = s.ListenAndServeTLS(h.TLS.Cert, h.TLS.Key)
 	} else {
-		s.ListenAndServe()
+		_ = s.ListenAndServe()
 	}
 }
 

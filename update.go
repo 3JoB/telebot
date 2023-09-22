@@ -275,8 +275,8 @@ func (b *Bot) handle(end string, c Context) bool {
 
 func (b *Bot) handleMedia(c Context) bool {
 	var (
-		m     = c.Message()
-		fired = true
+		m          = c.Message()
+		fired bool = true
 	)
 
 	switch {
@@ -304,7 +304,7 @@ func (b *Bot) handleMedia(c Context) bool {
 		return b.handle(OnMedia, c)
 	}
 
-	return true
+	return fired
 }
 
 func (b *Bot) runHandler(h HandlerFunc, c Context) {
