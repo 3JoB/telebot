@@ -4,7 +4,7 @@ go 1.21.1
 
 require (
 	github.com/3JoB/resty-ilo v1.2.0
-	github.com/3JoB/ulib v1.33.0
+	github.com/3JoB/ulib v1.36.1
 	github.com/3JoB/unsafeConvert v1.6.0
 	github.com/bytedance/sonic v1.10.1
 	github.com/cornelk/hashmap v1.0.8
@@ -37,7 +37,7 @@ require (
 	github.com/golang/mock v1.6.0 // indirect
 	github.com/google/pprof v0.0.0-20230323073829-e72429f035bd // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
-	github.com/klauspost/compress v1.16.7 // indirect
+	github.com/klauspost/compress v1.17.0 // indirect
 	github.com/klauspost/cpuid/v2 v2.0.9 // indirect
 	github.com/magiconair/properties v1.8.7 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
