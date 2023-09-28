@@ -1,6 +1,8 @@
 package telebot
 
-import "strings"
+import (
+	"strings"
+)
 
 // Update object represents an incoming update.
 type Update struct {
@@ -41,8 +43,19 @@ func (b *Bot) ProcessUpdate(u Update) bool {
 				return true
 			}
 
-			match := cmdRx.FindAllStringSubmatch(m.Text, -1)
-			if match != nil {
+			// match := cmdRx.FindAllStringSubmatch(m.Text, -1)
+			command, botName, payload := process(m.Text)
+			if command != "" {
+				if botName != "" && !strings.EqualFold(b.Me.Username, botName) {
+					return false
+				}
+				m.Payload = payload
+				if b.handle(command, c) {
+					return true
+				}
+			}
+
+			/*if match != nil {
 				// Syntax: "</command>@<bot> <payload>"
 				command, botName := match[0][1], match[0][3]
 
@@ -54,7 +67,7 @@ func (b *Bot) ProcessUpdate(u Update) bool {
 				if b.handle(command, c) {
 					return true
 				}
-			}
+			}*/
 
 			// 1:1 satisfaction
 			if b.handle(m.Text, c) {

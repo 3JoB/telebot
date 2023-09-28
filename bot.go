@@ -11,7 +11,6 @@ import (
 
 	"github.com/3JoB/ulib/litefmt"
 	"github.com/3JoB/unsafeConvert"
-	"github.com/grafana/regexp"
 
 	"github.com/3JoB/telebot/internal/net"
 	"github.com/3JoB/telebot/internal/pool"
@@ -187,11 +186,6 @@ func (b *Bot) Group() *Group {
 func (b *Bot) Use(middleware ...MiddlewareFunc) {
 	b.group.Use(middleware...)
 }
-
-var (
-	cmdRx   = regexp.MustCompile(`^(/\w+)(@(\w+))?(\s|$)(.+)?`)
-	cbackRx = regexp.MustCompile(`^\f([-\w]+)(\|(.+))?$`)
-)
 
 // Handle lets you set the handler for some command name or
 // one of the supported endpoints. It also applies middleware
