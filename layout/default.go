@@ -1,7 +1,7 @@
 package layout
 
 import (
-	tele "pkg.one/telebot"
+	tele "github.com/3JoB/telebot"
 )
 
 // DefaultLayout is a simplified layout instance with pre-defined locale by default.

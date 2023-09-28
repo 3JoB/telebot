@@ -13,7 +13,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"pkg.one/telebot/internal/net"
+	"github.com/3JoB/telebot/internal/net"
 )
 
 var (

@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	tele "pkg.one/telebot"
+	tele "github.com/3JoB/telebot"
 )
 
 // var b, _ = tele.NewBot(tele.Settings{Offline: true})

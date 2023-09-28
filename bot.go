@@ -12,9 +12,9 @@ import (
 	"github.com/3JoB/ulib/litefmt"
 	"github.com/3JoB/unsafeConvert"
 
-	"pkg.one/telebot/internal/net"
-	"pkg.one/telebot/internal/pool"
-	"pkg.one/telebot/json"
+	"github.com/3JoB/telebot/internal/net"
+	"github.com/3JoB/telebot/internal/pool"
+	"github.com/3JoB/telebot/json"
 )
 
 var (
@@ -140,7 +140,7 @@ type Settings struct {
 
 	// The Json interface is used to customize the json handle.
 	// Five wrappers are provided by default. For detailed documentation,
-	// see: https://pkg.go.dev/pkg.one/telebot/json.
+	// see: https://pkg.go.dev/github.com/3JoB/telebot/json.
 	//
 	// Some methods use the default go-json because they are not under *Bot.
 	Json json.Json

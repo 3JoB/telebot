@@ -15,7 +15,7 @@ import (
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 
-	"pkg.one/telebot/internal/pool"
+	"github.com/3JoB/telebot/internal/pool"
 )
 
 // Raw lets you call any method of Bot API manually.

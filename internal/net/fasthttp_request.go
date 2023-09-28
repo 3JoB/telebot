@@ -7,7 +7,7 @@ import (
 	"github.com/3JoB/unsafeConvert"
 	"github.com/valyala/fasthttp"
 
-	"pkg.one/telebot/json"
+	"github.com/3JoB/telebot/json"
 )
 
 type FastHTTPRequest struct {

@@ -5,7 +5,7 @@ import (
 
 	"github.com/3JoB/resty-ilo"
 
-	"pkg.one/telebot/json"
+	"github.com/3JoB/telebot/json"
 )
 
 type GoNet struct {

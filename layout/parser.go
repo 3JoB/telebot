@@ -11,7 +11,7 @@ import (
 	"github.com/goccy/go-yaml"
 	"github.com/spf13/viper"
 
-	tele "pkg.one/telebot"
+	tele "github.com/3JoB/telebot"
 )
 
 type Settings struct {
