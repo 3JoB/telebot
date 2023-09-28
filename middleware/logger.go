@@ -8,7 +8,7 @@ import (
 	"github.com/goccy/go-json"
 	"github.com/rs/zerolog"
 
-	tele "github.com/3JoB/telebot"
+	tele "pkg.one/telebot"
 )
 
 // Logger returns a middleware that logs incoming updates.

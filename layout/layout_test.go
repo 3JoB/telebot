@@ -7,7 +7,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	tele "github.com/3JoB/telebot"
+	tele "pkg.one/telebot"
 )
 
 func TestLayout(t *testing.T) {

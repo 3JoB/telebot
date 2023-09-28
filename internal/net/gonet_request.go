@@ -6,7 +6,7 @@ import (
 	"github.com/3JoB/resty-ilo"
 	"github.com/3JoB/ulib/keyword/flash"
 
-	"github.com/3JoB/telebot/json"
+	"pkg.one/telebot/json"
 )
 
 type GoNetRequest struct {

@@ -6,7 +6,7 @@ import (
 
 	"github.com/spf13/viper"
 
-	tele "github.com/3JoB/telebot"
+	tele "pkg.one/telebot"
 )
 
 // Config represents typed map interface related to the "config" section in layout.

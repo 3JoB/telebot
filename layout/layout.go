@@ -12,7 +12,7 @@ import (
 	"github.com/goccy/go-json"
 	"github.com/goccy/go-yaml"
 
-	tele "github.com/3JoB/telebot"
+	tele "pkg.one/telebot"
 )
 
 type (

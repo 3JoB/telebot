@@ -1,4 +1,4 @@
-module github.com/3JoB/telebot
+module pkg.one/telebot
 
 go 1.21.1
 
