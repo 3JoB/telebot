@@ -57,7 +57,7 @@ type Webhook struct {
 	TLS      *WebhookTLS
 	Endpoint *WebhookEndpoint
 
-	dest chan<- Update
+	dest chan<- *Update
 	bot  *Bot
 }
 
@@ -118,7 +118,7 @@ func (h *Webhook) getParams() map[string]any {
 	return params
 }
 
-func (h *Webhook) Poll(b *Bot, dest chan Update, stop chan struct{}) {
+func (h *Webhook) Poll(b *Bot, dest chan *Update, stop chan struct{}) {
 	if err := b.SetWebhook(h); err != nil {
 		b.OnError(err, nil)
 		close(stop)
@@ -164,8 +164,8 @@ func (h *Webhook) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var update Update
-	if err := h.bot.json.NewDecoder(r.Body).Decode(&update); err != nil {
+	var update *Update
+	if err := h.bot.json.NewDecoder(r.Body).Decode(update); err != nil {
 		h.bot.debug(fmt.Errorf("cannot decode update: %v", err))
 		return
 	}

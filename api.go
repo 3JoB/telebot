@@ -245,7 +245,7 @@ func (b *Bot) getMe() (*User, error) {
 	return resp.Result, nil
 }
 
-func (b *Bot) getUpdates(offset, limit int, timeout time.Duration, allowed []string) ([]Update, error) {
+func (b *Bot) getUpdates(offset, limit int, timeout time.Duration, allowed []string) ([]*Update, error) {
 	params := map[string]any{
 		"offset":  offset,
 		"timeout": int(timeout / time.Second),
@@ -262,7 +262,7 @@ func (b *Bot) getUpdates(offset, limit int, timeout time.Duration, allowed []str
 		return nil, err
 	}
 
-	var resp Response[[]Update]
+	var resp Response[[]*Update]
 
 	if err := b.json.Unmarshal(data, &resp); err != nil {
 		return nil, wrapError(err)
