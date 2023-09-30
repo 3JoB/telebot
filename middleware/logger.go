@@ -23,7 +23,7 @@ func Logger(writers ...io.Writer) tele.MiddlewareFunc {
 	l := zerolog.New(w).With().Timestamp().Logger()
 
 	return func(next tele.HandlerFunc) tele.HandlerFunc {
-		return func(c tele.Context) error {
+		return func(c *tele.Context) error {
 			data, _ := json.MarshalIndent(c.Update(), "", "  ")
 			l.Info().Msg(unsafeConvert.StringSlice(data))
 			return next(c)

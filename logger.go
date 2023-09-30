@@ -16,7 +16,7 @@ type Logger interface {
 	Warnf(format string, a ...any)
 	Errorf(format string, a ...any)
 	Panicf(format string, a ...any)
-	OnError(error, Context)
+	OnError(error, *Context)
 }
 
 type LoggerZerolog struct {
@@ -69,7 +69,7 @@ func (z *LoggerZerolog) Panicf(format string, a ...any) {
 	z.l.Debug().Msg(format)
 }
 
-func (z *LoggerZerolog) OnError(err error, c Context) {
+func (z *LoggerZerolog) OnError(err error, c *Context) {
 	var message string
 	if c != nil {
 		message = litefmt.PSprint(unsafeConvert.Itoa(c.Update().ID), " ", err.Error())

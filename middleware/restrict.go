@@ -29,7 +29,7 @@ func Restrict(v RestrictConfig) tele.MiddlewareFunc {
 		if v.Out == nil {
 			v.Out = next
 		}
-		return func(c tele.Context) error {
+		return func(c *tele.Context) error {
 			for _, chat := range v.Chats {
 				if chat == c.Sender().ID {
 					return v.In(c)
@@ -47,7 +47,7 @@ func Blacklist(chats ...int64) tele.MiddlewareFunc {
 		return Restrict(RestrictConfig{
 			Chats: chats,
 			Out:   next,
-			In:    func(c tele.Context) error { return nil },
+			In:    func(c *tele.Context) error { return nil },
 		})(next)
 	}
 }
@@ -59,7 +59,7 @@ func Whitelist(chats ...int64) tele.MiddlewareFunc {
 		return Restrict(RestrictConfig{
 			Chats: chats,
 			In:    next,
-			Out:   func(c tele.Context) error { return nil },
+			Out:   func(c *tele.Context) error { return nil },
 		})(next)
 	}
 }

@@ -167,7 +167,7 @@ func (b *Bot) Logger() Logger {
 	return b.logger
 }
 
-func (b *Bot) OnError(err error, c Context) {
+func (b *Bot) OnError(err error, c *Context) {
 	b.logger.OnError(err, c)
 }
 
@@ -212,7 +212,7 @@ func (b *Bot) Handle(endpoint any, h HandlerFunc, m ...MiddlewareFunc) {
 		mw = append(mw, m...)
 	}
 
-	handler := func(c Context) error {
+	handler := func(c *Context) error {
 		return applyMiddleware(h, mw...)(c)
 	}
 
@@ -278,39 +278,22 @@ func (b *Bot) NewMarkup() *ReplyMarkup {
 	return &ReplyMarkup{}
 }
 
-// NewContext returns a new native context object,
+// NewContext returns a new context object,
 // field by the passed update.
-func (b *Bot) NewContext(u Update) Context {
-	return &nativeContext{
-		b: b,
-		u: u,
-	}
+func (b *Bot) NewContext(u Update) *Context {
+	ctx := b.AcquireContext()
+	ctx.b = b
+	ctx.u = u
+	return ctx
 }
 
 // Get a Context from the pool.
-func (b *Bot) AcquireContext() *nativeContext {
+func (b *Bot) AcquireContext() *Context {
 	n := ctxPool.Get()
 	if n == nil {
-		return &nativeContext{}
+		return &Context{}
 	}
-	return n.(*nativeContext)
-}
-
-// Release the Context. After it is released,
-// the previous Context should not be continued to be used.
-func (n *nativeContext) ReleaseContext() {
-	if n == nil {
-		return
-	}
-	if n.store != nil {
-		n.store.Range(func(k string, v any) bool {
-			n.store.Del(k)
-			return true
-		})
-	}
-	n.b = nil
-	n.u = EUpdate
-	ctxPool.Put(n)
+	return n.(*Context)
 }
 
 // Use this method to change the bot's name. Returns True on success.

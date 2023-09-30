@@ -21,7 +21,7 @@ type (
 	Layout struct {
 		pref  *tele.Settings
 		mu    sync.RWMutex // protects ctxs
-		ctxs  map[tele.Context]string
+		ctxs  map[*tele.Context]string
 		funcs template.FuncMap
 
 		commands map[string]string
@@ -77,7 +77,7 @@ func New(path string, funcs ...template.FuncMap) (*Layout, error) {
 	}
 
 	lt := Layout{
-		ctxs:  make(map[tele.Context]string),
+		ctxs:  make(map[*tele.Context]string),
 		funcs: make(template.FuncMap),
 	}
 
@@ -155,7 +155,7 @@ func (lt *Layout) Locales() []string {
 }
 
 // Locale returns the context locale.
-func (lt *Layout) Locale(c tele.Context) (string, bool) {
+func (lt *Layout) Locale(c *tele.Context) (string, bool) {
 	lt.mu.RLock()
 	defer lt.mu.RUnlock()
 	locale, ok := lt.ctxs[c]
@@ -163,7 +163,7 @@ func (lt *Layout) Locale(c tele.Context) (string, bool) {
 }
 
 // SetLocale allows you to change a locale for the passed context.
-func (lt *Layout) SetLocale(c tele.Context, locale string) {
+func (lt *Layout) SetLocale(c *tele.Context, locale string) {
 	lt.mu.Lock()
 	lt.ctxs[c] = locale
 	lt.mu.Unlock()
@@ -240,7 +240,7 @@ func (lt *Layout) CommandsLocale(locale string, args ...any) (cmds []tele.Comman
 //	func onStart(c tele.Context) error {
 //		return c.Send(lt.Text(c, "start", c.Sender()))
 //	}
-func (lt *Layout) Text(c tele.Context, k string, args ...any) string {
+func (lt *Layout) Text(c *tele.Context, k string, args ...any) string {
 	locale, ok := lt.Locale(c)
 	if !ok {
 		return ""
@@ -309,7 +309,7 @@ func (lt *Layout) Callback(k string) tele.CallbackEndpoint {
 //	m := b.NewMarkup()
 //	m.Inline(m.Row(btns...))
 //	// Your generated markup is ready.
-func (lt *Layout) Button(c tele.Context, k string, args ...any) *tele.Btn {
+func (lt *Layout) Button(c *tele.Context, k string, args ...any) *tele.Btn {
 	locale, ok := lt.Locale(c)
 	if !ok {
 		return nil
@@ -374,7 +374,7 @@ func (lt *Layout) ButtonLocale(locale, k string, args ...any) *tele.Btn {
 //			lt.Markup(c, "menu"),
 //		)
 //	}
-func (lt *Layout) Markup(c tele.Context, k string, args ...any) *tele.ReplyMarkup {
+func (lt *Layout) Markup(c *tele.Context, k string, args ...any) *tele.ReplyMarkup {
 	locale, ok := lt.Locale(c)
 	if !ok {
 		return nil
@@ -445,7 +445,7 @@ func (lt *Layout) MarkupLocale(locale, k string, args ...any) *tele.ReplyMarkup 
 //			CacheTime: 100,
 //		})
 //	}
-func (lt *Layout) Result(c tele.Context, k string, args ...any) tele.Result {
+func (lt *Layout) Result(c *tele.Context, k string, args ...any) tele.Result {
 	locale, ok := lt.Locale(c)
 	if !ok {
 		return nil

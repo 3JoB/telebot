@@ -10,173 +10,28 @@ import (
 
 // HandlerFunc represents a handler function, which is
 // used to handle actual endpoints.
-type HandlerFunc func(Context) error
+type HandlerFunc func(*Context) error
 
 // Context wraps an update and represents the context of current event.
-type Context interface {
-	// Bot returns the bot instance.
-	Bot() *Bot
-
-	// Update returns the original update.
-	Update() Update
-
-	// Message returns stored message if such presented.
-	Message() *Message
-
-	// Callback returns stored callback if such presented.
-	Callback() *Callback
-
-	// Query returns stored query if such presented.
-	Query() *Query
-
-	// InlineResult returns stored inline result if such presented.
-	InlineResult() *InlineResult
-
-	// ShippingQuery returns stored shipping query if such presented.
-	ShippingQuery() *ShippingQuery
-
-	// PreCheckoutQuery returns stored pre checkout query if such presented.
-	PreCheckoutQuery() *PreCheckoutQuery
-
-	// Poll returns stored poll if such presented.
-	Poll() *Poll
-
-	// PollAnswer returns stored poll answer if such presented.
-	PollAnswer() *PollAnswer
-
-	// ChatMember returns chat member changes.
-	ChatMember() *ChatMemberUpdate
-
-	// ChatJoinRequest returns cha
-	ChatJoinRequest() *ChatJoinRequest
-
-	// Migration returns both migration from and to chat IDs.
-	Migration() (int64, int64)
-
-	// Sender returns the current recipient, depending on the context type.
-	// Returns nil if user is not presented.
-	Sender() *User
-
-	// Chat returns the current chat, depending on the context type.
-	// Returns nil if chat is not presented.
-	Chat() *Chat
-
-	// Recipient combines both Sender and Chat functions. If there is no user
-	// the chat will be returned. The native context cannot be without sender,
-	// but it is useful in the case when the context created intentionally
-	// by the NewContext constructor and have only Chat field inside.
-	Recipient() Recipient
-
-	// Text returns the message text, depending on the context type.
-	// In the case when no related data presented, returns an empty string.
-	Text() string
-
-	// Entities returns the message entities, whether it's media caption's or the text's.
-	// In the case when no entities presented, returns a nil.
-	Entities() Entities
-
-	// Data returns the current data, depending on the context type.
-	// If the context contains command, returns its arguments string.
-	// If the context contains payment, returns its payload.
-	// In the case when no related data presented, returns an empty string.
-	Data() string
-
-	// Args returns a raw slice of command or callback arguments as strings.
-	// The message arguments split by space, while the callback's ones by a "|" symbol.
-	Args() []string
-
-	// Send sends a message to the current recipient.
-	// See Send from bot.go.
-	Send(what any, opts ...any) (*Message, error)
-
-	// SendAlbum sends an album to the current recipient.
-	// See SendAlbum from bot.go.
-	SendAlbum(a Album, opts ...any) error
-
-	// Reply replies to the current message.
-	// See Reply from bot.go.
-	Reply(what any, opts ...any) (*Message, error)
-
-	// Forward forwards the given message to the current recipient.
-	// See Forward from bot.go.
-	Forward(msg Editable, opts ...any) error
-
-	// ForwardTo forwards the current message to the given recipient.
-	// See Forward from bot.go
-	ForwardTo(to Recipient, opts ...any) error
-
-	// Edit edits the current message.
-	// See Edit from bot.go.
-	Edit(what any, opts ...any) error
-
-	// EditCaption edits the caption of the current message.
-	// See EditCaption from bot.go.
-	EditCaption(caption string, opts ...any) error
-
-	// EditOrSend edits the current message if the update is callback,
-	// otherwise the content is sent to the chat as a separate message.
-	EditOrSend(what any, opts ...any) error
-
-	// EditOrReply edits the current message if the update is callback,
-	// otherwise the content is replied as a separate message.
-	EditOrReply(what any, opts ...any) (*Message, error)
-
-	// Delete removes the current message.
-	// See Delete from bot.go.
-	Delete() error
-
-	// DeleteAfter waits for the duration to elapse and then removes the
-	// message. It handles an error automatically using b.OnError callback.
-	// It returns a Timer that can be used to cancel the call using its Stop method.
-	DeleteAfter(d time.Duration) *time.Timer
-
-	// Notify updates the chat action for the current recipient.
-	// See Notify from bot.go.
-	Notify(action ChatAction) error
-
-	// Ship replies to the current shipping query.
-	// See Ship from bot.go.
-	Ship(what ...any) error
-
-	// Accept finalizes the current deal.
-	// See Accept from bot.go.
-	Accept(errorMessage ...string) error
-
-	// Answer sends a response to the current inline query.
-	// See Answer from bot.go.
-	Answer(resp *QueryResponse) error
-
-	// Respond sends a response for the current callback query.
-	// See Respond from bot.go.
-	Respond(resp ...*CallbackResponse) error
-
-	// Get retrieves data from the context.
-	Get(key string) any
-
-	// Set saves data in the context.
-	Set(key string, val any)
-
-	// Release Context
-	ReleaseContext()
-}
-
-// nativeContext is a native implementation of the Context interface.
-// "context" is taken by context package, maybe there is a better name.
-type nativeContext struct {
+type Context struct {
 	b     *Bot
 	u     Update
+	next  bool
 	store *hashmap.Map[string, any]
 }
 
-func (c *nativeContext) Bot() *Bot {
+// Bot returns the bot instance.
+func (c *Context) Bot() *Bot {
 	return c.b
 }
 
-func (c *nativeContext) Update() Update {
+// Update returns the original update.
+func (c *Context) Update() Update {
 	return c.u
 }
 
-func (c *nativeContext) Message() *Message {
+// Message returns stored message if such presented.
+func (c *Context) Message() *Message {
 	switch {
 	case c.u.Message != nil:
 		return c.u.Message
@@ -196,27 +51,33 @@ func (c *nativeContext) Message() *Message {
 	}
 }
 
-func (c *nativeContext) Callback() *Callback {
+// Callback returns stored callback if such presented.
+func (c *Context) Callback() *Callback {
 	return c.u.Callback
 }
 
-func (c *nativeContext) Query() *Query {
+// Query returns stored query if such presented.
+func (c *Context) Query() *Query {
 	return c.u.Query
 }
 
-func (c *nativeContext) InlineResult() *InlineResult {
+// InlineResult returns stored inline result if such presented.
+func (c *Context) InlineResult() *InlineResult {
 	return c.u.InlineResult
 }
 
-func (c *nativeContext) ShippingQuery() *ShippingQuery {
+// ShippingQuery returns stored shipping query if such presented.
+func (c *Context) ShippingQuery() *ShippingQuery {
 	return c.u.ShippingQuery
 }
 
-func (c *nativeContext) PreCheckoutQuery() *PreCheckoutQuery {
+// PreCheckoutQuery returns stored pre checkout query if such presented.
+func (c *Context) PreCheckoutQuery() *PreCheckoutQuery {
 	return c.u.PreCheckoutQuery
 }
 
-func (c *nativeContext) ChatMember() *ChatMemberUpdate {
+// ChatMember returns chat member changes.
+func (c *Context) ChatMember() *ChatMemberUpdate {
 	switch {
 	case c.u.ChatMember != nil:
 		return c.u.ChatMember
@@ -227,23 +88,29 @@ func (c *nativeContext) ChatMember() *ChatMemberUpdate {
 	}
 }
 
-func (c *nativeContext) ChatJoinRequest() *ChatJoinRequest {
+// ChatJoinRequest returns chat member join request.
+func (c *Context) ChatJoinRequest() *ChatJoinRequest {
 	return c.u.ChatJoinRequest
 }
 
-func (c *nativeContext) Poll() *Poll {
+// Poll returns stored poll if such presented.
+func (c *Context) Poll() *Poll {
 	return c.u.Poll
 }
 
-func (c *nativeContext) PollAnswer() *PollAnswer {
+// PollAnswer returns stored poll answer if such presented.
+func (c *Context) PollAnswer() *PollAnswer {
 	return c.u.PollAnswer
 }
 
-func (c *nativeContext) Migration() (int64, int64) {
+// Migration returns both migration from and to chat IDs.
+func (c *Context) Migration() (int64, int64) {
 	return c.u.Message.MigrateFrom, c.u.Message.MigrateTo
 }
 
-func (c *nativeContext) Sender() *User {
+// Sender returns the current recipient, depending on the context type.
+// Returns nil if user is not presented.
+func (c *Context) Sender() *User {
 	switch {
 	case c.u.Callback != nil:
 		return c.u.Callback.Sender
@@ -270,7 +137,9 @@ func (c *nativeContext) Sender() *User {
 	}
 }
 
-func (c *nativeContext) Chat() *Chat {
+// Chat returns the current chat, depending on the context type.
+// Returns nil if chat is not presented.
+func (c *Context) Chat() *Chat {
 	switch {
 	case c.Message() != nil:
 		return c.Message().Chat
@@ -285,7 +154,11 @@ func (c *nativeContext) Chat() *Chat {
 	}
 }
 
-func (c *nativeContext) Recipient() Recipient {
+// Recipient combines both Sender and Chat functions. If there is no user
+// the chat will be returned. The native context cannot be without sender,
+// but it is useful in the case when the context created intentionally
+// by the NewContext constructor and have only Chat field inside.
+func (c *Context) Recipient() Recipient {
 	chat := c.Chat()
 	if chat != nil {
 		return chat
@@ -293,7 +166,9 @@ func (c *nativeContext) Recipient() Recipient {
 	return c.Sender()
 }
 
-func (c *nativeContext) Text() string {
+// Text returns the message text, depending on the context type.
+// In the case when no related data presented, returns an empty string.
+func (c *Context) Text() string {
 	m := c.Message()
 	if m == nil {
 		return ""
@@ -304,7 +179,9 @@ func (c *nativeContext) Text() string {
 	return m.Text
 }
 
-func (c *nativeContext) Entities() Entities {
+// Entities returns the message entities, whether it's media caption's or the text's.
+// In the case when no entities presented, returns a nil.
+func (c *Context) Entities() Entities {
 	m := c.Message()
 	if m == nil {
 		return nil
@@ -315,7 +192,11 @@ func (c *nativeContext) Entities() Entities {
 	return m.Entities
 }
 
-func (c *nativeContext) Data() string {
+// Data returns the current data, depending on the context type.
+// If the context contains command, returns its arguments string.
+// If the context contains payment, returns its payload.
+// In the case when no related data presented, returns an empty string.
+func (c *Context) Data() string {
 	switch {
 	case c.u.Message != nil:
 		return c.u.Message.Payload
@@ -334,7 +215,9 @@ func (c *nativeContext) Data() string {
 	}
 }
 
-func (c *nativeContext) Args() []string {
+// Args returns a raw slice of command or callback arguments as strings.
+// The message arguments split by space, while the callback's ones by a "|" symbol.
+func (c *Context) Args() []string {
 	switch {
 	case c.u.Message != nil:
 		payload := strings.Trim(c.u.Message.Payload, " ")
@@ -351,17 +234,23 @@ func (c *nativeContext) Args() []string {
 	return nil
 }
 
-func (c *nativeContext) Send(what any, opts ...any) (*Message, error) {
+// Send sends a message to the current recipient.
+// See Send from bot.go.
+func (c *Context) Send(what any, opts ...any) (*Message, error) {
 	e, err := c.b.Send(c.Recipient(), what, opts...)
 	return e, err
 }
 
-func (c *nativeContext) SendAlbum(a Album, opts ...any) error {
+// SendAlbum sends an album to the current recipient.
+// See SendAlbum from bot.go.
+func (c *Context) SendAlbum(a Album, opts ...any) error {
 	_, err := c.b.SendAlbum(c.Recipient(), a, opts...)
 	return err
 }
 
-func (c *nativeContext) Reply(what any, opts ...any) (*Message, error) {
+// Reply replies to the current message.
+// See Reply from bot.go.
+func (c *Context) Reply(what any, opts ...any) (*Message, error) {
 	msg := c.Message()
 	if msg == nil {
 		return nil, ErrBadContext
@@ -369,12 +258,16 @@ func (c *nativeContext) Reply(what any, opts ...any) (*Message, error) {
 	return c.b.Reply(msg, what, opts...)
 }
 
-func (c *nativeContext) Forward(msg Editable, opts ...any) error {
+// Forward forwards the given message to the current recipient.
+// See Forward from bot.go.
+func (c *Context) Forward(msg Editable, opts ...any) error {
 	_, err := c.b.Forward(c.Recipient(), msg, opts...)
 	return err
 }
 
-func (c *nativeContext) ForwardTo(to Recipient, opts ...any) error {
+// ForwardTo forwards the current message to the given recipient.
+// See Forward from bot.go
+func (c *Context) ForwardTo(to Recipient, opts ...any) error {
 	msg := c.Message()
 	if msg == nil {
 		return ErrBadContext
@@ -383,7 +276,9 @@ func (c *nativeContext) ForwardTo(to Recipient, opts ...any) error {
 	return err
 }
 
-func (c *nativeContext) Edit(what any, opts ...any) error {
+// Edit edits the current message.
+// See Edit from bot.go.
+func (c *Context) Edit(what any, opts ...any) error {
 	if c.u.InlineResult != nil {
 		_, err := c.b.Edit(c.u.InlineResult, what, opts...)
 		return err
@@ -395,7 +290,9 @@ func (c *nativeContext) Edit(what any, opts ...any) error {
 	return ErrBadContext
 }
 
-func (c *nativeContext) EditCaption(caption string, opts ...any) error {
+// EditCaption edits the caption of the current message.
+// See EditCaption from bot.go.
+func (c *Context) EditCaption(caption string, opts ...any) error {
 	if c.u.InlineResult != nil {
 		_, err := c.b.EditCaption(c.u.InlineResult, caption, opts...)
 		return err
@@ -407,7 +304,9 @@ func (c *nativeContext) EditCaption(caption string, opts ...any) error {
 	return ErrBadContext
 }
 
-func (c *nativeContext) EditOrSend(what any, opts ...any) error {
+// EditOrSend edits the current message if the update is callback,
+// otherwise the content is sent to the chat as a separate message.
+func (c *Context) EditOrSend(what any, opts ...any) error {
 	err := c.Edit(what, opts...)
 	if err == ErrBadContext {
 		_, err := c.Send(what, opts...)
@@ -416,7 +315,9 @@ func (c *nativeContext) EditOrSend(what any, opts ...any) error {
 	return err
 }
 
-func (c *nativeContext) EditOrReply(what any, opts ...any) (*Message, error) {
+// EditOrReply edits the current message if the update is callback,
+// otherwise the content is replied as a separate message.
+func (c *Context) EditOrReply(what any, opts ...any) (*Message, error) {
 	err := c.Edit(what, opts...)
 	if err == ErrBadContext {
 		return c.Reply(what, opts...)
@@ -424,7 +325,9 @@ func (c *nativeContext) EditOrReply(what any, opts ...any) (*Message, error) {
 	return nil, err
 }
 
-func (c *nativeContext) Delete() error {
+// Delete removes the current message.
+// See Delete from bot.go.
+func (c *Context) Delete() error {
 	msg := c.Message()
 	if msg == nil {
 		return ErrBadContext
@@ -432,7 +335,10 @@ func (c *nativeContext) Delete() error {
 	return c.b.Delete(msg)
 }
 
-func (c *nativeContext) DeleteAfter(d time.Duration) *time.Timer {
+// DeleteAfter waits for the duration to elapse and then removes the
+// message. It handles an error automatically using b.OnError callback.
+// It returns a Timer that can be used to cancel the call using its Stop method.
+func (c *Context) DeleteAfter(d time.Duration) *time.Timer {
 	return time.AfterFunc(d, func() {
 		if err := c.Delete(); err != nil {
 			c.b.OnError(err, c)
@@ -440,49 +346,86 @@ func (c *nativeContext) DeleteAfter(d time.Duration) *time.Timer {
 	})
 }
 
-func (c *nativeContext) Notify(action ChatAction) error {
+// Next pass control to the next middleware/ctx function.
+func (c *Context) Next() error {
+	c.next = true
+
+	return nil
+}
+
+// Notify updates the chat action for the current recipient.
+// See Notify from bot.go.
+func (c *Context) Notify(action ChatAction) error {
 	return c.b.Notify(c.Recipient(), action)
 }
 
-func (c *nativeContext) Ship(what ...any) error {
+// Ship replies to the current shipping query.
+// See Ship from bot.go.
+func (c *Context) Ship(what ...any) error {
 	if c.u.ShippingQuery == nil {
 		return errors.New("telebot: context shipping query is nil")
 	}
 	return c.b.Ship(c.u.ShippingQuery, what...)
 }
 
-func (c *nativeContext) Accept(errorMessage ...string) error {
+// Accept finalizes the current deal.
+// See Accept from bot.go.
+func (c *Context) Accept(errorMessage ...string) error {
 	if c.u.PreCheckoutQuery == nil {
 		return errors.New("telebot: context pre checkout query is nil")
 	}
 	return c.b.Accept(c.u.PreCheckoutQuery, errorMessage...)
 }
 
-func (c *nativeContext) Respond(resp ...*CallbackResponse) error {
+// Respond sends a response for the current callback query.
+// See Respond from bot.go.
+func (c *Context) Respond(resp ...*CallbackResponse) error {
 	if c.u.Callback == nil {
 		return errors.New("telebot: context callback is nil")
 	}
 	return c.b.Respond(c.u.Callback, resp...)
 }
 
-func (c *nativeContext) Answer(resp *QueryResponse) error {
+// Answer sends a response to the current inline query.
+// See Answer from bot.go.
+func (c *Context) Answer(resp *QueryResponse) error {
 	if c.u.Query == nil {
 		return errors.New("telebot: context inline query is nil")
 	}
 	return c.b.Answer(c.u.Query, resp)
 }
 
-func (c *nativeContext) Set(k string, v any) {
+// Set saves data in the context.
+func (c *Context) Set(k string, v any) {
 	if c.store == nil {
 		c.store = hashmap.New[string, any]()
 	}
 	c.store.Set(k, v)
 }
 
-func (c *nativeContext) Get(k string) any {
+// Get retrieves data from the context.
+func (c *Context) Get(k string) any {
 	if c.store == nil {
 		c.store = hashmap.New[string, any]()
 	}
 	v, _ := c.store.Get(k)
 	return v
+}
+
+// Release the Context. After it is released,
+// the previous Context should not be continued to be used.
+func (n *Context) ReleaseContext() {
+	if n == nil {
+		return
+	}
+	n.next = false
+	if n.store != nil {
+		n.store.Range(func(k string, v any) bool {
+			n.store.Del(k)
+			return true
+		})
+	}
+	n.b = nil
+	n.u = EUpdate
+	ctxPool.Put(n)
 }

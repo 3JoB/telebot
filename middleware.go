@@ -1,5 +1,11 @@
 package telebot
 
+type Middlewares struct {
+	Before []MiddlewareFunc
+	After  []MiddlewareFunc
+	Final  []MiddlewareFunc
+}
+
 // MiddlewareFunc represents a middleware processing function,
 // which get called before the endpoint group or specific handler.
 type MiddlewareFunc func(HandlerFunc) HandlerFunc

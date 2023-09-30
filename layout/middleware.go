@@ -23,7 +23,7 @@ func (lt *Layout) Middleware(defaultLocale string, localeFunc ...LocaleFunc) tel
 	}
 
 	return func(next tele.HandlerFunc) tele.HandlerFunc {
-		return func(c tele.Context) error {
+		return func(c *tele.Context) error {
 			locale := defaultLocale
 			if f != nil {
 				if l := f(c.Sender()); l != "" {

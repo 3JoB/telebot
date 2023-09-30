@@ -15,7 +15,7 @@ func TestRecover(t *testing.T) {
 		require.Error(t, err, "recover test")
 	}
 
-	h := func(c tele.Context) error {
+	h := func(c *tele.Context) error {
 		panic("recover test")
 	}
 
