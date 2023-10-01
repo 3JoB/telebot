@@ -1,6 +1,9 @@
 package json
 
-import "io"
+import (
+	"bytes"
+	"io"
+)
 
 // The Json interface is used to customize the json handler.
 // Five wrappers are provided by default. For detailed documentation,
@@ -13,6 +16,7 @@ type Json interface {
 	Unmarshal(buf []byte, v any) error
 	NewEncoder(w io.Writer) Encoder
 	NewDecoder(r io.Reader) Decoder
+	Indent(dst *bytes.Buffer, src []byte, prefix string, indent string) error
 }
 
 type Encoder interface {

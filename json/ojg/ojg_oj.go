@@ -1,15 +1,18 @@
-package json
+package ojg
 
 import (
+	"bytes"
 	"io"
 
 	"github.com/goccy/go-json"
 	"github.com/ohler55/ojg/oj"
+
+	tjson "github.com/3JoB/telebot/json"
 )
 
 type Ojg struct{}
 
-func NewOjg() Json {
+func New() tjson.Json {
 	return Ojg{}
 }
 
@@ -25,10 +28,14 @@ func (Ojg) Unmarshal(buf []byte, v any) error {
 	return oj.Unmarshal(buf, v)
 }
 
-func (Ojg) NewEncoder(w io.Writer) Encoder {
+func (Ojg) NewEncoder(w io.Writer) tjson.Encoder {
 	return json.NewEncoder(w)
 }
 
-func (Ojg) NewDecoder(r io.Reader) Decoder {
+func (Ojg) NewDecoder(r io.Reader) tjson.Decoder {
 	return json.NewDecoder(r)
+}
+
+func (Ojg) Indent(dst *bytes.Buffer, src []byte, prefix string, indent string) error {
+	return json.Indent(dst, src, prefix, indent)
 }

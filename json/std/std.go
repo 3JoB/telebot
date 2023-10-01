@@ -1,13 +1,16 @@
 package json
 
 import (
+	"bytes"
 	"encoding/json"
 	"io"
+
+	tjson "github.com/3JoB/telebot/json"
 )
 
 type Std struct{}
 
-func NewStd() Json {
+func New() tjson.Json {
 	return Std{}
 }
 
@@ -23,10 +26,14 @@ func (Std) Unmarshal(buf []byte, v any) error {
 	return json.Unmarshal(buf, v)
 }
 
-func (Std) NewEncoder(w io.Writer) Encoder {
+func (Std) NewEncoder(w io.Writer) tjson.Encoder {
 	return json.NewEncoder(w)
 }
 
-func (Std) NewDecoder(r io.Reader) Decoder {
+func (Std) NewDecoder(r io.Reader) tjson.Decoder {
 	return json.NewDecoder(r)
+}
+
+func (Std) Indent(dst *bytes.Buffer, src []byte, prefix string, indent string) error {
+	return json.Indent(dst, src, prefix, indent)
 }

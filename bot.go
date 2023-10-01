@@ -15,11 +15,18 @@ import (
 
 	"github.com/3JoB/telebot/internal/net"
 	"github.com/3JoB/telebot/json"
+	"github.com/3JoB/telebot/json/sonnet"
 )
 
 var (
-	ctxPool sync.Pool
+	ctxPool     sync.Pool
+	defaultJson json.Json = sonnet.New()
 )
+
+// SetdefaultJSON will set a default global JSON handler
+func SetDefaultJSON(j json.Json) {
+	defaultJson = j
+}
 
 // NewBot does try to build a Bot with token `token`, which
 // is a secret API key assigned to particular bot.
@@ -30,7 +37,7 @@ func NewBot(pref Settings) (*Bot, error) {
 
 	pref_json := pref.Json
 	if pref_json == nil {
-		pref_json = json.NewGoJson()
+		pref_json = defaultJson
 	}
 
 	client := pref.Client

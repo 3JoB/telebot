@@ -48,7 +48,7 @@ func Raw[T any](b *Bot, method string, payload ...T) (*bytes.Buffer, error) {
 		ReleaseBuffer(buf)
 		return nil, wrapError(err)
 	}
-	//buf.Write(resp.Bytes())
+	// buf.Write(resp.Bytes())
 	defer resp.Release()
 
 	if b.verbose {
@@ -174,7 +174,7 @@ func (b *Bot) sendFiles(method string, files map[string]File, params map[string]
 		ReleaseBuffer(buf)
 		return nil, err
 	}
-	
+
 	resp, err := req.Do()
 	if err != nil {
 		err = wrapError(err)
@@ -302,7 +302,7 @@ type extracts struct {
 // in errors.go, it will be prefixed with `unknown` keyword.
 func extractOk(data *bytes.Buffer) error {
 	var e extracts
-	if err := json.Unmarshal(data.Bytes(), &e); err != nil {
+	if err := defaultJson.Unmarshal(data.Bytes(), &e); err != nil {
 		return err
 	}
 	if e.Ok {
@@ -348,9 +348,9 @@ func extractOk(data *bytes.Buffer) error {
 func extractMessage(data *bytes.Buffer) (*Message, error) {
 	defer pool.ReleaseBuffer(data)
 	var resp Response[*Message]
-	if err := json.Unmarshal(data.Bytes(), &resp); err != nil {
+	if err := defaultJson.Unmarshal(data.Bytes(), &resp); err != nil {
 		var resp Response[bool]
-		if err := json.NewDecoder(data).Decode(&resp); err != nil {
+		if err := defaultJson.NewDecoder(data).Decode(&resp); err != nil {
 			return nil, wrapError(err)
 		}
 		if resp.Result {

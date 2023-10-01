@@ -20,7 +20,6 @@ func NewFastHTTPClient() NetFrame {
 			Dial:                          fasthttpproxy.FasthttpProxyHTTPDialer(),
 		},
 	}
-	f.json = json.NewGoJson()
 	return f
 }
 
