@@ -248,14 +248,14 @@ func (t *InlineButton) MarshalJSON() ([]byte, error) {
 	type IB InlineButton
 
 	if t.Login != nil || t.WebApp != nil {
-		return json.Marshal(struct {
+		return defaultJson.Marshal(struct {
 			IB
 			InlineQueryChat string `json:"switch_inline_query_current_chat,omitempty"`
 		}{
 			IB: IB(*t),
 		})
 	}
-	return json.Marshal(IB(*t))
+	return defaultJson.Marshal(IB(*t))
 }
 
 // With returns a copy of the button with data.

@@ -2,8 +2,6 @@ package telebot
 
 import (
 	"fmt"
-
-	"github.com/goccy/go-json"
 )
 
 // Query is an incoming inline query. When the user sends
@@ -103,7 +101,7 @@ func (results Results) MarshalJSON() ([]byte, error) {
 		}
 	}
 
-	return json.Marshal([]Result(results))
+	return defaultJson.Marshal([]Result(results))
 }
 
 func inferIQR(result Result) error {

@@ -12,7 +12,6 @@ import (
 	"github.com/3JoB/ulib/litefmt"
 	"github.com/3JoB/ulib/pool"
 	"github.com/3JoB/unsafeConvert"
-	"github.com/goccy/go-json"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 )
@@ -364,12 +363,12 @@ func extractMessage(data *bytes.Buffer) (*Message, error) {
 func indent(b []byte) string {
 	buf := pool.NewBuffer()
 	defer ReleaseBuffer(buf)
-	_ = json.Indent(buf, b, "", "  ")
+	_ = defaultJson.Indent(buf, b, "", "  ")
 	return buf.String()
 }
 
 func verbose(method string, payload any, data *bytes.Buffer) {
-	body, _ := json.Marshal(payload)
+	body, _ := defaultJson.Marshal(payload)
 	body = bytes.ReplaceAll(body, unsafeConvert.ByteSlice(`\"`), unsafeConvert.ByteSlice(`"`))
 	body = bytes.ReplaceAll(body, unsafeConvert.ByteSlice(`"{`), unsafeConvert.ByteSlice(`{`))
 	body = bytes.ReplaceAll(body, unsafeConvert.ByteSlice(`}"`), unsafeConvert.ByteSlice(`}`))

@@ -2,8 +2,6 @@ package telebot
 
 import (
 	"time"
-
-	"github.com/goccy/go-json"
 )
 
 // Rights is a list of privileges available to chat members.
@@ -301,6 +299,6 @@ func (b *Bot) SetDefaultRights(rights Rights, forChannels bool) error {
 }
 
 func embedRights(p map[string]any, rights Rights) {
-	data, _ := json.Marshal(rights)
-	_ = json.Unmarshal(data, &p)
+	data, _ := defaultJson.Marshal(rights)
+	_ = defaultJson.Unmarshal(data, &p)
 }

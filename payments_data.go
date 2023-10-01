@@ -10,7 +10,7 @@ const dataCurrencies = `{"AED":{"code":"AED","title":"United Arab Emirates Dirha
 var SupportedCurrencies = make(map[string]Currency)
 
 func init() {
-	err := json.Unmarshal(unsafeConvert.ByteSlice(dataCurrencies), &SupportedCurrencies)
+	err := defaultJson.Unmarshal(unsafeConvert.ByteSlice(dataCurrencies), &SupportedCurrencies)
 	if err != nil {
 		panic(err)
 	}
