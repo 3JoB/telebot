@@ -4,7 +4,7 @@ go 1.21.1
 
 require (
 	github.com/3JoB/resty-ilo v1.2.0
-	github.com/3JoB/ulib v1.36.1
+	github.com/3JoB/ulib v1.36.2
 	github.com/3JoB/unsafeConvert v1.6.0
 	github.com/bytedance/sonic v1.10.1
 	github.com/cornelk/hashmap v1.0.8
@@ -28,7 +28,6 @@ require (
 	github.com/andybalholm/brotli v1.0.5 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20230717121745-296ad89f973d // indirect
 	github.com/chenzhuoyu/iasm v0.9.0 // indirect
-	github.com/dav009/flash v0.0.0-20171215081313-a4f0c2e0fc62 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/fatih/color v1.13.0 // indirect
 	github.com/fsnotify/fsnotify v1.6.0 // indirect

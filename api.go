@@ -10,12 +10,11 @@ import (
 	"time"
 
 	"github.com/3JoB/ulib/litefmt"
+	"github.com/3JoB/ulib/pool"
 	"github.com/3JoB/unsafeConvert"
 	"github.com/goccy/go-json"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
-
-	"github.com/3JoB/telebot/internal/pool"
 )
 
 // Raw lets you call any method of Bot API manually.
@@ -26,37 +25,48 @@ import (
 //
 //		Example:
 //	    	Raw[int](b, "getMe")
-func Raw[T any](b *Bot, method string, payload ...T) ([]byte, error) {
+//
+// It now returns a *bytes.Buffer, which will be automatically returned to the
+// pool most of the time, but if you call a method such as Raw alone that returns
+// a Buffer pointer, please use the ReleaseBuffer() method to save it back to the pool.
+func Raw[T any](b *Bot, method string, payload ...T) (*bytes.Buffer, error) {
 	url := b.buildUrl(method)
 	req := b.client.AcquireRequest()
+	buf := pool.NewBuffer()
+	req.SetRequestURI(url)
+	req.SetWriter(buf)
 	req.MethodPOST()
-
 	if len(payload) > 0 {
 		if err := req.WriteJson(payload[0]); err != nil {
+			ReleaseBuffer(buf)
 			return nil, err
 		}
 	}
 
-	req.SetRequestURI(url)
-
 	resp, err := req.Do()
 	if err != nil {
+		ReleaseBuffer(buf)
 		return nil, wrapError(err)
 	}
+	//buf.Write(resp.Bytes())
 	defer resp.Release()
 
 	if b.verbose {
-		verbose(method, payload, resp.Bytes())
+		verbose(method, payload, buf)
 	}
 
 	// returning data as well
-	return resp.Bytes(), extractOk(resp.Bytes())
+	return buf, extractOk(buf)
 }
 
 // Raw lets you call any method of Bot API manually.
 // It also handles API errors, so you only need to unwrap
 // result field from json data.
-func (b *Bot) Raw(method string, payload ...any) ([]byte, error) {
+//
+// It now returns a *bytes.Buffer, which will be automatically returned to the
+// pool most of the time, but if you call a method such as Raw alone that returns
+// a Buffer pointer, please use the ReleaseBuffer() method to save it back to the pool.
+func (b *Bot) Raw(method string, payload ...any) (*bytes.Buffer, error) {
 	url := b.buildUrl(method)
 
 	// Cancel the request immediately without waiting for the timeout  when bot is about to stop.
@@ -74,7 +84,12 @@ func (b *Bot) Raw(method string, payload ...any) ([]byte, error) {
 		case <-exit:
 		}
 	}()*/
+	buf := pool.NewBuffer()
 	req := b.client.AcquireRequest()
+
+	req.SetRequestURI(url)
+	req.MethodPOST()
+
 	if len(payload) > 0 {
 		if payload[0] != nil {
 			if err := req.WriteJson(payload[0]); err != nil {
@@ -83,26 +98,26 @@ func (b *Bot) Raw(method string, payload ...any) ([]byte, error) {
 		}
 	}
 
-	req.SetRequestURI(url)
-	req.MethodPOST()
 	resp, err := req.Do()
 	if err != nil {
+		ReleaseBuffer(buf)
 		return nil, wrapError(err)
 	}
+	buf.Write(resp.Bytes())
 	defer resp.Release()
 	if b.verbose {
-		verbose(method, payload, resp.Bytes())
+		verbose(method, payload, buf)
 	}
 
 	// returning data as well
-	return resp.Bytes(), extractOk(resp.Bytes())
+	return buf, extractOk(buf)
 }
 
 func (b *Bot) buildUrl(method string) string {
 	return litefmt.PSprint(b.URL, "/bot", b.Token, "/", method)
 }
 
-func (b *Bot) sendFiles(method string, files map[string]File, params map[string]any) ([]byte, error) {
+func (b *Bot) sendFiles(method string, files map[string]File, params map[string]any) (*bytes.Buffer, error) {
 	rawFiles := make(map[string]any)
 	for name, f := range files {
 		switch {
@@ -148,19 +163,23 @@ func (b *Bot) sendFiles(method string, files map[string]File, params map[string]
 	}()
 
 	url := b.buildUrl(method)
-	// url := b.URL + "/bot" + b.Token + "/" + method
 	req := b.client.AcquireRequest()
+	req.SetRequestURI(url)
+	buf := pool.NewBuffer()
+
 	if err := req.WriteFile(writer.FormDataContentType(), pipeReader); err != nil {
 		err = wrapError(err)
 		_ = pipeReader.CloseWithError(err)
+		req.Release()
+		ReleaseBuffer(buf)
 		return nil, err
 	}
-
-	req.SetRequestURI(url)
+	
 	resp, err := req.Do()
 	if err != nil {
 		err = wrapError(err)
 		_ = pipeReader.CloseWithError(err)
+		ReleaseBuffer(buf)
 		return nil, err
 	}
 	defer resp.Release()
@@ -169,7 +188,7 @@ func (b *Bot) sendFiles(method string, files map[string]File, params map[string]
 		return nil, ErrInternal
 	}
 
-	return resp.Bytes(), extractOk(resp.Bytes())
+	return buf, extractOk(buf)
 }
 
 func addFileToWriter(writer *multipart.Writer, filename, field string, file any) error {
@@ -234,14 +253,16 @@ func (b *Bot) sendMedia(media Media, params map[string]any, files map[string]Fil
 
 func (b *Bot) getMe() (*User, error) {
 	data, err := Raw[bool](b, "getMe")
+	defer ReleaseBuffer(data)
 	if err != nil {
 		return nil, err
 	}
 
 	var resp Response[*User]
-	if err := b.json.Unmarshal(data, &resp); err != nil {
+	if err := b.json.Unmarshal(data.Bytes(), &resp); err != nil {
 		return nil, wrapError(err)
 	}
+
 	return resp.Result, nil
 }
 
@@ -250,8 +271,7 @@ func (b *Bot) getUpdates(offset, limit int, timeout time.Duration, allowed []str
 		"offset":  offset,
 		"timeout": int(timeout / time.Second),
 	}
-	data, _ := b.json.Marshal(allowed)
-	params["allowed_updates"] = unsafeConvert.StringSlice(data)
+	params["allowed_updates"] = allowed
 
 	if limit != 0 {
 		params["limit"] = limit
@@ -261,10 +281,10 @@ func (b *Bot) getUpdates(offset, limit int, timeout time.Duration, allowed []str
 	if err != nil {
 		return nil, err
 	}
+	defer ReleaseBuffer(data)
 
 	var resp Response[[]*Update]
-
-	if err := b.json.Unmarshal(data, &resp); err != nil {
+	if err := b.json.NewDecoder(data).Decode(&resp); err != nil {
 		return nil, wrapError(err)
 	}
 	return resp.Result, nil
@@ -280,13 +300,10 @@ type extracts struct {
 // extractOk checks given result for error. If result is ok returns nil.
 // In other cases it extracts API error. If error is not presented
 // in errors.go, it will be prefixed with `unknown` keyword.
-func extractOk(data []byte) error {
+func extractOk(data *bytes.Buffer) error {
 	var e extracts
-	read := pool.NewBuffer()
-	_, _ = read.Write(data)
-	defer read.Close()
-	if json.NewDecoder(read).Decode(&e) != nil {
-		return nil // FIXME
+	if err := json.Unmarshal(data.Bytes(), &e); err != nil {
+		return err
 	}
 	if e.Ok {
 		return nil
@@ -328,11 +345,12 @@ func extractOk(data []byte) error {
 
 // extractMessage extracts common Message result from given data.
 // Should be called after extractOk or b.Raw() to handle possible errors.
-func extractMessage(data []byte) (*Message, error) {
+func extractMessage(data *bytes.Buffer) (*Message, error) {
+	defer pool.ReleaseBuffer(data)
 	var resp Response[*Message]
-	if err := json.Unmarshal(data, &resp); err != nil {
+	if err := json.Unmarshal(data.Bytes(), &resp); err != nil {
 		var resp Response[bool]
-		if err := json.Unmarshal(data, &resp); err != nil {
+		if err := json.NewDecoder(data).Decode(&resp); err != nil {
 			return nil, wrapError(err)
 		}
 		if resp.Result {
@@ -343,21 +361,21 @@ func extractMessage(data []byte) (*Message, error) {
 	return resp.Result, nil
 }
 
-func verbose(method string, payload any, data []byte) {
+func indent(b []byte) string {
+	buf := pool.NewBuffer()
+	defer ReleaseBuffer(buf)
+	_ = json.Indent(buf, b, "", "  ")
+	return buf.String()
+}
+
+func verbose(method string, payload any, data *bytes.Buffer) {
 	body, _ := json.Marshal(payload)
 	body = bytes.ReplaceAll(body, unsafeConvert.ByteSlice(`\"`), unsafeConvert.ByteSlice(`"`))
 	body = bytes.ReplaceAll(body, unsafeConvert.ByteSlice(`"{`), unsafeConvert.ByteSlice(`{`))
 	body = bytes.ReplaceAll(body, unsafeConvert.ByteSlice(`}"`), unsafeConvert.ByteSlice(`}`))
 
-	indent := func(b []byte) string {
-		var buf bytes.Buffer
-		defer buf.Reset()
-		_ = json.Indent(&buf, b, "", "  ")
-		return buf.String()
-	}
-
 	log.Printf(
 		"[verbose] telebot: sent request\nMethod: %v\nParams: %v\nResponse: %v",
-		method, indent(body), indent(data),
+		method, indent(body), indent(data.Bytes()),
 	)
 }

@@ -51,12 +51,13 @@ func (b *Bot) GameScores(user Recipient, msg Editable) ([]GameHighScore, error) 
 	}
 
 	data, err := Raw(b, "getGameHighScores", params)
+	defer ReleaseBuffer(data)
 	if err != nil {
 		return nil, err
 	}
 
 	var resp Response[[]GameHighScore]
-	if err := b.json.Unmarshal(data, &resp); err != nil {
+	if err := b.json.NewDecoder(data).Decode(&resp); err != nil {
 		return nil, err
 	}
 	return resp.Result, nil

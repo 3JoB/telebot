@@ -1,7 +1,5 @@
 package telebot
 
-import "github.com/goccy/go-json"
-
 // Command represents a bot command.
 type Command struct {
 	// Text is a text of the command, 1-32 characters.
@@ -42,12 +40,13 @@ type CommandScope struct {
 func (b *Bot) Commands(opts ...any) ([]Command, error) {
 	params := extractCommandsParams(opts...)
 	data, err := Raw(b, "getMyCommands", params)
+	defer ReleaseBuffer(data)
 	if err != nil {
 		return nil, err
 	}
 
 	var resp Response[[]Command]
-	if err := json.Unmarshal(data, &resp); err != nil {
+	if err := b.json.NewDecoder(data).Decode(&resp); err != nil {
 		return nil, wrapError(err)
 	}
 	return resp.Result, nil
@@ -56,14 +55,16 @@ func (b *Bot) Commands(opts ...any) ([]Command, error) {
 // SetCommands changes the list of the bot's commands.
 func (b *Bot) SetCommands(opts ...any) error {
 	params := extractCommandsParams(opts...)
-	_, err := Raw(b, "setMyCommands", params)
+	r, err := Raw(b, "setMyCommands", params)
+	ReleaseBuffer(r)
 	return err
 }
 
 // DeleteCommands deletes the list of the bot's commands for the given scope and user language.
 func (b *Bot) DeleteCommands(opts ...any) error {
 	params := extractCommandsParams(opts...)
-	_, err := Raw(b, "deleteMyCommands", params)
+	r, err := Raw(b, "deleteMyCommands", params)
+	ReleaseBuffer(r)
 	return err
 }
 

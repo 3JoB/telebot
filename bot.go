@@ -10,16 +10,15 @@ import (
 	"sync"
 
 	"github.com/3JoB/ulib/litefmt"
+	"github.com/3JoB/ulib/pool"
 	"github.com/3JoB/unsafeConvert"
 
 	"github.com/3JoB/telebot/internal/net"
-	"github.com/3JoB/telebot/internal/pool"
 	"github.com/3JoB/telebot/json"
 )
 
 var (
-	ctxPool    sync.Pool
-	updatePool sync.Pool
+	ctxPool sync.Pool
 )
 
 // NewBot does try to build a Bot with token `token`, which
@@ -193,11 +192,11 @@ func (b *Bot) Use(middleware ...MiddlewareFunc) {
 //
 // Example:
 //
-//	b.Handle("/start", func (c tele.Context) error {
+//	b.Handle("/start", func (c *tele.Context) error {
 //		return c.Reply("Hello!")
 //	})
 //
-//	b.Handle(&inlineButton, func (c tele.Context) error {
+//	b.Handle(&inlineButton, func (c *tele.Context) error {
 //		return c.Respond(&tele.CallbackResponse{Text: "Hello!"})
 //	})
 //
@@ -341,8 +340,9 @@ func (b *Bot) GetMyDescription(lang string) (string, error) {
 	if r, err := Raw(b, "getMyDescription", d); err != nil {
 		return "", err
 	} else {
+		defer ReleaseBuffer(r)
 		var resp Response[Description]
-		err := b.json.Unmarshal(r, &resp)
+		err := b.json.NewDecoder(r).Decode(&resp)
 		return resp.Result.Description, err
 	}
 }
@@ -356,8 +356,9 @@ func (b *Bot) GetMyShortDescription(lang string) (string, error) {
 	if r, err := Raw(b, "getMyShortDescription", d); err != nil {
 		return "", err
 	} else {
+		defer ReleaseBuffer(r)
 		var resp Response[ShortDescription]
-		err := b.json.Unmarshal(r, &resp)
+		err := b.json.NewDecoder(r).Decode(&resp)
 		return resp.Result.ShortDescription, err
 	}
 }
@@ -369,9 +370,11 @@ func (b *Bot) SetDescription(description, lang string) error {
 	if lang != "" {
 		d["language_code"] = lang
 	}
-	if _, err := Raw(b, "setMyDescription", d); err != nil {
+	r, err := Raw(b, "setMyDescription", d)
+	if err != nil {
 		return err
 	}
+	ReleaseBuffer(r)
 	return nil
 }
 
@@ -459,9 +462,10 @@ func (b *Bot) SendAlbum(to Recipient, a Album, opts ...any) ([]Message, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer ReleaseBuffer(data)
 
 	var resp Response[[]Message]
-	if err := b.json.Unmarshal(data, &resp); err != nil {
+	if err := b.json.NewDecoder(data).Decode(&resp); err != nil {
 		return nil, wrapError(err)
 	}
 
@@ -642,12 +646,12 @@ func (b *Bot) EditReplyMarkup(msg Editable, markup *ReplyMarkup) (*Message, erro
 	data, _ := b.json.Marshal(markup)
 	params["reply_markup"] = unsafeConvert.StringSlice(data)
 
-	data, err := Raw(b, "editMessageReplyMarkup", params)
+	datas, err := Raw(b, "editMessageReplyMarkup", params)
 	if err != nil {
 		return nil, err
 	}
 
-	return extractMessage(data)
+	return extractMessage(datas)
 }
 
 // EditCaption edits already sent photo caption with known recipient and message id.
@@ -760,12 +764,12 @@ func (b *Bot) EditMedia(msg Editable, media Inputtable, opts ...any) (*Message, 
 		params["message_id"] = msgID
 	}
 
-	data, err := b.sendFiles("editMessageMedia", files, params)
+	datas, err := b.sendFiles("editMessageMedia", files, params)
 	if err != nil {
 		return nil, err
 	}
 
-	return extractMessage(data)
+	return extractMessage(datas)
 }
 
 // Delete removes the message, including service messages.
@@ -787,7 +791,8 @@ func (b *Bot) Delete(msg Editable) error {
 		"message_id": msgID,
 	}
 
-	_, err := Raw(b, "deleteMessage", params)
+	r, err := Raw(b, "deleteMessage", params)
+	ReleaseBuffer(r)
 	return err
 }
 
@@ -888,7 +893,8 @@ func (b *Bot) Respond(c *Callback, resp ...*CallbackResponse) error {
 	}
 
 	r.CallbackID = c.ID
-	_, err := Raw(b, "answerCallbackQuery", r)
+	d, err := Raw(b, "answerCallbackQuery", r)
+	ReleaseBuffer(d)
 	return err
 }
 
@@ -917,12 +923,13 @@ func (b *Bot) AnswerWebApp(query *Query, r Result) (*WebAppMessage, error) {
 	}
 
 	data, err := Raw(b, "answerWebAppQuery", params)
+	defer ReleaseBuffer(data)
 	if err != nil {
 		return nil, err
 	}
 
 	var resp Response[*WebAppMessage]
-	if err := b.json.Unmarshal(data, &resp); err != nil {
+	if err := b.json.NewDecoder(data).Decode(&resp); err != nil {
 		return nil, wrapError(err)
 	}
 
@@ -940,12 +947,13 @@ func (b *Bot) FileByID(fileID string) (File, error) {
 	}
 
 	data, err := Raw(b, "getFile", params)
+	defer ReleaseBuffer(data)
 	if err != nil {
 		return File{}, err
 	}
 
 	var resp Response[File]
-	if err := b.json.Unmarshal(data, &resp); err != nil {
+	if err := b.json.NewDecoder(data).Decode(&resp); err != nil {
 		return File{}, wrapError(err)
 	}
 	return resp.Result, nil
@@ -1003,20 +1011,22 @@ func (b *Bot) File(file *File) (io.ReadCloser, error) {
 
 	url := b.buildFileUrl(f.FilePath)
 	file.FilePath = f.FilePath // saving file path
-	buffer := pool.NewBuffer()
+	buf := pool.NewBufferClose()
 	req := b.client.AcquireRequest()
 	req.MethodGET()
 	req.SetRequestURI(url)
-	req.SetWriter(buffer)
 	resp, err := req.Do()
 	if err != nil {
+		buf.Close()
 		return nil, wrapError(err)
 	}
+	buf.Write(resp.Bytes())
+
 	defer resp.Release()
 	if !resp.IsStatusCode(200) {
 		return nil, fmt.Errorf("telebot: expected status 200 but got %v", resp.StatusCode())
 	}
-	return buffer, nil
+	return buf, nil
 }
 
 // StopLiveLocation stops broadcasting live message location
@@ -1038,8 +1048,9 @@ func (b *Bot) StopLiveLocation(msg Editable, opts ...any) (*Message, error) {
 	sendOpts := extractOptions(opts)
 	b.embedSendOptions(params, sendOpts)
 
-	data, err := Raw(b, "stopMessageLiveLocation", params)
+	data, err := b.Raw("stopMessageLiveLocation", params)
 	if err != nil {
+		ReleaseBuffer(data)
 		return nil, err
 	}
 
@@ -1063,12 +1074,13 @@ func (b *Bot) StopPoll(msg Editable, opts ...any) (*Poll, error) {
 	b.embedSendOptions(params, sendOpts)
 
 	data, err := Raw(b, "stopPoll", params)
+	defer ReleaseBuffer(data)
 	if err != nil {
 		return nil, err
 	}
 
 	var resp Response[*Poll]
-	if err := b.json.Unmarshal(data, &resp); err != nil {
+	if err := b.json.NewDecoder(data).Decode(&resp); err != nil {
 		return nil, wrapError(err)
 	}
 	return resp.Result, nil
@@ -1080,7 +1092,8 @@ func (b *Bot) Leave(chat *Chat) error {
 		"chat_id": chat.Recipient(),
 	}
 
-	_, err := Raw(b, "leaveChat", params)
+	r, err := Raw(b, "leaveChat", params)
+	ReleaseBuffer(r)
 	return err
 }
 
@@ -1099,7 +1112,8 @@ func (b *Bot) Pin(msg Editable, opts ...any) error {
 	sendOpts := extractOptions(opts)
 	b.embedSendOptions(params, sendOpts)
 
-	_, err := Raw(b, "pinChatMessage", params)
+	r, err := Raw(b, "pinChatMessage", params)
+	ReleaseBuffer(r)
 	return err
 }
 
@@ -1113,7 +1127,8 @@ func (b *Bot) Unpin(chat *Chat, messageID ...int) error {
 		params["message_id"] = messageID[0]
 	}
 
-	_, err := Raw(b, "unpinChatMessage", params)
+	r, err := Raw(b, "unpinChatMessage", params)
+	ReleaseBuffer(r)
 	return err
 }
 
@@ -1124,7 +1139,8 @@ func (b *Bot) UnpinAll(chat *Chat) error {
 		"chat_id": chat.Recipient(),
 	}
 
-	_, err := Raw(b, "unpinAllChatMessages", params)
+	r, err := Raw(b, "unpinAllChatMessages", params)
+	ReleaseBuffer(r)
 	return err
 }
 
@@ -1143,12 +1159,13 @@ func (b *Bot) ChatByUsername(name string) (*Chat, error) {
 	}
 
 	data, err := Raw(b, "getChat", params)
+	defer ReleaseBuffer(data)
 	if err != nil {
 		return nil, err
 	}
 
 	var resp Response[*Chat]
-	if err := b.json.Unmarshal(data, &resp); err != nil {
+	if err := b.json.NewDecoder(data).Decode(&resp); err != nil {
 		return nil, wrapError(err)
 	}
 	if resp.Result.Type == ChatChannel && resp.Result.Username == "" {
@@ -1164,12 +1181,13 @@ func (b *Bot) ProfilePhotosOf(user *User) ([]Photo, error) {
 	}
 
 	data, err := Raw(b, "getUserProfilePhotos", params)
+	defer ReleaseBuffer(data)
 	if err != nil {
 		return nil, err
 	}
 
 	var resp Response[ProfileStr]
-	if err := b.json.Unmarshal(data, &resp); err != nil {
+	if err := b.json.NewDecoder(data).Decode(&resp); err != nil {
 		return nil, wrapError(err)
 	}
 	return resp.Result.Photos, nil
@@ -1183,12 +1201,13 @@ func (b *Bot) ChatMemberOf(chat, user Recipient) (*ChatMember, error) {
 	}
 
 	data, err := Raw(b, "getChatMember", params)
+	defer ReleaseBuffer(data)
 	if err != nil {
 		return nil, err
 	}
 
 	var resp Response[*ChatMember]
-	if err := b.json.Unmarshal(data, &resp); err != nil {
+	if err := b.json.NewDecoder(data).Decode(&resp); err != nil {
 		return nil, wrapError(err)
 	}
 	return resp.Result, nil
@@ -1202,12 +1221,13 @@ func (b *Bot) MenuButton(chat *User) (*MenuButton, error) {
 	}
 
 	data, err := Raw(b, "getChatMenuButton", params)
+	defer ReleaseBuffer(data)
 	if err != nil {
 		return nil, err
 	}
 
 	var resp Response[*MenuButton]
-	if err := b.json.Unmarshal(data, &resp); err != nil {
+	if err := b.json.NewDecoder(data).Decode(&resp); err != nil {
 		return nil, wrapError(err)
 	}
 	return resp.Result, nil
@@ -1232,19 +1252,21 @@ func (b *Bot) SetMenuButton(chat *User, mb any) error {
 		params["menu_button"] = v
 	}
 
-	_, err := Raw(b, "setChatMenuButton", params)
+	r, err := Raw(b, "setChatMenuButton", params)
+	ReleaseBuffer(r)
 	return err
 }
 
 // Logout logs out from the cloud Bot API server before launching the bot locally.
 func (b *Bot) Logout() (bool, error) {
 	data, err := Raw[bool](b, "logOut")
+	defer ReleaseBuffer(data)
 	if err != nil {
 		return false, err
 	}
 
 	var resp Response[bool]
-	if err := b.json.Unmarshal(data, &resp); err != nil {
+	if err := b.json.NewDecoder(data).Decode(&resp); err != nil {
 		return false, wrapError(err)
 	}
 
@@ -1254,12 +1276,13 @@ func (b *Bot) Logout() (bool, error) {
 // Close closes the bot instance before moving it from one local server to another.
 func (b *Bot) Close() (bool, error) {
 	data, err := Raw[bool](b, "close")
+	defer ReleaseBuffer(data)
 	if err != nil {
 		return false, err
 	}
 
 	var resp Response[bool]
-	if err := b.json.Unmarshal(data, &resp); err != nil {
+	if err := b.json.NewDecoder(data).Decode(&resp); err != nil {
 		return false, wrapError(err)
 	}
 

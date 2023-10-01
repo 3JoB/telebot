@@ -175,12 +175,13 @@ func (h *Webhook) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 // Webhook returns the current webhook status.
 func (b *Bot) Webhook() (*Webhook, error) {
 	data, err := Raw[bool](b, "getWebhookInfo")
+	defer ReleaseBuffer(data)
 	if err != nil {
 		return nil, err
 	}
 
 	var resp Response[Webhook]
-	if err := b.json.Unmarshal(data, &resp); err != nil {
+	if err := b.json.NewDecoder(data).Decode(&resp); err != nil {
 		return nil, wrapError(err)
 	}
 	return &resp.Result, nil

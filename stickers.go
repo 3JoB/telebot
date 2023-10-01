@@ -57,12 +57,13 @@ func (b *Bot) UploadSticker(to Recipient, png *File) (*File, error) {
 	}
 
 	data, err := b.sendFiles("uploadStickerFile", files, params)
+	defer ReleaseBuffer(data)
 	if err != nil {
 		return nil, err
 	}
 
 	var resp Response[File]
-	if err := b.json.Unmarshal(data, &resp); err != nil {
+	if err := b.json.NewDecoder(data).Decode(&resp); err != nil {
 		return nil, wrapError(err)
 	}
 	return &resp.Result, nil
@@ -71,12 +72,13 @@ func (b *Bot) UploadSticker(to Recipient, png *File) (*File, error) {
 // StickerSet returns a sticker set on success.
 func (b *Bot) StickerSet(name string) (*StickerSet, error) {
 	data, err := Raw(b, "getStickerSet", map[string]string{"name": name})
+	defer ReleaseBuffer(data)
 	if err != nil {
 		return nil, err
 	}
 
 	var resp Response[*StickerSet]
-	if err := b.json.Unmarshal(data, &resp); err != nil {
+	if err := b.json.NewDecoder(data).Decode(&resp); err != nil {
 		return nil, wrapError(err)
 	}
 	return resp.Result, nil
@@ -108,13 +110,15 @@ func (b *Bot) CreateStickerSet(to Recipient, s StickerSet) error {
 		params["mask_position"] = unsafeConvert.StringSlice(data)
 	}
 
-	_, err := b.sendFiles("createNewStickerSet", files, params)
+	r, err := b.sendFiles("createNewStickerSet", files, params)
+	ReleaseBuffer(r)
 	return err
 }
 
 // Use this method to delete a sticker set that was created by the bot. Returns True on success.
 func (b *Bot) DeleteStickerSet(name string) error {
-	_, err := Raw(b, "deleteStickerSet", map[string]string{"name": name})
+	r, err := Raw(b, "deleteStickerSet", map[string]string{"name": name})
+	ReleaseBuffer(r)
 	return err
 }
 
@@ -140,7 +144,8 @@ func (b *Bot) AddSticker(to Recipient, s StickerSet) error {
 		params["mask_position"] = unsafeConvert.StringSlice(data)
 	}
 
-	_, err := b.sendFiles("addStickerToSet", files, params)
+	r, err := b.sendFiles("addStickerToSet", files, params)
+	ReleaseBuffer(r)
 	return err
 }
 
@@ -188,19 +193,18 @@ func (b *Bot) SetStickerSetThumbnail(to Recipient, s StickerSet) error {
 
 // CustomEmojiStickers returns the information about custom emoji stickers by their ids.
 func (b *Bot) CustomEmojiStickers(ids []string) ([]Sticker, error) {
-	data, _ := b.json.Marshal(ids)
-
-	params := map[string]string{
-		"custom_emoji_ids": unsafeConvert.StringSlice(data),
+	params := map[string][]string{
+		"custom_emoji_ids": ids,
 	}
 
 	data, err := Raw(b, "getCustomEmojiStickers", params)
+	defer ReleaseBuffer(data)
 	if err != nil {
 		return nil, err
 	}
 
 	var resp Response[[]Sticker]
-	if err := b.json.Unmarshal(data, &resp); err != nil {
+	if err := b.json.NewDecoder(data).Decode(&resp); err != nil {
 		return nil, wrapError(err)
 	}
 	return resp.Result, nil

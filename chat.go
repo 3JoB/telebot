@@ -260,12 +260,13 @@ func (b *Bot) InviteLink(chat *Chat) (string, error) {
 	}
 
 	data, err := Raw(b, "exportChatInviteLink", params)
+	defer ReleaseBuffer(data)
 	if err != nil {
 		return "", err
 	}
 
 	var resp Response[string]
-	if err := b.json.Unmarshal(data, &resp); err != nil {
+	if err := b.json.NewDecoder(data).Decode(&resp); err != nil {
 		return "", wrapError(err)
 	}
 	return resp.Result, nil
@@ -290,12 +291,13 @@ func (b *Bot) CreateInviteLink(chat Recipient, link *ChatInviteLink) (*ChatInvit
 	}
 
 	data, err := Raw(b, "createChatInviteLink", params)
+	defer ReleaseBuffer(data)
 	if err != nil {
 		return nil, err
 	}
 
 	var resp Response[ChatInviteLink]
-	if err := b.json.Unmarshal(data, &resp); err != nil {
+	if err := b.json.NewDecoder(data).Decode(&resp); err != nil {
 		return nil, wrapError(err)
 	}
 
@@ -327,7 +329,7 @@ func (b *Bot) EditInviteLink(chat Recipient, link *ChatInviteLink) (*ChatInviteL
 	}
 
 	var resp Response[ChatInviteLink]
-	if err := b.json.Unmarshal(data, &resp); err != nil {
+	if err := b.json.NewDecoder(data).Decode(&resp); err != nil {
 		return nil, wrapError(err)
 	}
 
@@ -342,12 +344,13 @@ func (b *Bot) RevokeInviteLink(chat Recipient, link string) (*ChatInviteLink, er
 	}
 
 	data, err := Raw(b, "revokeChatInviteLink", params)
+	defer ReleaseBuffer(data)
 	if err != nil {
 		return nil, err
 	}
 
 	var resp Response[ChatInviteLink]
-	if err := b.json.Unmarshal(data, &resp); err != nil {
+	if err := b.json.NewDecoder(data).Decode(&resp); err != nil {
 		return nil, wrapError(err)
 	}
 
@@ -362,6 +365,7 @@ func (b *Bot) ApproveJoinRequest(chat Recipient, user *User) error {
 	}
 
 	data, err := Raw(b, "approveChatJoinRequest", params)
+	defer ReleaseBuffer(data)
 	if err != nil {
 		return err
 	}
@@ -377,6 +381,7 @@ func (b *Bot) DeclineJoinRequest(chat Recipient, user *User) error {
 	}
 
 	data, err := Raw(b, "declineChatJoinRequest", params)
+	defer ReleaseBuffer(data)
 	if err != nil {
 		return err
 	}
@@ -391,7 +396,8 @@ func (b *Bot) SetGroupTitle(chat *Chat, title string) error {
 		"title":   title,
 	}
 
-	_, err := Raw(b, "setChatTitle", params)
+	r, err := Raw(b, "setChatTitle", params)
+	ReleaseBuffer(r)
 	return err
 }
 

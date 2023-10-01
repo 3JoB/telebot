@@ -24,14 +24,6 @@ type Update struct {
 	ChatJoinRequest   *ChatJoinRequest  `json:"chat_join_request,omitempty"`
 }
 
-func AcquireUpdate() *Update {
-	u := updatePool.Get()
-	if u == nil {
-		return &Update{}
-	}
-	return u.(*Update)
-}
-
 func ReleaseUpdate(u *Update) {
 	u.Callback = nil
 	u.ChannelPost = nil
@@ -48,7 +40,6 @@ func ReleaseUpdate(u *Update) {
 	u.PreCheckoutQuery = nil
 	u.Query = nil
 	u.ShippingQuery = nil
-	updatePool.Put(u)
 }
 
 // ProcessUpdate processes a single incoming update.

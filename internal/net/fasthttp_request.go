@@ -1,22 +1,20 @@
 package net
 
 import (
+	"bytes"
 	"io"
 
-	"github.com/3JoB/ulib/keyword/flash"
-	"github.com/3JoB/unsafeConvert"
 	"github.com/valyala/fasthttp"
 
 	"github.com/3JoB/telebot/json"
 )
 
 type FastHTTPRequest struct {
-	bind     any
 	json     json.Json
+	w        *bytes.Buffer
 	client   *fasthttp.Client
 	request  *fasthttp.Request
 	response *fasthttp.Response
-	w        io.Writer
 }
 
 func (f *FastHTTPRequest) acquire() {
@@ -47,14 +45,12 @@ func (f *FastHTTPRequest) SetContentType(v string) {
 	f.request.Header.Set("Content-Type", v)
 }
 
-// If this value is set, when reading data, the Body will be written
-// directly to the set Writer interface without returning []byte.
-func (f *FastHTTPRequest) SetWriter(w io.Writer) {
+func (f *FastHTTPRequest) SetWriter(w *bytes.Buffer) {
 	f.w = w
 }
 
 func (f *FastHTTPRequest) Write(b []byte) {
-	_, _ = f.request.BodyWriter().Write(b)
+	f.request.BodyWriter().Write(b) //nolint:errcheck
 }
 
 func (f *FastHTTPRequest) WriteFile(content string, r io.Reader) error {
@@ -70,12 +66,6 @@ func (f *FastHTTPRequest) WriteJson(v any) error {
 	}
 	f.SetContentType("application/json")
 	return nil
-}
-
-func (f *FastHTTPRequest) SetUnmarshal(v any) {
-	if v != nil {
-		f.bind = v
-	}
 }
 
 // Body returns writer for populating request body.
@@ -95,30 +85,17 @@ func (f *FastHTTPRequest) Do() (NetResponse, error) {
 	resp := f.acquireResponse()
 	resp.code = f.response.StatusCode()
 
-	if f.bind != nil {
-		if f.isJson() {
-			err = f.json.Unmarshal(f.response.Body(), f.bind)
-			goto END
-		}
+	if f.w != nil {
+		f.w.Write(f.response.Body()) //nolint:errcheck
+	} else {
+		resp.body = f.response.Body()
 	}
-
-	if f.response.StatusCode() == 200 {
-		if f.w != nil {
-			err = f.response.BodyWriteTo(f.w)
-			goto END
-		}
-	}
-
-	resp.body = f.response.Body()
-
-END:
 	return resp, err
 }
 
 func (f *FastHTTPRequest) Reset() {
 	fasthttp.ReleaseRequest(f.request)
 	fasthttp.ReleaseResponse(f.response)
-	f.bind = nil
 	f.request = nil
 	f.response = nil
 	f.client = nil
@@ -128,8 +105,4 @@ func (f *FastHTTPRequest) Reset() {
 func (f *FastHTTPRequest) Release() {
 	f.Reset()
 	requestPool.Put(f)
-}
-
-func (f *FastHTTPRequest) isJson() bool {
-	return flash.Search(unsafeConvert.StringSlice(f.response.Header.Peek("Content-Type")), "json")
 }

@@ -170,12 +170,13 @@ func (c Currency) ToTotal(total float64) int {
 // CreateInvoiceLink creates a link for a payment invoice.
 func (b *Bot) CreateInvoiceLink(i Invoice) (string, error) {
 	data, err := Raw(b, "createInvoiceLink", i.params())
+	defer ReleaseBuffer(data)
 	if err != nil {
 		return "", err
 	}
 
 	var resp Response[string]
-	if err := b.json.Unmarshal(data, &resp); err != nil {
+	if err := b.json.NewDecoder(data).Decode(&resp); err != nil {
 		return "", wrapError(err)
 	}
 	return resp.Result, nil

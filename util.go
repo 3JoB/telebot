@@ -1,6 +1,12 @@
 package telebot
 
-import "strings"
+import (
+	"strings"
+
+	"github.com/3JoB/ulib/pool"
+)
+
+var ReleaseBuffer = pool.ReleaseBuffer
 
 func process(input string) (command, bot, payload string) {
 	/*Benchmark

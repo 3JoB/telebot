@@ -114,7 +114,8 @@ func (b *Bot) Ban(chat *Chat, member *ChatMember, revokeMessages ...bool) error 
 		params["revoke_messages"] = revokeMessages[0]
 	}
 
-	_, err := Raw(b, "kickChatMember", params)
+	r, err := Raw(b, "kickChatMember", params)
+	ReleaseBuffer(r)
 	return err
 }
 
@@ -130,7 +131,8 @@ func (b *Bot) Unban(chat *Chat, user *User, forBanned ...bool) error {
 		params["only_if_banned"] = forBanned[0]
 	}
 
-	_, err := Raw(b, "unbanChatMember", params)
+	r, err := Raw(b, "unbanChatMember", params)
+	ReleaseBuffer(r)
 	return err
 }
 
@@ -151,7 +153,8 @@ func (b *Bot) Restrict(chat *Chat, member *ChatMember) error {
 	}
 	embedRights(params, prv)
 
-	_, err := Raw(b, "restrictChatMember", params)
+	r, err := Raw(b, "restrictChatMember", params)
+	ReleaseBuffer(r)
 	return err
 }
 
@@ -175,7 +178,8 @@ func (b *Bot) Promote(chat *Chat, member *ChatMember) error {
 	}
 	embedRights(params, prv)
 
-	_, err := Raw(b, "promoteChatMember", params)
+	r, err := Raw(b, "promoteChatMember", params)
+	ReleaseBuffer(r)
 	return err
 }
 
@@ -192,12 +196,13 @@ func (b *Bot) AdminsOf(chat *Chat) ([]ChatMember, error) {
 	}
 
 	data, err := Raw(b, "getChatAdministrators", params)
+	defer ReleaseBuffer(data)
 	if err != nil {
 		return nil, err
 	}
 
 	var resp Response[[]ChatMember]
-	if err := b.json.Unmarshal(data, &resp); err != nil {
+	if err := b.json.NewDecoder(data).Decode(&resp); err != nil {
 		return nil, wrapError(err)
 	}
 	return resp.Result, nil
@@ -210,12 +215,13 @@ func (b *Bot) Len(chat *Chat) (int, error) {
 	}
 
 	data, err := Raw(b, "getChatMembersCount", params)
+	defer ReleaseBuffer(data)
 	if err != nil {
 		return 0, err
 	}
 
 	var resp Response[int]
-	if err := b.json.Unmarshal(data, &resp); err != nil {
+	if err := b.json.NewDecoder(data).Decode(&resp); err != nil {
 		return 0, wrapError(err)
 	}
 	return resp.Result, nil
@@ -230,7 +236,8 @@ func (b *Bot) SetAdminTitle(chat *Chat, user *User, title string) error {
 		"custom_title": title,
 	}
 
-	_, err := Raw(b, "setChatAdministratorCustomTitle", params)
+	r, err := Raw(b, "setChatAdministratorCustomTitle", params)
+	ReleaseBuffer(r)
 	return err
 }
 
@@ -243,7 +250,8 @@ func (b *Bot) BanSenderChat(chat *Chat, sender Recipient) error {
 		"sender_chat_id": sender.Recipient(),
 	}
 
-	_, err := Raw(b, "banChatSenderChat", params)
+	r, err := Raw(b, "banChatSenderChat", params)
+	ReleaseBuffer(r)
 	return err
 }
 
@@ -255,7 +263,8 @@ func (b *Bot) UnbanSenderChat(chat *Chat, sender Recipient) error {
 		"sender_chat_id": sender.Recipient(),
 	}
 
-	_, err := Raw(b, "unbanChatSenderChat", params)
+	r, err := Raw(b, "unbanChatSenderChat", params)
+	ReleaseBuffer(r)
 	return err
 }
 
@@ -266,12 +275,13 @@ func (b *Bot) DefaultRights(forChannels bool) (*Rights, error) {
 	}
 
 	data, err := Raw(b, "getMyDefaultAdministratorRights", params)
+	defer ReleaseBuffer(data)
 	if err != nil {
 		return nil, err
 	}
 
 	var resp Response[*Rights]
-	if err := b.json.Unmarshal(data, &resp); err != nil {
+	if err := b.json.NewDecoder(data).Decode(&resp); err != nil {
 		return nil, err
 	}
 	return resp.Result, nil
@@ -285,7 +295,8 @@ func (b *Bot) SetDefaultRights(rights Rights, forChannels bool) error {
 		"for_channels": forChannels,
 	}
 
-	_, err := Raw(b, "setMyDefaultAdministratorRights", params)
+	r, err := Raw(b, "setMyDefaultAdministratorRights", params)
+	ReleaseBuffer(r)
 	return err
 }
 

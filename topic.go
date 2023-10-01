@@ -37,7 +37,8 @@ func (b *Bot) CreateTopic(chat *Chat, forum *Topic) error {
 		params["icon_custom_emoji_id"] = forum.IconCustomEmojiID
 	}
 
-	_, err := Raw(b, "createForumTopic", params)
+	data, err := Raw(b, "createForumTopic", params)
+	ReleaseBuffer(data)
 	return err
 }
 
@@ -55,7 +56,8 @@ func (b *Bot) EditTopic(chat *Chat, forum *Topic) error {
 		params["icon_custom_emoji_id"] = forum.IconCustomEmojiID
 	}
 
-	_, err := Raw(b, "editForumTopic", params)
+	data, err := Raw(b, "editForumTopic", params)
+	ReleaseBuffer(data)
 	return err
 }
 
@@ -66,7 +68,8 @@ func (b *Bot) CloseTopic(chat *Chat, forum *Topic) error {
 		"message_thread_id": forum.ThreadID,
 	}
 
-	_, err := Raw(b, "closeForumTopic", params)
+	data, err := Raw(b, "closeForumTopic", params)
+	ReleaseBuffer(data)
 	return err
 }
 
@@ -77,7 +80,8 @@ func (b *Bot) ReopenTopic(chat *Chat, forum *Topic) error {
 		"message_thread_id": forum.ThreadID,
 	}
 
-	_, err := Raw(b, "reopenForumTopic", params)
+	data, err := Raw(b, "reopenForumTopic", params)
+	ReleaseBuffer(data)
 	return err
 }
 
@@ -88,7 +92,8 @@ func (b *Bot) DeleteTopic(chat *Chat, forum *Topic) error {
 		"message_thread_id": forum.ThreadID,
 	}
 
-	_, err := Raw(b, "deleteForumTopic", params)
+	data, err := Raw(b, "deleteForumTopic", params)
+	ReleaseBuffer(data)
 	return err
 }
 
@@ -99,7 +104,8 @@ func (b *Bot) UnpinAllTopicMessages(chat *Chat, forum *Topic) error {
 		"message_thread_id": forum.ThreadID,
 	}
 
-	_, err := Raw(b, "unpinAllForumTopicMessages", params)
+	data, err := Raw(b, "unpinAllForumTopicMessages", params)
+	ReleaseBuffer(data)
 	return err
 }
 
@@ -108,12 +114,13 @@ func (b *Bot) TopicIconStickers() ([]Sticker, error) {
 	params := make(map[string]any)
 
 	data, err := Raw(b, "getForumTopicIconStickers", params)
+	defer ReleaseBuffer(data)
 	if err != nil {
 		return nil, err
 	}
 
 	var resp Response[[]Sticker]
-	if err := b.json.Unmarshal(data, &resp); err != nil {
+	if err := b.json.NewDecoder(data).Decode(&resp); err != nil {
 		return nil, wrapError(err)
 	}
 	return resp.Result, nil

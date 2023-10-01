@@ -1,21 +1,20 @@
 package net
 
 import (
+	"bytes"
 	"io"
 
 	"github.com/3JoB/resty-ilo"
-	"github.com/3JoB/ulib/keyword/flash"
 
 	"github.com/3JoB/telebot/json"
 )
 
 type GoNetRequest struct {
-	bind   any
-	json   json.Json
 	uri    string
 	method string
+	json   json.Json
+	w      *bytes.Buffer
 	r      *resty.Request
-	w      io.Writer
 }
 
 func (g *GoNetRequest) acquireResponse() *GoNetResponse {
@@ -42,16 +41,8 @@ func (g *GoNetRequest) SetContentType(v string) {
 	g.r = g.r.SetHeader("Content-Type", v)
 }
 
-// If this value is set, when reading data, the Body will be written
-// directly to the set Writer interface without returning []byte.
-func (g *GoNetRequest) SetWriter(w io.Writer) {
+func (g *GoNetRequest) SetWriter(w *bytes.Buffer) {
 	g.w = w
-}
-
-func (g *GoNetRequest) SetUnmarshal(v any) {
-	if v != nil {
-		g.bind = v
-	}
 }
 
 func (g *GoNetRequest) Write(b []byte) {
@@ -96,31 +87,16 @@ func (g *GoNetRequest) Do() (NetResponse, error) {
 
 	resp := g.acquireResponse()
 	resp.code = response.StatusCode()
-
-	if g.bind != nil {
-		if flash.Search(response.Header().Get("Content-Type"), "json") {
-			err = g.json.Unmarshal(response.Body(), g.bind)
-			goto END
-		}
+	if g.w != nil {
+		g.w.Write(response.Body()) //nolint:errcheck
+	} else {
+		resp.body = response.Body()
 	}
-
-	if response.IsStatusCode(200) {
-		if g.w != nil {
-			_, err = io.Copy(g.w, response.RawBody())
-			goto END
-		}
-	}
-
-	resp.body = response.Body()
-
-END:
-
-	_ = response.RawBody().Close()
+	response.RawBody().Close() //nolint:errcheck
 	return resp, err
 }
 
 func (g *GoNetRequest) Reset() {
-	g.bind = nil
 	g.uri = ""
 	g.method = ""
 	g.r = nil
