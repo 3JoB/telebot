@@ -4,7 +4,6 @@ import (
 	"math"
 
 	"github.com/3JoB/unsafeConvert"
-	"github.com/goccy/go-json"
 )
 
 // ShippingQuery contains information about an incoming shipping query.
