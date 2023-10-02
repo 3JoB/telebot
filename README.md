@@ -1,4 +1,4 @@
-# Telebot • Telebot Expansion Pack
+# Telebot • Expansion Pack
 >"I never knew creating Telegram bots could be so _sexy_!"
 
 Provides fasthttp and net/http dual network libraries at the same time!
