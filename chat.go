@@ -408,7 +408,8 @@ func (b *Bot) SetGroupDescription(chat *Chat, description string) error {
 		"description": description,
 	}
 
-	_, err := Raw(b, "setChatDescription", params)
+	r, err := Raw(b, "setChatDescription", params)
+	ReleaseBuffer(r)
 	return err
 }
 
@@ -418,7 +419,8 @@ func (b *Bot) SetGroupPhoto(chat *Chat, p *Photo) error {
 		"chat_id": chat.Recipient(),
 	}
 
-	_, err := b.sendFiles("setChatPhoto", map[string]File{"photo": p.File}, params)
+	r, err := b.sendFiles("setChatPhoto", map[string]File{"photo": p.File}, params)
+	ReleaseBuffer(r)
 	return err
 }
 
@@ -429,7 +431,8 @@ func (b *Bot) SetGroupStickerSet(chat *Chat, setName string) error {
 		"sticker_set_name": setName,
 	}
 
-	_, err := Raw(b, "setChatStickerSet", params)
+	r, err := Raw(b, "setChatStickerSet", params)
+	ReleaseBuffer(r)
 	return err
 }
 
@@ -440,7 +443,8 @@ func (b *Bot) SetGroupPermissions(chat *Chat, perms Rights) error {
 		"permissions": perms,
 	}
 
-	_, err := Raw(b, "setChatPermissions", params)
+	r, err := Raw(b, "setChatPermissions", params)
+	ReleaseBuffer(r)
 	return err
 }
 
@@ -450,7 +454,8 @@ func (b *Bot) DeleteGroupPhoto(chat *Chat) error {
 		"chat_id": chat.Recipient(),
 	}
 
-	_, err := Raw(b, "deleteChatPhoto", params)
+	r, err := Raw(b, "deleteChatPhoto", params)
+	ReleaseBuffer(r)
 	return err
 }
 
@@ -460,6 +465,7 @@ func (b *Bot) DeleteGroupStickerSet(chat *Chat) error {
 		"chat_id": chat.Recipient(),
 	}
 
-	_, err := Raw(b, "deleteChatStickerSet", params)
+	r, err := Raw(b, "deleteChatStickerSet", params)
+	ReleaseBuffer(r)
 	return err
 }

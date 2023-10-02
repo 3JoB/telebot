@@ -9,7 +9,7 @@ import (
 // Five wrappers are provided by default. For detailed documentation,
 // see: https://pkg.go.dev/github.com/3JoB/telebot/json.
 //
-// Some methods use the default go-json because they are not under *Bot.
+// Some methods use the default sonnet because they are not under *Bot.
 type Json interface {
 	Marshal(v any) ([]byte, error)
 	MarshalIndent(v any, prefix string, indent string) ([]byte, error)

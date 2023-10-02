@@ -265,7 +265,7 @@ func (b *Bot) getMe() (*User, error) {
 	return resp.Result, nil
 }
 
-func (b *Bot) getUpdates(offset, limit int, timeout time.Duration, allowed []string) ([]*Update, error) {
+func (b *Bot) getUpdates(offset, limit int, timeout time.Duration, allowed []string) ([]Update, error) {
 	params := map[string]any{
 		"offset":  offset,
 		"timeout": int(timeout / time.Second),
@@ -282,7 +282,7 @@ func (b *Bot) getUpdates(offset, limit int, timeout time.Duration, allowed []str
 	}
 	defer ReleaseBuffer(data)
 
-	var resp Response[[]*Update]
+	var resp Response[[]Update]
 	if err := b.json.NewDecoder(data).Decode(&resp); err != nil {
 		return nil, wrapError(err)
 	}

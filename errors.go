@@ -23,9 +23,9 @@ type (
 	}
 )
 
-// ʔ returns description of error.
+// String returns description of error.
 // A tiny shortcut to make code clearer.
-func (err *Error) ʔ() string {
+func (err *Error) String() string {
 	return err.Description
 }
 
@@ -129,114 +129,72 @@ var (
 	ErrUserIsDeactivated    = NewError(403, "Forbidden: user is deactivated")
 )
 
+var (
+	ErrMap map[uint32]*Error = map[uint32]*Error{
+		hash32(ErrTooLarge):     ErrTooLarge,
+		hash32(ErrUnauthorized): ErrUnauthorized,
+		hash32(ErrNotFound):     ErrNotFound,
+		hash32(ErrInternal):     ErrInternal,
+
+		hash32(ErrBadButtonData):          ErrBadButtonData,
+		hash32(ErrBadPollOptions):         ErrBadPollOptions,
+		hash32(ErrBadURLContent):          ErrBadURLContent,
+		hash32(ErrCantEditMessage):        ErrCantEditMessage,
+		hash32(ErrCantRemoveOwner):        ErrCantRemoveOwner,
+		hash32(ErrCantUploadFile):         ErrCantUploadFile,
+		hash32(ErrCantUseMediaInAlbum):    ErrCantUseMediaInAlbum,
+		hash32(ErrChatAboutNotModified):   ErrChatAboutNotModified,
+		hash32(ErrChatNotFound):           ErrChatNotFound,
+		hash32(ErrEmptyChatID):            ErrEmptyChatID,
+		hash32(ErrEmptyMessage):           ErrEmptyMessage,
+		hash32(ErrEmptyText):              ErrEmptyText,
+		hash32(ErrFailedImageProcess):     ErrFailedImageProcess,
+		hash32(ErrGroupMigrated):          ErrGroupMigrated,
+		hash32(ErrMessageNotModified):     ErrMessageNotModified,
+		hash32(ErrNoRightsToDelete):       ErrNoRightsToDelete,
+		hash32(ErrNoRightsToRestrict):     ErrNoRightsToRestrict,
+		hash32(ErrNoRightsToSend):         ErrNoRightsToSend,
+		hash32(ErrNoRightsToSendGifs):     ErrNoRightsToSendGifs,
+		hash32(ErrNoRightsToSendPhoto):    ErrNoRightsToSendPhoto,
+		hash32(ErrNoRightsToSendStickers): ErrNoRightsToSendStickers,
+		hash32(ErrNotFoundToDelete):       ErrNotFoundToDelete,
+		hash32(ErrNotFoundToForward):      ErrNotFoundToForward,
+		hash32(ErrNotFoundToReply):        ErrNotFoundToReply,
+		hash32(ErrQueryTooOld):            ErrQueryTooOld,
+		hash32(ErrSameMessageContent):     ErrSameMessageContent,
+		hash32(ErrStickerEmojisInvalid):   ErrStickerEmojisInvalid,
+		hash32(ErrStickerSetInvalid):      ErrStickerSetInvalid,
+		hash32(ErrStickerSetInvalidName):  ErrStickerSetInvalidName,
+		hash32(ErrStickerSetNameOccupied): ErrStickerSetNameOccupied,
+		hash32(ErrTooLongMarkup):          ErrTooLongMarkup,
+		hash32(ErrTooLongMessage):         ErrTooLongMessage,
+		hash32(ErrUserIsAdmin):            ErrUserIsAdmin,
+		hash32(ErrWrongFileID):            ErrWrongFileID,
+		hash32(ErrWrongFileIDCharacter):   ErrWrongFileIDCharacter,
+		hash32(ErrWrongFileIDLength):      ErrWrongFileIDLength,
+		hash32(ErrWrongFileIDPadding):     ErrWrongFileIDPadding,
+		hash32(ErrWrongFileIDSymbol):      ErrWrongFileIDSymbol,
+		hash32(ErrWrongTypeOfContent):     ErrWrongTypeOfContent,
+		hash32(ErrWrongURL):               ErrWrongURL,
+		hash32(ErrForwardMessage):         ErrForwardMessage,
+
+		hash32(ErrBlockedByUser):        ErrBlockedByUser,
+		hash32(ErrKickedFromGroup):      ErrKickedFromGroup,
+		hash32(ErrKickedFromSuperGroup): ErrKickedFromSuperGroup,
+		hash32(ErrKickedFromChannel):    ErrKickedFromChannel,
+		hash32(ErrNotStartedByUser):     ErrNotStartedByUser,
+		hash32(ErrUserIsDeactivated):    ErrUserIsDeactivated,
+	}
+)
+
 // Err returns Error instance by given description.
 func Err(s string) error {
-	switch s {
-	case ErrTooLarge.ʔ():
-		return ErrTooLarge
-	case ErrUnauthorized.ʔ():
-		return ErrUnauthorized
-	case ErrNotFound.ʔ():
-		return ErrNotFound
-	case ErrInternal.ʔ():
-		return ErrInternal
-	case ErrBadButtonData.ʔ():
-		return ErrBadButtonData
-	case ErrBadPollOptions.ʔ():
-		return ErrBadPollOptions
-	case ErrBadURLContent.ʔ():
-		return ErrBadURLContent
-	case ErrCantEditMessage.ʔ():
-		return ErrCantEditMessage
-	case ErrCantRemoveOwner.ʔ():
-		return ErrCantRemoveOwner
-	case ErrCantUploadFile.ʔ():
-		return ErrCantUploadFile
-	case ErrCantUseMediaInAlbum.ʔ():
-		return ErrCantUseMediaInAlbum
-	case ErrChatAboutNotModified.ʔ():
-		return ErrChatAboutNotModified
-	case ErrChatNotFound.ʔ():
-		return ErrChatNotFound
-	case ErrEmptyChatID.ʔ():
-		return ErrEmptyChatID
-	case ErrEmptyMessage.ʔ():
-		return ErrEmptyMessage
-	case ErrEmptyText.ʔ():
-		return ErrEmptyText
-	case ErrFailedImageProcess.ʔ():
-		return ErrFailedImageProcess
-	case ErrGroupMigrated.ʔ():
-		return ErrGroupMigrated
-	case ErrMessageNotModified.ʔ():
-		return ErrMessageNotModified
-	case ErrNoRightsToDelete.ʔ():
-		return ErrNoRightsToDelete
-	case ErrNoRightsToRestrict.ʔ():
-		return ErrNoRightsToRestrict
-	case ErrNoRightsToSend.ʔ():
-		return ErrNoRightsToSend
-	case ErrNoRightsToSendGifs.ʔ():
-		return ErrNoRightsToSendGifs
-	case ErrNoRightsToSendPhoto.ʔ():
-		return ErrNoRightsToSendPhoto
-	case ErrNoRightsToSendStickers.ʔ():
-		return ErrNoRightsToSendStickers
-	case ErrNotFoundToDelete.ʔ():
-		return ErrNotFoundToDelete
-	case ErrNotFoundToForward.ʔ():
-		return ErrNotFoundToForward
-	case ErrNotFoundToReply.ʔ():
-		return ErrNotFoundToReply
-	case ErrQueryTooOld.ʔ():
-		return ErrQueryTooOld
-	case ErrSameMessageContent.ʔ():
-		return ErrSameMessageContent
-	case ErrStickerEmojisInvalid.ʔ():
-		return ErrStickerEmojisInvalid
-	case ErrStickerSetInvalid.ʔ():
-		return ErrStickerSetInvalid
-	case ErrStickerSetInvalidName.ʔ():
-		return ErrStickerSetInvalidName
-	case ErrStickerSetNameOccupied.ʔ():
-		return ErrStickerSetNameOccupied
-	case ErrTooLongMarkup.ʔ():
-		return ErrTooLongMarkup
-	case ErrTooLongMessage.ʔ():
-		return ErrTooLongMessage
-	case ErrUserIsAdmin.ʔ():
-		return ErrUserIsAdmin
-	case ErrWrongFileID.ʔ():
-		return ErrWrongFileID
-	case ErrWrongFileIDCharacter.ʔ():
-		return ErrWrongFileIDCharacter
-	case ErrWrongFileIDLength.ʔ():
-		return ErrWrongFileIDLength
-	case ErrWrongFileIDPadding.ʔ():
-		return ErrWrongFileIDPadding
-	case ErrWrongFileIDSymbol.ʔ():
-		return ErrWrongFileIDSymbol
-	case ErrWrongTypeOfContent.ʔ():
-		return ErrWrongTypeOfContent
-	case ErrWrongURL.ʔ():
-		return ErrWrongURL
-	case ErrBlockedByUser.ʔ():
-		return ErrBlockedByUser
-	case ErrKickedFromGroup.ʔ():
-		return ErrKickedFromGroup
-	case ErrKickedFromSuperGroup.ʔ():
-		return ErrKickedFromSuperGroup
-	case ErrKickedFromChannel.ʔ():
-		return ErrKickedFromChannel
-	case ErrNotStartedByUser.ʔ():
-		return ErrNotStartedByUser
-	case ErrUserIsDeactivated.ʔ():
-		return ErrUserIsDeactivated
-	case ErrForwardMessage.ʔ():
-		return ErrForwardMessage
-	default:
-		return nil
+	if r, ok := ErrMap[hash32p(s)]; ok {
+		fmt.Println(ok)
+		fmt.Println(r.Description)
+		return r
 	}
+	return nil
 }
 
 // wrapError returns new wrapped telebot-related error.

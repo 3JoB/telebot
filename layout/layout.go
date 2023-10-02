@@ -9,8 +9,8 @@ import (
 	"text/template"
 
 	"github.com/3JoB/unsafeConvert"
-	"github.com/goccy/go-json"
 	"github.com/goccy/go-yaml"
+	"github.com/sugawarayuuta/sonnet"
 
 	tele "github.com/3JoB/telebot"
 )
@@ -510,7 +510,7 @@ func (lt *Layout) ResultLocale(locale, k string, args ...any) tele.Result {
 		}
 	case "location":
 		r = &tele.LocationResult{ResultBase: base.ResultBase}
-		if err := json.Unmarshal(data, &r); err != nil {
+		if err := sonnet.Unmarshal(data, &r); err != nil {
 			log.Println("telebot/layout:", err)
 		}
 	case "mpeg4_gif":

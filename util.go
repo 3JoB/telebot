@@ -4,9 +4,13 @@ import (
 	"strings"
 
 	"github.com/3JoB/ulib/pool"
+	"github.com/jamiealquiza/fnv"
 )
 
-var ReleaseBuffer = pool.ReleaseBuffer
+var (
+	ReleaseBuffer = pool.ReleaseBuffer
+	mod           = 1000000007
+)
 
 func process(input string) (command, bot, payload string) {
 	/*Benchmark
@@ -46,4 +50,12 @@ func process(input string) (command, bot, payload string) {
 	payload = strings.ReplaceAll(payload, "\\n", "\n")
 
 	return
+}
+
+func hash32p(e string) uint32 {
+	return fnv.Hash32(e)
+}
+
+func hash32(e *Error) uint32 {
+	return fnv.Hash32(e.String())
 }

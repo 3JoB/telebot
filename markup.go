@@ -3,8 +3,6 @@ package telebot
 import (
 	"fmt"
 	"strings"
-
-	"github.com/goccy/go-json"
 )
 
 // ReplyMarkup controls two convenient options for bot-user communications
@@ -217,7 +215,7 @@ type ReplyButton struct {
 // MarshalJSON implements json.Marshaler. It allows passing PollType as a
 // keyboard's poll type instead of KeyboardButtonPollType object.
 func (pt PollType) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&struct {
+	return defaultJson.Marshal(&struct {
 		Type string `json:"type"`
 	}{
 		Type: string(pt),

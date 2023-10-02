@@ -5,8 +5,8 @@ import (
 	"os"
 
 	"github.com/3JoB/unsafeConvert"
-	"github.com/goccy/go-json"
 	"github.com/rs/zerolog"
+	"github.com/sugawarayuuta/sonnet"
 
 	tele "github.com/3JoB/telebot"
 )
@@ -24,7 +24,7 @@ func Logger(writers ...io.Writer) tele.MiddlewareFunc {
 
 	return func(next tele.HandlerFunc) tele.HandlerFunc {
 		return func(c *tele.Context) error {
-			data, _ := json.MarshalIndent(c.Update(), "", "  ")
+			data, _ := sonnet.MarshalIndent(c.Update(), "", "  ")
 			l.Info().Msg(unsafeConvert.StringSlice(data))
 			return next(c)
 		}

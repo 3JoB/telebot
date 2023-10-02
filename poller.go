@@ -14,7 +14,7 @@ type Poller interface {
 	//
 	// Poller must listen for stop constantly and close
 	// it as soon as it's done polling.
-	Poll(b *Bot, updates chan *Update, stop chan struct{})
+	Poll(b *Bot, updates chan Update, stop chan struct{})
 }
 
 // LongPoller is a classic LongPoller with timeout.
@@ -43,7 +43,7 @@ type LongPoller struct {
 }
 
 // Poll does long polling.
-func (p *LongPoller) Poll(b *Bot, dest chan *Update, stop chan struct{}) {
+func (p *LongPoller) Poll(b *Bot, dest chan Update, stop chan struct{}) {
 	for {
 		select {
 		case <-stop:
@@ -72,11 +72,11 @@ func (p *LongPoller) Poll(b *Bot, dest chan *Update, stop chan struct{}) {
 type MiddlewarePoller struct {
 	Capacity int // Default: 1
 	Poller   Poller
-	Filter   func(*Update) bool
+	Filter   func(Update) bool
 }
 
 // NewMiddlewarePoller wait for it... constructs a new middleware poller.
-func NewMiddlewarePoller(original Poller, filter func(*Update) bool) *MiddlewarePoller {
+func NewMiddlewarePoller(original Poller, filter func(Update) bool) *MiddlewarePoller {
 	return &MiddlewarePoller{
 		Poller: original,
 		Filter: filter,
@@ -84,12 +84,12 @@ func NewMiddlewarePoller(original Poller, filter func(*Update) bool) *Middleware
 }
 
 // Poll sieves updates through middleware filter.
-func (p *MiddlewarePoller) Poll(b *Bot, dest chan *Update, stop chan struct{}) {
+func (p *MiddlewarePoller) Poll(b *Bot, dest chan Update, stop chan struct{}) {
 	if p.Capacity < 1 {
 		p.Capacity = 1
 	}
 
-	middle := make(chan *Update, p.Capacity)
+	middle := make(chan Update, p.Capacity)
 	stopPoller := make(chan struct{})
 	stopConfirm := make(chan struct{})
 

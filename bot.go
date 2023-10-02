@@ -67,7 +67,7 @@ func NewBot(pref Settings) (*Bot, error) {
 		URL:    pref.URL,
 		Poller: pref.Poller,
 
-		Updates:  make(chan *Update, pref.Updates),
+		Updates:  make(chan Update, pref.Updates),
 		handlers: make(map[string]HandlerFunc),
 		stop:     make(chan chan struct{}),
 
@@ -98,7 +98,7 @@ type Bot struct {
 	Me      *User
 	Token   string
 	URL     string
-	Updates chan *Update
+	Updates chan Update
 	Poller  Poller
 
 	client      net.NetFrame
@@ -286,7 +286,7 @@ func (b *Bot) NewMarkup() *ReplyMarkup {
 
 // NewContext returns a new context object,
 // field by the passed update.
-func (b *Bot) NewContext(u *Update) *Context {
+func (b *Bot) NewContext(u Update) *Context {
 	ctx := b.AcquireContext()
 	ctx.b = b
 	ctx.u = u

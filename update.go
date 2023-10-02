@@ -24,27 +24,9 @@ type Update struct {
 	ChatJoinRequest   *ChatJoinRequest  `json:"chat_join_request,omitempty"`
 }
 
-func ReleaseUpdate(u *Update) {
-	u.Callback = nil
-	u.ChannelPost = nil
-	u.ChatJoinRequest = nil
-	u.ChatMember = nil
-	u.EditedChannelPost = nil
-	u.EditedMessage = nil
-	u.ID = 0
-	u.InlineResult = nil
-	u.Message = nil
-	u.MyChatMember = nil
-	u.Poll = nil
-	u.PollAnswer = nil
-	u.PreCheckoutQuery = nil
-	u.Query = nil
-	u.ShippingQuery = nil
-}
-
 // ProcessUpdate processes a single incoming update.
 // A started bot calls this function automatically.
-func (b *Bot) ProcessUpdate(u *Update) bool {
+func (b *Bot) ProcessUpdate(u Update) bool {
 	c := b.NewContext(u)
 
 	if u.Message != nil {

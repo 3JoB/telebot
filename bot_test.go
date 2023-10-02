@@ -122,7 +122,7 @@ func TestBotStart(t *testing.T) {
 
 	tp := newTestPoller()
 	go func() {
-		tp.updates <- &Update{Message: &Message{Text: "/start"}}
+		tp.updates <- Update{Message: &Message{Text: "/start"}}
 	}()
 
 	b, err = NewBot(pref)
@@ -154,7 +154,7 @@ func TestBotProcessUpdate(t *testing.T) {
 		assert.NotNil(t, c.Message().Photo)
 		return nil
 	})
-	b.ProcessUpdate(&Update{Message: &Message{Photo: &Photo{}}})
+	b.ProcessUpdate(Update{Message: &Message{Photo: &Photo{}}})
 
 	b.Handle("/start", func(c *Context) error {
 		assert.Equal(t, "/start", c.Text())
@@ -310,47 +310,47 @@ func TestBotProcessUpdate(t *testing.T) {
 		return nil
 	})
 
-	b.ProcessUpdate(&Update{Message: &Message{Text: "/start"}})
-	b.ProcessUpdate(&Update{Message: &Message{Text: "/start@other_bot"}})
-	b.ProcessUpdate(&Update{Message: &Message{Text: "hello"}})
-	b.ProcessUpdate(&Update{Message: &Message{Text: "text"}})
-	b.ProcessUpdate(&Update{Message: &Message{PinnedMessage: &Message{}}})
-	b.ProcessUpdate(&Update{Message: &Message{Photo: &Photo{}}})
-	b.ProcessUpdate(&Update{Message: &Message{Voice: &Voice{}}})
-	b.ProcessUpdate(&Update{Message: &Message{Audio: &Audio{}}})
-	b.ProcessUpdate(&Update{Message: &Message{Animation: &Animation{}}})
-	b.ProcessUpdate(&Update{Message: &Message{Document: &Document{}}})
-	b.ProcessUpdate(&Update{Message: &Message{Sticker: &Sticker{}}})
-	b.ProcessUpdate(&Update{Message: &Message{Video: &Video{}}})
-	b.ProcessUpdate(&Update{Message: &Message{VideoNote: &VideoNote{}}})
-	b.ProcessUpdate(&Update{Message: &Message{Contact: &Contact{}}})
-	b.ProcessUpdate(&Update{Message: &Message{Location: &Location{}}})
-	b.ProcessUpdate(&Update{Message: &Message{Venue: &Venue{}}})
-	b.ProcessUpdate(&Update{Message: &Message{Invoice: &Invoice{}}})
-	b.ProcessUpdate(&Update{Message: &Message{Payment: &Payment{}}})
-	b.ProcessUpdate(&Update{Message: &Message{Dice: &Dice{}}})
-	b.ProcessUpdate(&Update{Message: &Message{GroupCreated: true}})
-	b.ProcessUpdate(&Update{Message: &Message{UserJoined: &User{ID: 1}}})
-	b.ProcessUpdate(&Update{Message: &Message{UsersJoined: []User{{ID: 1}}}})
-	b.ProcessUpdate(&Update{Message: &Message{UserLeft: &User{}}})
-	b.ProcessUpdate(&Update{Message: &Message{NewGroupTitle: "title"}})
-	b.ProcessUpdate(&Update{Message: &Message{NewGroupPhoto: &Photo{}}})
-	b.ProcessUpdate(&Update{Message: &Message{GroupPhotoDeleted: true}})
-	b.ProcessUpdate(&Update{Message: &Message{Chat: &Chat{ID: 1}, MigrateTo: 2}})
-	b.ProcessUpdate(&Update{EditedMessage: &Message{Text: "edited"}})
-	b.ProcessUpdate(&Update{ChannelPost: &Message{Text: "post"}})
-	b.ProcessUpdate(&Update{ChannelPost: &Message{PinnedMessage: &Message{}}})
-	b.ProcessUpdate(&Update{EditedChannelPost: &Message{Text: "edited post"}})
-	b.ProcessUpdate(&Update{Callback: &Callback{MessageID: "inline", Data: "callback"}})
-	b.ProcessUpdate(&Update{Callback: &Callback{Data: "callback"}})
-	b.ProcessUpdate(&Update{Callback: &Callback{Data: "\funique|callback"}})
-	b.ProcessUpdate(&Update{Query: &Query{Text: "query"}})
-	b.ProcessUpdate(&Update{InlineResult: &InlineResult{ResultID: "result"}})
-	b.ProcessUpdate(&Update{ShippingQuery: &ShippingQuery{ID: "shipping"}})
-	b.ProcessUpdate(&Update{PreCheckoutQuery: &PreCheckoutQuery{ID: "checkout"}})
-	b.ProcessUpdate(&Update{Poll: &Poll{ID: "poll"}})
-	b.ProcessUpdate(&Update{PollAnswer: &PollAnswer{PollID: "poll"}})
-	b.ProcessUpdate(&Update{Message: &Message{WebAppData: &WebAppData{Data: "webapp"}}})
+	b.ProcessUpdate(Update{Message: &Message{Text: "/start"}})
+	b.ProcessUpdate(Update{Message: &Message{Text: "/start@other_bot"}})
+	b.ProcessUpdate(Update{Message: &Message{Text: "hello"}})
+	b.ProcessUpdate(Update{Message: &Message{Text: "text"}})
+	b.ProcessUpdate(Update{Message: &Message{PinnedMessage: &Message{}}})
+	b.ProcessUpdate(Update{Message: &Message{Photo: &Photo{}}})
+	b.ProcessUpdate(Update{Message: &Message{Voice: &Voice{}}})
+	b.ProcessUpdate(Update{Message: &Message{Audio: &Audio{}}})
+	b.ProcessUpdate(Update{Message: &Message{Animation: &Animation{}}})
+	b.ProcessUpdate(Update{Message: &Message{Document: &Document{}}})
+	b.ProcessUpdate(Update{Message: &Message{Sticker: &Sticker{}}})
+	b.ProcessUpdate(Update{Message: &Message{Video: &Video{}}})
+	b.ProcessUpdate(Update{Message: &Message{VideoNote: &VideoNote{}}})
+	b.ProcessUpdate(Update{Message: &Message{Contact: &Contact{}}})
+	b.ProcessUpdate(Update{Message: &Message{Location: &Location{}}})
+	b.ProcessUpdate(Update{Message: &Message{Venue: &Venue{}}})
+	b.ProcessUpdate(Update{Message: &Message{Invoice: &Invoice{}}})
+	b.ProcessUpdate(Update{Message: &Message{Payment: &Payment{}}})
+	b.ProcessUpdate(Update{Message: &Message{Dice: &Dice{}}})
+	b.ProcessUpdate(Update{Message: &Message{GroupCreated: true}})
+	b.ProcessUpdate(Update{Message: &Message{UserJoined: &User{ID: 1}}})
+	b.ProcessUpdate(Update{Message: &Message{UsersJoined: []User{{ID: 1}}}})
+	b.ProcessUpdate(Update{Message: &Message{UserLeft: &User{}}})
+	b.ProcessUpdate(Update{Message: &Message{NewGroupTitle: "title"}})
+	b.ProcessUpdate(Update{Message: &Message{NewGroupPhoto: &Photo{}}})
+	b.ProcessUpdate(Update{Message: &Message{GroupPhotoDeleted: true}})
+	b.ProcessUpdate(Update{Message: &Message{Chat: &Chat{ID: 1}, MigrateTo: 2}})
+	b.ProcessUpdate(Update{EditedMessage: &Message{Text: "edited"}})
+	b.ProcessUpdate(Update{ChannelPost: &Message{Text: "post"}})
+	b.ProcessUpdate(Update{ChannelPost: &Message{PinnedMessage: &Message{}}})
+	b.ProcessUpdate(Update{EditedChannelPost: &Message{Text: "edited post"}})
+	b.ProcessUpdate(Update{Callback: &Callback{MessageID: "inline", Data: "callback"}})
+	b.ProcessUpdate(Update{Callback: &Callback{Data: "callback"}})
+	b.ProcessUpdate(Update{Callback: &Callback{Data: "\funique|callback"}})
+	b.ProcessUpdate(Update{Query: &Query{Text: "query"}})
+	b.ProcessUpdate(Update{InlineResult: &InlineResult{ResultID: "result"}})
+	b.ProcessUpdate(Update{ShippingQuery: &ShippingQuery{ID: "shipping"}})
+	b.ProcessUpdate(Update{PreCheckoutQuery: &PreCheckoutQuery{ID: "checkout"}})
+	b.ProcessUpdate(Update{Poll: &Poll{ID: "poll"}})
+	b.ProcessUpdate(Update{PollAnswer: &PollAnswer{PollID: "poll"}})
+	b.ProcessUpdate(Update{Message: &Message{WebAppData: &WebAppData{Data: "webapp"}}})
 }
 
 func TestBotOnError(t *testing.T) {
@@ -402,7 +402,7 @@ func TestBot_Middleware(t *testing.T) {
 			return nil
 		}, mwTrace("handler-1-b"))
 
-		b.ProcessUpdate(&Update{Message: &Message{Text: "/a"}})
+		b.ProcessUpdate(Update{Message: &Message{Text: "/a"}})
 
 		expectedOrder := []string{
 			"global-1:in", "global-2:in",
@@ -414,7 +414,7 @@ func TestBot_Middleware(t *testing.T) {
 		assert.Equal(t, expectedOrder, trace)
 
 		trace = trace[:0]
-		b.ProcessUpdate(&Update{Message: &Message{Text: "/b"}})
+		b.ProcessUpdate(Update{Message: &Message{Text: "/b"}})
 
 		expectedOrder = []string{
 			"global-1:in", "global-2:in",
@@ -450,7 +450,7 @@ func TestBot_Middleware(t *testing.T) {
 		b.Handle("/a", func(c *Context) error { return nil }, nopMiddleware)
 		b.Handle("/b", func(c *Context) error { return nil }, fatalMiddleware)
 
-		b.ProcessUpdate(&Update{Message: &Message{Text: "/a"}})
+		b.ProcessUpdate(Update{Message: &Message{Text: "/a"}})
 	})
 
 	t.Run("handler middleware is not clobbered when combined with group middleware", func(t *testing.T) {
@@ -467,7 +467,7 @@ func TestBot_Middleware(t *testing.T) {
 		g.Handle("/a", func(c *Context) error { return nil }, nopMiddleware)
 		g.Handle("/b", func(c *Context) error { return nil }, fatalMiddleware)
 
-		b.ProcessUpdate(&Update{Message: &Message{Text: "/a"}})
+		b.ProcessUpdate(Update{Message: &Message{Text: "/a"}})
 	})
 }
 

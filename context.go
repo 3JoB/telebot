@@ -15,7 +15,7 @@ type HandlerFunc func(*Context) error
 // Context wraps an update and represents the context of current event.
 type Context struct {
 	b     *Bot
-	u     *Update
+	u     Update
 	next  bool
 	store *hashmap.Map[string, any]
 }
@@ -26,7 +26,7 @@ func (c *Context) Bot() *Bot {
 }
 
 // Update returns the original update.
-func (c *Context) Update() *Update {
+func (c *Context) Update() Update {
 	return c.u
 }
 
@@ -426,7 +426,6 @@ func (n *Context) ReleaseContext() {
 		})
 	}
 	n.b = nil
-	ReleaseUpdate(n.u)
-	n.u = nil
+	n.u = Update{}
 	ctxPool.Put(n)
 }
