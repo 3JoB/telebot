@@ -9,7 +9,6 @@ import (
 
 var (
 	ReleaseBuffer = pool.ReleaseBuffer
-	mod           = 1000000007
 )
 
 func process(input string) (command, bot, payload string) {
