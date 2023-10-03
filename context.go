@@ -8,10 +8,6 @@ import (
 	"github.com/cornelk/hashmap"
 )
 
-// HandlerFunc represents a handler function, which is
-// used to handle actual endpoints.
-type HandlerFunc func(*Context) error
-
 // Context wraps an update and represents the context of current event.
 type Context struct {
 	b     *Bot
@@ -353,6 +349,11 @@ func (c *Context) Next() error {
 	return nil
 }
 
+// Next pass control to the next middleware/ctx function.
+func (c *Context) Done() error {
+	return nil
+}
+
 // Notify updates the chat action for the current recipient.
 // See Notify from bot.go.
 func (c *Context) Notify(action ChatAction) error {
@@ -414,7 +415,7 @@ func (c *Context) Get(k string) any {
 
 // Release the Context. After it is released,
 // the previous Context should not be continued to be used.
-func (n *Context) ReleaseContext() {
+func (n *Context) releaseContext() {
 	if n == nil {
 		return
 	}

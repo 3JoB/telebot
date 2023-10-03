@@ -320,11 +320,15 @@ func (b *Bot) handleMedia(c *Context) bool {
 	return fired
 }
 
-func (b *Bot) runHandler(h HandlerFunc, c *Context) {
+func (b *Bot) runHandler(h *Handle, c *Context) {
 	f := func() {
-		if err := h(c); err != nil {
+		if err := h.doMiddleware(c); err != nil {
 			b.OnError(err, c)
 		}
+		if err := h.do(c); err != nil {
+			b.OnError(err, c)
+		}
+		c.releaseContext()
 	}
 	if b.synchronous {
 		f()

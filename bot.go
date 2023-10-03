@@ -68,7 +68,7 @@ func NewBot(pref Settings) (*Bot, error) {
 		Poller: pref.Poller,
 
 		Updates:  make(chan Update, pref.Updates),
-		handlers: make(map[string]HandlerFunc),
+		handlers: make(map[string]*Handle),
 		stop:     make(chan chan struct{}),
 
 		synchronous: pref.Synchronous,
@@ -105,7 +105,7 @@ type Bot struct {
 	group       *Group
 	json        json.Json
 	logger      Logger
-	handlers    map[string]HandlerFunc
+	handlers    map[string]*Handle
 	synchronous bool
 	verbose     bool
 	local       bool
@@ -189,7 +189,7 @@ func (b *Bot) Group() *Group {
 }
 
 // Use adds middleware to the global bot chain.
-func (b *Bot) Use(middleware ...MiddlewareFunc) {
+func (b *Bot) Use(middleware ...HandlerFunc) {
 	b.group.Use(middleware...)
 }
 
@@ -210,16 +210,17 @@ func (b *Bot) Use(middleware ...MiddlewareFunc) {
 // Middleware usage:
 //
 //	b.Handle("/ban", onBan, middleware.Whitelist(ids...))
-func (b *Bot) Handle(endpoint any, h HandlerFunc, m ...MiddlewareFunc) {
+func (b *Bot) Handle(endpoint any, h HandlerFunc, m ...HandlerFunc) {
 	mw := m
 	if len(b.group.middleware) > 0 {
-		mw = make([]MiddlewareFunc, 0, len(b.group.middleware)+len(m))
+		mw = make([]HandlerFunc, 0, len(b.group.middleware)+len(m))
 		mw = append(mw, b.group.middleware...)
 		mw = append(mw, m...)
 	}
 
-	handler := func(c *Context) error {
-		return applyMiddleware(h, mw...)(c)
+	handler := &Handle{
+		Do:         h,
+		Middleware: mw,
 	}
 
 	switch end := endpoint.(type) {

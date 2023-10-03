@@ -16,35 +16,33 @@ type LocaleFunc func(tele.Recipient) string
 //		loc, _ := db.UserLocale(r.Recipient())
 //		return loc
 //	}))
-func (lt *Layout) Middleware(defaultLocale string, localeFunc ...LocaleFunc) tele.MiddlewareFunc {
+func (lt *Layout) Middleware(defaultLocale string, localeFunc ...LocaleFunc) tele.HandlerFunc {
 	var f LocaleFunc
 	if len(localeFunc) > 0 {
 		f = localeFunc[0]
 	}
 
-	return func(next tele.HandlerFunc) tele.HandlerFunc {
-		return func(c *tele.Context) error {
-			locale := defaultLocale
-			if f != nil {
-				if l := f(c.Sender()); l != "" {
-					locale = l
-				}
+	return func(c *tele.Context) error {
+		locale := defaultLocale
+		if f != nil {
+			if l := f(c.Sender()); l != "" {
+				locale = l
 			}
-
-			lt.SetLocale(c, locale)
-
-			defer func() {
-				lt.mu.Lock()
-				delete(lt.ctxs, c)
-				lt.mu.Unlock()
-			}()
-
-			return next(c)
 		}
+
+		lt.SetLocale(c, locale)
+
+		defer func() {
+			lt.mu.Lock()
+			delete(lt.ctxs, c)
+			lt.mu.Unlock()
+		}()
+
+		return c.Next()
 	}
 }
 
 // Middleware wraps ordinary layout middleware with your default locale.
-func (dlt *DefaultLayout) Middleware() tele.MiddlewareFunc {
+func (dlt *DefaultLayout) Middleware() tele.HandlerFunc {
 	return dlt.lt.Middleware(dlt.locale)
 }

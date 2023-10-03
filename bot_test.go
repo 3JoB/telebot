@@ -361,8 +361,10 @@ func TestBotOnError(t *testing.T) {
 
 	var ok bool
 
-	b.runHandler(func(c *Context) error {
-		return errors.New("not nil")
+	b.runHandler(&Handle{
+		Do: func(c *Context) error {
+			return errors.New("not nil")
+		},
 	}, &Context{b: b})
 
 	assert.True(t, ok)
@@ -372,14 +374,11 @@ func TestBot_Middleware(t *testing.T) {
 	t.Run("call order", func(t *testing.T) {
 		var trace []string
 
-		mwTrace := func(name string) MiddlewareFunc {
-			return func(next HandlerFunc) HandlerFunc {
-				return func(c *Context) error {
-					trace = append(trace, name+":in")
-					err := next(c)
-					trace = append(trace, name+":out")
-					return err
-				}
+		mwTrace := func(name string) HandlerFunc {
+			return func(c *Context) error {
+				trace = append(trace, name+":in")
+				trace = append(trace, name+":out")
+				return c.Next()
 			}
 		}
 
@@ -428,15 +427,11 @@ func TestBot_Middleware(t *testing.T) {
 		assert.Equal(t, expectedOrder, trace)
 	})
 
-	fatalMiddleware := func(next HandlerFunc) HandlerFunc {
-		return func(c *Context) error {
-			t.Fatal("fatalMiddleware should not be called")
-			return nil
-		}
+	fatalMiddleware := func(c *Context) error {
+		t.Fatal("fatalMiddleware should not be called")
+		return c.Next()
 	}
-	nopMiddleware := func(next HandlerFunc) HandlerFunc {
-		return func(c *Context) error { return next(c) }
-	}
+	nopMiddleware := func(c *Context) error { return c.Next() }
 
 	t.Run("handler middleware is not clobbered when combined with global middleware", func(t *testing.T) {
 		b, err := NewBot(Settings{Synchronous: true, Offline: true})
@@ -444,7 +439,7 @@ func TestBot_Middleware(t *testing.T) {
 			t.Fatal(err)
 		}
 		// Pre-allocate middleware slice to make sure it has extra capacity after group-level middleware is added.
-		b.group.middleware = make([]MiddlewareFunc, 0, 2)
+		b.group.middleware = make([]HandlerFunc, 0, 2)
 		b.Use(nopMiddleware)
 
 		b.Handle("/a", func(c *Context) error { return nil }, nopMiddleware)
@@ -461,7 +456,7 @@ func TestBot_Middleware(t *testing.T) {
 
 		g := b.Group()
 		// Pre-allocate middleware slice to make sure it has extra capacity after group-level middleware is added.
-		g.middleware = make([]MiddlewareFunc, 0, 2)
+		g.middleware = make([]HandlerFunc, 0, 2)
 		g.Use(nopMiddleware)
 
 		g.Handle("/a", func(c *Context) error { return nil }, nopMiddleware)
