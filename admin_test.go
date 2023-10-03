@@ -12,7 +12,7 @@ func TestEmbedRights(t *testing.T) {
 		"chat_id": "1",
 		"user_id": "2",
 	}
-	embedRights(params, rights)
+	embedRights(params, &rights)
 
 	expected := map[string]any{
 		"is_anonymous":              false,

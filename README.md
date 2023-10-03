@@ -85,15 +85,6 @@ func main() {
 
 	b.Handle("/hello", func(c tele.Context) error {
 		c.Send("Hello!")
-	
-		// Recommended use: Correct execution of the release 
-		// method can avoid creating a large number of pointers,
-		// but the corresponding Context should not continue to be 
-		// called after release.
-		//
-		// This method was added in TEP v1.3.0. If not called, it will be the same as 
-		// v1.2.0 and older versions.
-		defer c.ReleaseContext()
 		return nil
 	})
 
@@ -183,13 +174,11 @@ b.Handle(tele.OnText, onText, middleware.IgnoreVia())
 Custom middleware example:
 ```go
 // AutoResponder automatically responds to every callback update.
-func AutoResponder(next tele.HandlerFunc) tele.HandlerFunc {
-	return func(c tele.Context) error {
-		if c.Callback() != nil {
-			defer c.Respond()
-		}
-		return next(c) // continue execution chain
+func AutoResponder(c tele.Context) error {
+	if c.Callback() != nil {
+		defer c.Respond()
 	}
+	return next(c) // continue execution chain
 }
 ```
 

@@ -37,7 +37,7 @@ func (b *Bot) CreateTopic(chat *Chat, forum *Topic) error {
 		params["icon_custom_emoji_id"] = forum.IconCustomEmojiID
 	}
 
-	data, err := Raw(b, "createForumTopic", params)
+	data, err := b.Raw("createForumTopic", params)
 	ReleaseBuffer(data)
 	return err
 }
@@ -56,7 +56,7 @@ func (b *Bot) EditTopic(chat *Chat, forum *Topic) error {
 		params["icon_custom_emoji_id"] = forum.IconCustomEmojiID
 	}
 
-	data, err := Raw(b, "editForumTopic", params)
+	data, err := b.Raw("editForumTopic", params)
 	ReleaseBuffer(data)
 	return err
 }
@@ -68,7 +68,7 @@ func (b *Bot) CloseTopic(chat *Chat, forum *Topic) error {
 		"message_thread_id": forum.ThreadID,
 	}
 
-	data, err := Raw(b, "closeForumTopic", params)
+	data, err := b.Raw("closeForumTopic", params)
 	ReleaseBuffer(data)
 	return err
 }
@@ -80,7 +80,7 @@ func (b *Bot) ReopenTopic(chat *Chat, forum *Topic) error {
 		"message_thread_id": forum.ThreadID,
 	}
 
-	data, err := Raw(b, "reopenForumTopic", params)
+	data, err := b.Raw("reopenForumTopic", params)
 	ReleaseBuffer(data)
 	return err
 }
@@ -92,7 +92,7 @@ func (b *Bot) DeleteTopic(chat *Chat, forum *Topic) error {
 		"message_thread_id": forum.ThreadID,
 	}
 
-	data, err := Raw(b, "deleteForumTopic", params)
+	data, err := b.Raw("deleteForumTopic", params)
 	ReleaseBuffer(data)
 	return err
 }
@@ -104,7 +104,7 @@ func (b *Bot) UnpinAllTopicMessages(chat *Chat, forum *Topic) error {
 		"message_thread_id": forum.ThreadID,
 	}
 
-	data, err := Raw(b, "unpinAllForumTopicMessages", params)
+	data, err := b.Raw("unpinAllForumTopicMessages", params)
 	ReleaseBuffer(data)
 	return err
 }
@@ -113,7 +113,7 @@ func (b *Bot) UnpinAllTopicMessages(chat *Chat, forum *Topic) error {
 func (b *Bot) TopicIconStickers() ([]Sticker, error) {
 	params := make(map[string]any)
 
-	data, err := Raw(b, "getForumTopicIconStickers", params)
+	data, err := b.Raw("getForumTopicIconStickers", params)
 	defer ReleaseBuffer(data)
 	if err != nil {
 		return nil, err
@@ -133,7 +133,7 @@ func (b *Bot) EditGeneralTopic(chat *Chat, forum *Topic) error {
 		"name":    forum.Name,
 	}
 
-	_, err := Raw(b, "editGeneralForumTopic", params)
+	_, err := b.Raw("editGeneralForumTopic", params)
 	return err
 }
 
@@ -143,7 +143,7 @@ func (b *Bot) CloseGeneralTopic(chat *Chat, forum *Topic) error {
 		"chat_id": chat.Recipient(),
 	}
 
-	_, err := Raw(b, "closeGeneralForumTopic", params)
+	_, err := b.Raw("closeGeneralForumTopic", params)
 	return err
 }
 
@@ -153,7 +153,7 @@ func (b *Bot) ReopenGeneralTopic(chat *Chat, forum *Topic) error {
 		"chat_id": chat.Recipient(),
 	}
 
-	_, err := Raw(b, "reopenGeneralForumTopic", params)
+	_, err := b.Raw("reopenGeneralForumTopic", params)
 	return err
 }
 
@@ -163,7 +163,7 @@ func (b *Bot) HideGeneralTopic(chat *Chat, forum *Topic) error {
 		"chat_id": chat.Recipient(),
 	}
 
-	_, err := Raw(b, "hideGeneralForumTopic", params)
+	_, err := b.Raw("hideGeneralForumTopic", params)
 	return err
 }
 
@@ -173,7 +173,7 @@ func (b *Bot) UnhideGeneralTopic(chat *Chat, forum *Topic) error {
 		"chat_id": chat.Recipient(),
 	}
 
-	_, err := Raw(b, "unhideGeneralForumTopic", params)
+	_, err := b.Raw("unhideGeneralForumTopic", params)
 	return err
 }
 
@@ -185,6 +185,6 @@ func (b *Bot) UnpinAllGeneralForumTopicMessages(chat *Chat) error {
 		"chat_id": chat.Recipient(),
 	}
 
-	_, err := Raw(b, "unpinAllGeneralForumTopicMessages", params)
+	_, err := b.Raw("unpinAllGeneralForumTopicMessages", params)
 	return err
 }

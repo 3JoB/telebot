@@ -20,7 +20,6 @@
 //		}
 //
 //		b.Handle("/start", func(c *tele.Context) error {
-//			defer c.ReleaseContext()
 //			return c.Send("Hello world!")
 //		})
 //

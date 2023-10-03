@@ -1,6 +1,7 @@
 package telebot
 
 import (
+	"github.com/3JoB/telebot/params"
 	"github.com/3JoB/unsafeConvert"
 )
 
@@ -71,7 +72,7 @@ func (b *Bot) UploadSticker(to Recipient, png *File) (*File, error) {
 
 // StickerSet returns a sticker set on success.
 func (b *Bot) StickerSet(name string) (*StickerSet, error) {
-	data, err := Raw(b, "getStickerSet", map[string]string{"name": name})
+	data, err :=b.Raw("getStickerSet", map[string]string{"name": name})
 	defer ReleaseBuffer(data)
 	if err != nil {
 		return nil, err
@@ -117,7 +118,7 @@ func (b *Bot) CreateStickerSet(to Recipient, s StickerSet) error {
 
 // Use this method to delete a sticker set that was created by the bot. Returns True on success.
 func (b *Bot) DeleteStickerSet(name string) error {
-	r, err := Raw(b, "deleteStickerSet", map[string]string{"name": name})
+	r, err := b.Raw("deleteStickerSet", &params.Any{Name: name})
 	ReleaseBuffer(r)
 	return err
 }
@@ -156,13 +157,13 @@ func (b *Bot) SetStickerPosition(sticker string, position int) error {
 		"position": unsafeConvert.IntToString(position),
 	}
 
-	_, err := Raw(b, "setStickerPositionInSet", params)
+	_, err :=b.Raw("setStickerPositionInSet", params)
 	return err
 }
 
 // DeleteSticker deletes a sticker from a set created by the bot.
 func (b *Bot) DeleteSticker(sticker string) error {
-	_, err := Raw(b, "deleteStickerFromSet", map[string]string{"sticker": sticker})
+	_, err :=b.Raw("deleteStickerFromSet", map[string]string{"sticker": sticker})
 	return err
 }
 
@@ -197,7 +198,7 @@ func (b *Bot) CustomEmojiStickers(ids []string) ([]Sticker, error) {
 		"custom_emoji_ids": ids,
 	}
 
-	data, err := Raw(b, "getCustomEmojiStickers", params)
+	data, err :=b.Raw("getCustomEmojiStickers", params)
 	defer ReleaseBuffer(data)
 	if err != nil {
 		return nil, err

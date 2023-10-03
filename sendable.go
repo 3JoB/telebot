@@ -297,7 +297,7 @@ func (x *Location) Send(b *Bot, to Recipient, opt *SendOptions) (*Message, error
 	}
 	b.embedSendOptions(params, opt)
 
-	data, err := Raw(b, "sendLocation", params)
+	data, err := b.Raw("sendLocation", params)
 	if err != nil {
 		return nil, err
 	}
@@ -320,7 +320,7 @@ func (v *Venue) Send(b *Bot, to Recipient, opt *SendOptions) (*Message, error) {
 	}
 	b.embedSendOptions(params, opt)
 
-	data, err := Raw(b, "sendVenue", params)
+	data, err := b.Raw("sendVenue", params)
 	if err != nil {
 		return nil, err
 	}
@@ -334,7 +334,7 @@ func (i *Invoice) Send(b *Bot, to Recipient, opt *SendOptions) (*Message, error)
 	params["chat_id"] = to.Recipient()
 	b.embedSendOptions(params, opt)
 
-	data, err := Raw(b, "sendInvoice", params)
+	data, err := b.Raw("sendInvoice", params)
 	if err != nil {
 		return nil, err
 	}
@@ -372,7 +372,7 @@ func (p *Poll) Send(b *Bot, to Recipient, opt *SendOptions) (*Message, error) {
 	opts, _ := b.json.Marshal(options)
 	params["options"] = unsafeConvert.StringSlice(opts)
 
-	data, err := Raw(b, "sendPoll", params)
+	data, err := b.Raw("sendPoll", params)
 	if err != nil {
 		return nil, err
 	}
@@ -388,7 +388,7 @@ func (d *Dice) Send(b *Bot, to Recipient, opt *SendOptions) (*Message, error) {
 	}
 	b.embedSendOptions(params, opt)
 
-	data, err := Raw(b, "sendDice", params)
+	data, err := b.Raw("sendDice", params)
 	if err != nil {
 		return nil, err
 	}
@@ -404,7 +404,7 @@ func (g *Game) Send(b *Bot, to Recipient, opt *SendOptions) (*Message, error) {
 	}
 	b.embedSendOptions(params, opt)
 
-	data, err := Raw(b, "sendGame", params)
+	data, err := b.Raw("sendGame", params)
 	if err != nil {
 		return nil, err
 	}

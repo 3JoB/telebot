@@ -259,7 +259,7 @@ func (b *Bot) InviteLink(chat *Chat) (string, error) {
 		"chat_id": chat.Recipient(),
 	}
 
-	data, err := Raw(b, "exportChatInviteLink", params)
+	data, err := b.Raw("exportChatInviteLink", params)
 	defer ReleaseBuffer(data)
 	if err != nil {
 		return "", err
@@ -290,7 +290,7 @@ func (b *Bot) CreateInviteLink(chat Recipient, link *ChatInviteLink) (*ChatInvit
 		}
 	}
 
-	data, err := Raw(b, "createChatInviteLink", params)
+	data, err := b.Raw("createChatInviteLink", params)
 	defer ReleaseBuffer(data)
 	if err != nil {
 		return nil, err
@@ -323,7 +323,7 @@ func (b *Bot) EditInviteLink(chat Recipient, link *ChatInviteLink) (*ChatInviteL
 		}
 	}
 
-	data, err := Raw(b, "editChatInviteLink", params)
+	data, err := b.Raw("editChatInviteLink", params)
 	if err != nil {
 		return nil, err
 	}
@@ -343,7 +343,7 @@ func (b *Bot) RevokeInviteLink(chat Recipient, link string) (*ChatInviteLink, er
 		"invite_link": link,
 	}
 
-	data, err := Raw(b, "revokeChatInviteLink", params)
+	data, err := b.Raw("revokeChatInviteLink", params)
 	defer ReleaseBuffer(data)
 	if err != nil {
 		return nil, err
@@ -364,7 +364,7 @@ func (b *Bot) ApproveJoinRequest(chat Recipient, user *User) error {
 		"user_id": user.Recipient(),
 	}
 
-	data, err := Raw(b, "approveChatJoinRequest", params)
+	data, err := b.Raw("approveChatJoinRequest", params)
 	defer ReleaseBuffer(data)
 	if err != nil {
 		return err
@@ -380,7 +380,7 @@ func (b *Bot) DeclineJoinRequest(chat Recipient, user *User) error {
 		"user_id": user.Recipient(),
 	}
 
-	data, err := Raw(b, "declineChatJoinRequest", params)
+	data, err := b.Raw("declineChatJoinRequest", params)
 	defer ReleaseBuffer(data)
 	if err != nil {
 		return err
@@ -396,7 +396,7 @@ func (b *Bot) SetGroupTitle(chat *Chat, title string) error {
 		"title":   title,
 	}
 
-	r, err := Raw(b, "setChatTitle", params)
+	r, err := b.Raw("setChatTitle", params)
 	ReleaseBuffer(r)
 	return err
 }
@@ -408,7 +408,7 @@ func (b *Bot) SetGroupDescription(chat *Chat, description string) error {
 		"description": description,
 	}
 
-	r, err := Raw(b, "setChatDescription", params)
+	r, err := b.Raw("setChatDescription", params)
 	ReleaseBuffer(r)
 	return err
 }
@@ -431,7 +431,7 @@ func (b *Bot) SetGroupStickerSet(chat *Chat, setName string) error {
 		"sticker_set_name": setName,
 	}
 
-	r, err := Raw(b, "setChatStickerSet", params)
+	r, err := b.Raw("setChatStickerSet", params)
 	ReleaseBuffer(r)
 	return err
 }
@@ -443,7 +443,7 @@ func (b *Bot) SetGroupPermissions(chat *Chat, perms Rights) error {
 		"permissions": perms,
 	}
 
-	r, err := Raw(b, "setChatPermissions", params)
+	r, err := b.Raw("setChatPermissions", params)
 	ReleaseBuffer(r)
 	return err
 }
@@ -454,7 +454,7 @@ func (b *Bot) DeleteGroupPhoto(chat *Chat) error {
 		"chat_id": chat.Recipient(),
 	}
 
-	r, err := Raw(b, "deleteChatPhoto", params)
+	r, err := b.Raw("deleteChatPhoto", params)
 	ReleaseBuffer(r)
 	return err
 }
@@ -465,7 +465,7 @@ func (b *Bot) DeleteGroupStickerSet(chat *Chat) error {
 		"chat_id": chat.Recipient(),
 	}
 
-	r, err := Raw(b, "deleteChatStickerSet", params)
+	r, err := b.Raw("deleteChatStickerSet", params)
 	ReleaseBuffer(r)
 	return err
 }

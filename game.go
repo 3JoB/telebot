@@ -50,7 +50,7 @@ func (b *Bot) GameScores(user Recipient, msg Editable) ([]GameHighScore, error) 
 		params["message_id"] = msgID
 	}
 
-	data, err := Raw(b, "getGameHighScores", params)
+	data, err := b.Raw("getGameHighScores", params)
 	defer ReleaseBuffer(data)
 	if err != nil {
 		return nil, err
@@ -84,7 +84,7 @@ func (b *Bot) SetGameScore(user Recipient, msg Editable, score GameHighScore) (*
 		params["message_id"] = msgID
 	}
 
-	data, err := Raw(b, "setGameScore", params)
+	data, err := b.Raw("setGameScore", params)
 	if err != nil {
 		return nil, err
 	}

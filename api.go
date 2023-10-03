@@ -20,48 +20,6 @@ import (
 // It also handles API errors, so you only need to unwrap
 // result field from json data.
 //
-// If you do not pass in the payload value, you need to define the type of T.
-//
-//		Example:
-//	    	Raw[int](b, "getMe")
-//
-// It now returns a *bytes.Buffer, which will be automatically returned to the
-// pool most of the time, but if you call a method such as Raw alone that returns
-// a Buffer pointer, please use the ReleaseBuffer() method to save it back to the pool.
-func Raw[T any](b *Bot, method string, payload ...T) (*bytes.Buffer, error) {
-	url := b.buildUrl(method)
-	req := b.client.AcquireRequest()
-	buf := pool.NewBuffer()
-	req.SetRequestURI(url)
-	req.SetWriter(buf)
-	req.MethodPOST()
-	if len(payload) > 0 {
-		if err := req.WriteJson(payload[0]); err != nil {
-			ReleaseBuffer(buf)
-			return nil, err
-		}
-	}
-
-	resp, err := req.Do()
-	if err != nil {
-		ReleaseBuffer(buf)
-		return nil, wrapError(err)
-	}
-	// buf.Write(resp.Bytes())
-	defer resp.Release()
-
-	if b.verbose {
-		verbose(method, payload, buf)
-	}
-
-	// returning data as well
-	return buf, extractOk(buf)
-}
-
-// Raw lets you call any method of Bot API manually.
-// It also handles API errors, so you only need to unwrap
-// result field from json data.
-//
 // It now returns a *bytes.Buffer, which will be automatically returned to the
 // pool most of the time, but if you call a method such as Raw alone that returns
 // a Buffer pointer, please use the ReleaseBuffer() method to save it back to the pool.
@@ -134,7 +92,7 @@ func (b *Bot) sendFiles(method string, files map[string]File, params map[string]
 	}
 
 	if len(rawFiles) == 0 {
-		return Raw(b, method, params)
+		return b.Raw(method, params)
 	}
 
 	pipeReader, pipeWriter := io.Pipe()
@@ -221,7 +179,7 @@ func (b *Bot) sendText(to Recipient, text string, opt *SendOptions) (*Message, e
 	}
 	b.embedSendOptions(params, opt)
 
-	data, err := Raw(b, "sendMessage", params)
+	data, err := b.Raw("sendMessage", params)
 	if err != nil {
 		return nil, err
 	}
@@ -251,7 +209,7 @@ func (b *Bot) sendMedia(media Media, params map[string]any, files map[string]Fil
 }
 
 func (b *Bot) getMe() (*User, error) {
-	data, err := Raw[bool](b, "getMe")
+	data, err := b.Raw("getMe")
 	defer ReleaseBuffer(data)
 	if err != nil {
 		return nil, err
@@ -276,7 +234,7 @@ func (b *Bot) getUpdates(offset, limit int, timeout time.Duration, allowed []str
 		params["limit"] = limit
 	}
 
-	data, err := Raw(b, "getUpdates", params)
+	data, err := b.Raw("getUpdates", params)
 	if err != nil {
 		return nil, err
 	}
