@@ -1,11 +1,8 @@
 package telebot
 
 import (
-	"bufio"
 	"io"
 	"os"
-
-	"github.com/3JoB/telebot/pkg/temp"
 )
 
 // File object represents any sort of file.
@@ -91,38 +88,10 @@ type FileStorage struct {
 	ID     string
 }
 
-func (s *FileStorage) Copy(dst io.Writer) error {
-	r, w := bufio.NewReader(s.Reader), bufio.NewWriter(dst)
-	var buf [256]byte
-    for{
-        n, err := r.Read(buf[:])
-        if err == io.EOF {
-            break
-        }
-        if err != nil{
-            return err
-        }
-        if _, err := w.Write(buf[:n]); err != nil {
-			return err
-		}
-		if err := w.Flush(); err != nil {
-			return err
-		}
-    }
-	return nil
-}
-
 func (s *FileStorage) Close() (err error) {
-	if s.ID != "" {
-		if s.Reader != nil {
-			s.Reader.Close() //nolint:errcheck
-			s.Reader = nil
-		}
-		err = temp.RemoveTemp(s.ID)
-	} else {
-		if s.Reader != nil {
-			err = s.Reader.Close()
-		}
+	if s.Reader != nil {
+		err = s.Reader.Close()
+		s.Reader = nil
 	}
 	return
 }

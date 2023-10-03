@@ -16,6 +16,7 @@ import (
 	"github.com/3JoB/telebot/json"
 	"github.com/3JoB/telebot/json/sonnet"
 	"github.com/3JoB/telebot/net"
+	"github.com/3JoB/telebot/pkg/temp"
 )
 
 var (
@@ -970,14 +971,20 @@ func (b *Bot) Download(file *File, localFilename string) error {
 	}
 	defer reader.Close()
 
-	out, err := fsutil.OpenFile(localFilename, os.O_RDWR|os.O_CREATE, 0666)
-	if err != nil {
-		return wrapError(err)
-	}
-	defer out.Close()
+	if reader.ID != "" {
+		if err := temp.Do(reader.ID, localFilename); err != nil {
+			return err
+		}
+	} else {
+		out, err := fsutil.OpenFile(localFilename, os.O_RDWR|os.O_CREATE, 0666)
+		if err != nil {
+			return wrapError(err)
+		}
+		defer out.Close()
 
-	if _, err := io.Copy(out, reader.Reader); err != nil {
-		return wrapError(err)
+		if _, err := io.Copy(out, reader.Reader); err != nil {
+			return wrapError(err)
+		}
 	}
 
 	file.FileLocal = localFilename

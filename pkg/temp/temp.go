@@ -9,7 +9,11 @@ import (
 
 const TempDir string = "/telebot/temp"
 
-var Dir string = getDir()
+var Dir string
+
+func init(){
+	Dir = getDir()
+}
 
 func Joi(id string) string {
 	if Dir == "" {
@@ -51,13 +55,13 @@ func Set(id string) (*os.File, error) {
 }
 
 func Do(id, now string) error {
-	return fsutil.Move(Joi(id), now)
+	return fsutil.Symlink(Joi(id), filepath.Clean(now))
 }
 
-func RemoveTemp(id string) error {
+func Remove(id string) error {
 	return fsutil.Remove(Joi(id))
 }
 
-func CleanTemp() error {
+func Clean() error {
 	return fsutil.Remove(Dir)
 }
