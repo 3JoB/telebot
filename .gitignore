@@ -32,4 +32,4 @@ coverage.txt
 .terraform*
 terraform*
 /examples/awslambdaechobot/awslambdaechobot
-/.vscode/*
+.vscode/settings.json
