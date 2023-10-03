@@ -1,6 +1,6 @@
 package telebot
 
-// Handle stores each handler and its corresponding middleware, 
+// Handle stores each handler and its corresponding middleware,
 // which may be optimized in the future.
 type Handle struct {
 	Do         HandlerFunc
@@ -13,10 +13,12 @@ type HandlerFunc func(*Context) error
 
 // Execute handler
 func (h *Handle) do(c *Context) error {
-	if c.next {
-		return h.Do(c)
+	if len(h.Middleware) > 0 {
+		if !c.next {
+			return nil
+		}
 	}
-	return nil
+	return h.Do(c)
 }
 
 // Execution middleware

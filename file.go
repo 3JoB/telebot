@@ -1,8 +1,11 @@
 package telebot
 
 import (
+	"bufio"
 	"io"
 	"os"
+
+	"github.com/3JoB/telebot/net"
 )
 
 // File object represents any sort of file.
@@ -81,4 +84,43 @@ func (f *File) InCloud() bool {
 func (f *File) OnDisk() bool {
 	_, err := os.Stat(f.FileLocal)
 	return err == nil
+}
+
+type FileStorage struct {
+	Reader *os.File
+	ID     string
+}
+
+func (s *FileStorage) Copy(dst io.Writer) error {
+	r, w := bufio.NewReader(s.Reader), bufio.NewWriter(dst)
+	var buf [256]byte
+    for{
+        n, err := r.Read(buf[:])
+        if err == io.EOF {
+            break
+        }
+        if err != nil{
+            return err
+        }
+        if _, err := w.Write(buf[:n]); err != nil {
+			return err
+		}
+		if err := w.Flush(); err != nil {
+			return err
+		}
+    }
+	return nil
+}
+
+func (s *FileStorage) Close() (err error) {
+	if s.ID != "" {
+		s.Reader.Close() //nolint:errcheck
+		s.Reader = nil
+		err = net.RemoveTemp(s.ID)
+	} else {
+		if s.Reader != nil {
+			err = s.Reader.Close()
+		}
+	}
+	return
 }

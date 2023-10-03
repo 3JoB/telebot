@@ -3,6 +3,7 @@ package net
 import (
 	"bytes"
 	"io"
+	"os"
 
 	"github.com/valyala/fasthttp"
 
@@ -12,6 +13,7 @@ import (
 type FastHTTPRequest struct {
 	json     json.Json
 	w        *bytes.Buffer
+	temp     *os.File
 	client   *fasthttp.Client
 	request  *fasthttp.Request
 	response *fasthttp.Response
@@ -47,6 +49,12 @@ func (f *FastHTTPRequest) SetContentType(v string) {
 
 func (f *FastHTTPRequest) SetWriter(w *bytes.Buffer) {
 	f.w = w
+}
+
+func (f *FastHTTPRequest) SetTemp(path string) (*os.File, error) {
+	r, err := SetTemp(path)
+	f.temp = r
+	return r, err
 }
 
 func (f *FastHTTPRequest) Write(b []byte) {
@@ -85,11 +93,23 @@ func (f *FastHTTPRequest) Do() (NetResponse, error) {
 	resp := f.acquireResponse()
 	resp.code = f.response.StatusCode()
 
+	if resp.IsStatusCode(200) {
+		if f.temp != nil {
+			if err := f.response.BodyWriteTo(f.temp); err != nil {
+				return resp, err
+			}
+			goto END
+		}
+	}
+
 	if f.w != nil {
 		f.w.Write(f.response.Body()) //nolint:errcheck
 	} else {
 		resp.body = f.response.Body()
 	}
+
+END:
+
 	return resp, err
 }
 
@@ -99,6 +119,7 @@ func (f *FastHTTPRequest) Reset() {
 	f.request = nil
 	f.response = nil
 	f.client = nil
+	f.temp = nil
 	f.w = nil
 }
 

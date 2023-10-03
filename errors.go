@@ -132,8 +132,6 @@ var (
 // Err returns Error instance by given description.
 func Err(s string) error {
 	if r, ok := ErrMap[hash32p(s)]; ok {
-		fmt.Println(ok)
-		fmt.Println(r.Description)
 		return r
 	}
 	return nil

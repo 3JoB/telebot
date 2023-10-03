@@ -9,13 +9,13 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/3JoB/ulib/fsutil"
 	"github.com/3JoB/ulib/litefmt"
-	"github.com/3JoB/ulib/pool"
 	"github.com/3JoB/unsafeConvert"
 
-	"github.com/3JoB/telebot/internal/net"
 	"github.com/3JoB/telebot/json"
 	"github.com/3JoB/telebot/json/sonnet"
+	"github.com/3JoB/telebot/net"
 )
 
 var (
@@ -40,13 +40,12 @@ func NewBot(pref Settings) (*Bot, error) {
 		pref_json = defaultJson
 	}
 
-	client := pref.Client
+	var client net.NetFrame
 	if client == nil {
-		if pref.FastHTTP {
-			client = net.NewFastHTTPClient()
-		} else {
-			client = net.NewHTTPClient()
-		}
+		client = net.NewFastHTTPClient()
+		client.SetJsonHandle(pref_json)
+	} else {
+		client = pref.Client
 		client.SetJsonHandle(pref_json)
 	}
 
@@ -137,12 +136,6 @@ type Settings struct {
 	// Local flags the bot, it's on the same machine as telegram-bot-api,
 	// learn more about it: https://github.com/tdlib/telegram-bot-api
 	Local bool
-
-	// When this value is true, the network library will be switched to fasthttp,
-	// otherwise net/http will be used. The current network interface is in beta version,
-	// stability is not guaranteed, and the fasthttp interface may not be able to handle
-	// large files (if there is too little memory).
-	FastHTTP bool
 
 	// The Json interface is used to customize the json handle.
 	// Five wrappers are provided by default. For detailed documentation,
@@ -973,18 +966,17 @@ func (b *Bot) FileByID(fileID string) (File, error) {
 func (b *Bot) Download(file *File, localFilename string) error {
 	reader, err := b.File(file)
 	if err != nil {
-		return err
+		return wrapError(err)
 	}
 	defer reader.Close()
 
-	out, err := os.Create(localFilename)
+	out, err := fsutil.OpenFile(localFilename, os.O_RDWR|os.O_CREATE, 0666)
 	if err != nil {
 		return wrapError(err)
 	}
 	defer out.Close()
 
-	_, err = io.Copy(out, reader)
-	if err != nil {
+	if _, err := io.Copy(out, reader.Reader); err != nil {
 		return wrapError(err)
 	}
 
@@ -997,7 +989,12 @@ func (b *Bot) buildFileUrl(filepath string) string {
 }
 
 // File gets a file from Telegram servers.
-func (b *Bot) File(file *File) (io.ReadCloser, error) {
+func (b *Bot) File(file *File) (*FileStorage, error) {
+	var (
+		err    error
+		reader = &FileStorage{}
+	)
+
 	if b.local {
 		localPath := file.FilePath
 		if file.FilePath == "" {
@@ -1010,8 +1007,10 @@ func (b *Bot) File(file *File) (io.ReadCloser, error) {
 			file.FilePath = localPath
 		}
 
-		return os.Open(localPath)
+		reader.Reader, err = os.Open(localPath)
+		return reader, err
 	}
+
 	f, err := b.FileByID(file.FileID)
 	if err != nil {
 		return nil, err
@@ -1019,22 +1018,28 @@ func (b *Bot) File(file *File) (io.ReadCloser, error) {
 
 	url := b.buildFileUrl(f.FilePath)
 	file.FilePath = f.FilePath // saving file path
-	buf := pool.NewBufferClose()
 	req := b.client.AcquireRequest()
 	req.MethodGET()
 	req.SetRequestURI(url)
-	resp, err := req.Do()
-	if err != nil {
-		buf.Close()
+
+	tmp_id := fmt.Sprint(hash32p(f.fileName + f.FileID))
+	reader.ID = tmp_id
+	if reader.Reader, err = req.SetTemp(tmp_id); err != nil {
 		return nil, wrapError(err)
 	}
-	buf.Write(resp.Bytes())
+	resp, err := req.Do()
+	if err != nil {
+		reader.Close()
+		return nil, wrapError(err)
+	}
 
 	defer resp.Release()
 	if !resp.IsStatusCode(200) {
+		reader.Close()
 		return nil, fmt.Errorf("telebot: expected status 200 but got %v", resp.StatusCode())
 	}
-	return buf, nil
+
+	return reader, nil
 }
 
 // StopLiveLocation stops broadcasting live message location

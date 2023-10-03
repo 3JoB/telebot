@@ -1,8 +1,9 @@
 package telebot
 
 import (
-	"github.com/3JoB/telebot/params"
 	"github.com/3JoB/unsafeConvert"
+
+	"github.com/3JoB/telebot/params"
 )
 
 type StickerSetType = string
@@ -72,7 +73,7 @@ func (b *Bot) UploadSticker(to Recipient, png *File) (*File, error) {
 
 // StickerSet returns a sticker set on success.
 func (b *Bot) StickerSet(name string) (*StickerSet, error) {
-	data, err :=b.Raw("getStickerSet", map[string]string{"name": name})
+	data, err := b.Raw("getStickerSet", map[string]string{"name": name})
 	defer ReleaseBuffer(data)
 	if err != nil {
 		return nil, err
@@ -157,13 +158,13 @@ func (b *Bot) SetStickerPosition(sticker string, position int) error {
 		"position": unsafeConvert.IntToString(position),
 	}
 
-	_, err :=b.Raw("setStickerPositionInSet", params)
+	_, err := b.Raw("setStickerPositionInSet", params)
 	return err
 }
 
 // DeleteSticker deletes a sticker from a set created by the bot.
 func (b *Bot) DeleteSticker(sticker string) error {
-	_, err :=b.Raw("deleteStickerFromSet", map[string]string{"sticker": sticker})
+	_, err := b.Raw("deleteStickerFromSet", map[string]string{"sticker": sticker})
 	return err
 }
 
@@ -198,7 +199,7 @@ func (b *Bot) CustomEmojiStickers(ids []string) ([]Sticker, error) {
 		"custom_emoji_ids": ids,
 	}
 
-	data, err :=b.Raw("getCustomEmojiStickers", params)
+	data, err := b.Raw("getCustomEmojiStickers", params)
 	defer ReleaseBuffer(data)
 	if err != nil {
 		return nil, err

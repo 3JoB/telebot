@@ -1,7 +1,7 @@
 package params
 
 type (
-	Any struct{
+	Any struct {
 		Name string `json:"name"`
 	}
 )

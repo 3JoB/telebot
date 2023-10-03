@@ -3,6 +3,7 @@ package net
 import (
 	"bytes"
 	"io"
+	"os"
 
 	"github.com/3JoB/resty-ilo"
 
@@ -13,6 +14,7 @@ type GoNetRequest struct {
 	uri    string
 	method string
 	json   json.Json
+	temp   *os.File
 	w      *bytes.Buffer
 	r      *resty.Request
 }
@@ -43,6 +45,12 @@ func (g *GoNetRequest) SetContentType(v string) {
 
 func (g *GoNetRequest) SetWriter(w *bytes.Buffer) {
 	g.w = w
+}
+
+func (g *GoNetRequest) SetTemp(path string) (*os.File, error) {
+	r, err := SetTemp(path)
+	g.temp = r
+	return r, err
 }
 
 func (g *GoNetRequest) Write(b []byte) {
@@ -87,11 +95,23 @@ func (g *GoNetRequest) Do() (NetResponse, error) {
 
 	resp := g.acquireResponse()
 	resp.code = response.StatusCode()
+
+	if resp.IsStatusCode(200) {
+		if g.temp != nil {
+			_, err := io.Copy(g.temp, response.RawBody())
+			if err != nil {
+				return resp, err
+			}
+			goto END
+		}
+	}
 	if g.w != nil {
 		g.w.Write(response.Body()) //nolint:errcheck
 	} else {
 		resp.body = response.Body()
 	}
+
+END:
 	response.RawBody().Close() //nolint:errcheck
 	return resp, err
 }
@@ -101,6 +121,7 @@ func (g *GoNetRequest) Reset() {
 	g.method = ""
 	g.r = nil
 	g.w = nil
+	g.temp = nil
 }
 
 func (g *GoNetRequest) Release() {
