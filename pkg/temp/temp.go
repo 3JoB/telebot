@@ -9,11 +9,7 @@ import (
 
 const TempDir string = "/telebot/temp"
 
-var Dir string
-
-func init(){
-	Dir = getDir()
-}
+var Dir = getDir()
 
 func Joi(id string) string {
 	if Dir == "" {
