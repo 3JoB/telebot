@@ -3,6 +3,8 @@ package telebot
 import (
 	"strconv"
 	"time"
+
+	"github.com/3JoB/telebot/pkg/types"
 )
 
 // User object represents a Telegram user, bot.
@@ -56,7 +58,7 @@ type Chat struct {
 	EmojiStatusExpirationDate int64         `json:"emoji_status_expiration_date,omitempty"`
 	PinnedMessage             *Message      `json:"pinned_message,omitempty"`
 	Permissions               *Rights       `json:"permissions,omitempty"`
-	Topic                     *Topic        `json:"forum_topic,omitempty"`
+	Topic                     *types.Topic  `json:"forum_topic,omitempty"`
 	SlowMode                  int           `json:"slow_mode_delay,omitempty"`
 	StickerSet                string        `json:"sticker_set_name,omitempty"`
 	CanSetStickerSet          bool          `json:"can_set_sticker_set,omitempty"`

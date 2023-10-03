@@ -1024,7 +1024,7 @@ func (b *Bot) File(file *File) (*FileStorage, error) {
 
 	tmp_id := fmt.Sprint(hash32p(f.fileName + f.FileID))
 	reader.ID = tmp_id
-	if reader.Reader, err = req.SetTemp(tmp_id); err != nil {
+	if err = req.SetTemp(tmp_id); err != nil {
 		return nil, wrapError(err)
 	}
 	resp, err := req.Do()
@@ -1038,7 +1038,6 @@ func (b *Bot) File(file *File) (*FileStorage, error) {
 		reader.Close()
 		return nil, fmt.Errorf("telebot: expected status 200 but got %v", resp.StatusCode())
 	}
-
 	return reader, nil
 }
 

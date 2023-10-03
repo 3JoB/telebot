@@ -8,6 +8,7 @@ import (
 	"github.com/valyala/fasthttp"
 
 	"github.com/3JoB/telebot/json"
+	"github.com/3JoB/telebot/pkg/temp"
 )
 
 type FastHTTPRequest struct {
@@ -51,10 +52,10 @@ func (f *FastHTTPRequest) SetWriter(w *bytes.Buffer) {
 	f.w = w
 }
 
-func (f *FastHTTPRequest) SetTemp(path string) (*os.File, error) {
-	r, err := SetTemp(path)
+func (f *FastHTTPRequest) SetTemp(path string) error {
+	r, err := temp.Set(path)
 	f.temp = r
-	return r, err
+	return err
 }
 
 func (f *FastHTTPRequest) Write(b []byte) {
@@ -93,13 +94,12 @@ func (f *FastHTTPRequest) Do() (NetResponse, error) {
 	resp := f.acquireResponse()
 	resp.code = f.response.StatusCode()
 
-	if resp.IsStatusCode(200) {
-		if f.temp != nil {
-			if err := f.response.BodyWriteTo(f.temp); err != nil {
-				return resp, err
-			}
-			goto END
+	if resp.IsStatusCode(200) && f.temp != nil {
+		if err := f.response.BodyWriteTo(f.temp); err != nil {
+			return resp, err
 		}
+		f.temp.Close() //nolint:errcheck
+		goto END
 	}
 
 	if f.w != nil {

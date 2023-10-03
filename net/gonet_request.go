@@ -8,6 +8,7 @@ import (
 	"github.com/3JoB/resty-ilo"
 
 	"github.com/3JoB/telebot/json"
+	"github.com/3JoB/telebot/pkg/temp"
 )
 
 type GoNetRequest struct {
@@ -47,10 +48,10 @@ func (g *GoNetRequest) SetWriter(w *bytes.Buffer) {
 	g.w = w
 }
 
-func (g *GoNetRequest) SetTemp(path string) (*os.File, error) {
-	r, err := SetTemp(path)
+func (g *GoNetRequest) SetTemp(path string) error {
+	r, err := temp.Set(path)
 	g.temp = r
-	return r, err
+	return err
 }
 
 func (g *GoNetRequest) Write(b []byte) {
@@ -96,14 +97,13 @@ func (g *GoNetRequest) Do() (NetResponse, error) {
 	resp := g.acquireResponse()
 	resp.code = response.StatusCode()
 
-	if resp.IsStatusCode(200) {
-		if g.temp != nil {
-			_, err := io.Copy(g.temp, response.RawBody())
-			if err != nil {
-				return resp, err
-			}
-			goto END
+	if resp.IsStatusCode(200) && g.temp != nil {
+		_, err := io.Copy(g.temp, response.RawBody())
+		if err != nil {
+			return resp, err
 		}
+		g.temp.Close() //nolint:errcheck
+		goto END
 	}
 	if g.w != nil {
 		g.w.Write(response.Body()) //nolint:errcheck

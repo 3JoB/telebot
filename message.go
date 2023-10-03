@@ -4,6 +4,7 @@ import (
 	"time"
 	"unicode/utf16"
 
+	"github.com/3JoB/telebot/pkg/types"
 	"github.com/3JoB/unsafeConvert"
 )
 
@@ -259,22 +260,22 @@ type Message struct {
 	ReplyMarkup *ReplyMarkup `json:"reply_markup,omitempty"`
 
 	// Service message: forum topic created
-	TopicCreated *TopicCreated `json:"forum_topic_created,omitempty"`
+	TopicCreated *types.TopicCreated `json:"forum_topic_created,omitempty"`
 
 	// Service message: forum topic closed
-	TopicClosed *TopicClosed `json:"forum_topic_closed,omitempty"`
+	TopicClosed *types.TopicClosed `json:"forum_topic_closed,omitempty"`
 
 	// Service message: forum topic reopened
-	TopicReopened *TopicReopened `json:"forum_topic_reopened,omitempty"`
+	TopicReopened *types.TopicReopened `json:"forum_topic_reopened,omitempty"`
 
 	// Service message: forum topic deleted
-	TopicEdited *TopicEdited `json:"forum_topic_edited,omitempty"`
+	TopicEdited *types.TopicEdited `json:"forum_topic_edited,omitempty"`
 
 	// Service message: general forum topic hidden
-	GeneralTopicHidden *GeneralTopicHidden `json:"general_topic_hidden,omitempty"`
+	GeneralTopicHidden *types.GeneralTopicHidden `json:"general_topic_hidden,omitempty"`
 
 	// Service message: general forum topic unhidden
-	GeneralTopicUnhidden *GeneralTopicUnhidden `json:"general_topic_unhidden,omitempty"`
+	GeneralTopicUnhidden *types.GeneralTopicUnhidden `json:"general_topic_unhidden,omitempty"`
 
 	// Service message: the user allowed the bot added to the attachment menu to write messages
 	WriteAccessAllowed *WriteAccessAllowed `json:"write_access_allowed,omitempty"`

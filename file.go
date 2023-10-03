@@ -5,7 +5,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/3JoB/telebot/net"
+	"github.com/3JoB/telebot/pkg/temp"
 )
 
 // File object represents any sort of file.
@@ -114,9 +114,11 @@ func (s *FileStorage) Copy(dst io.Writer) error {
 
 func (s *FileStorage) Close() (err error) {
 	if s.ID != "" {
-		s.Reader.Close() //nolint:errcheck
-		s.Reader = nil
-		err = net.RemoveTemp(s.ID)
+		if s.Reader != nil {
+			s.Reader.Close() //nolint:errcheck
+			s.Reader = nil
+		}
+		err = temp.RemoveTemp(s.ID)
 	} else {
 		if s.Reader != nil {
 			err = s.Reader.Close()
