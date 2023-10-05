@@ -6,12 +6,12 @@ import (
 
 	"github.com/sugawarayuuta/sonnet"
 
-	tjson "github.com/3JoB/telebot/json"
+	"github.com/3JoB/telebot/pkg/json"
 )
 
 type Sonnet struct{}
 
-func New() tjson.Json {
+func New() json.Json {
 	return Sonnet{}
 }
 
@@ -27,11 +27,11 @@ func (Sonnet) Unmarshal(buf []byte, v any) error {
 	return sonnet.Unmarshal(buf, v)
 }
 
-func (Sonnet) NewEncoder(w io.Writer) tjson.Encoder {
+func (Sonnet) NewEncoder(w io.Writer) json.Encoder {
 	return sonnet.NewEncoder(w)
 }
 
-func (Sonnet) NewDecoder(r io.Reader) tjson.Decoder {
+func (Sonnet) NewDecoder(r io.Reader) json.Decoder {
 	return sonnet.NewDecoder(r)
 }
 

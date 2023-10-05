@@ -7,7 +7,7 @@ import (
 
 	"github.com/valyala/fasthttp"
 
-	"github.com/3JoB/telebot/json"
+	"github.com/3JoB/telebot/pkg/json"
 	"github.com/3JoB/telebot/pkg/temp"
 )
 

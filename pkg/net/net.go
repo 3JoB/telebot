@@ -8,7 +8,7 @@ import (
 	"io"
 	"sync"
 
-	"github.com/3JoB/telebot/json"
+	"github.com/3JoB/telebot/pkg/json"
 )
 
 const UA = "Mozilla/5.0(compatible; Telebot-Expansion-Pack/v1; +https://github.com/3JoB/telebot)"

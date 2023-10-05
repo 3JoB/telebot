@@ -13,9 +13,9 @@ import (
 	"github.com/3JoB/ulib/litefmt"
 	"github.com/3JoB/unsafeConvert"
 
-	"github.com/3JoB/telebot/json"
-	"github.com/3JoB/telebot/json/sonnet"
-	"github.com/3JoB/telebot/net"
+	"github.com/3JoB/telebot/pkg/json"
+	"github.com/3JoB/telebot/pkg/json/sonnet"
+	"github.com/3JoB/telebot/pkg/net"
 	"github.com/3JoB/telebot/pkg/temp"
 )
 

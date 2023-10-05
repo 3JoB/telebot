@@ -4,7 +4,7 @@ import (
 	"github.com/valyala/fasthttp"
 	"github.com/valyala/fasthttp/fasthttpproxy"
 
-	"github.com/3JoB/telebot/json"
+	"github.com/3JoB/telebot/pkg/json"
 )
 
 type FastHTTP struct {
