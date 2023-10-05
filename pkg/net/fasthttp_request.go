@@ -3,18 +3,16 @@ package net
 import (
 	"bytes"
 	"io"
-	"os"
 
 	"github.com/valyala/fasthttp"
 
 	"github.com/3JoB/telebot/pkg/json"
-	"github.com/3JoB/telebot/pkg/temp"
 )
 
 type FastHTTPRequest struct {
 	json     json.Json
 	w        *bytes.Buffer
-	temp     *os.File
+	f     io.ReadWriteCloser
 	client   *fasthttp.Client
 	request  *fasthttp.Request
 	response *fasthttp.Response
@@ -52,10 +50,8 @@ func (f *FastHTTPRequest) SetWriter(w *bytes.Buffer) {
 	f.w = w
 }
 
-func (f *FastHTTPRequest) SetTemp(path string) error {
-	r, err := temp.Set(path)
-	f.temp = r
-	return err
+func (f *FastHTTPRequest) SetTemp(v io.ReadWriteCloser) {
+	f.f = v
 }
 
 func (f *FastHTTPRequest) Write(b []byte) {
@@ -94,11 +90,8 @@ func (f *FastHTTPRequest) Do() (NetResponse, error) {
 	resp := f.acquireResponse()
 	resp.code = f.response.StatusCode()
 
-	if resp.IsStatusCode(200) && f.temp != nil {
-		if err := f.response.BodyWriteTo(f.temp); err != nil {
-			return resp, err
-		}
-		f.temp.Close() //nolint:errcheck
+	if resp.IsStatusCode(200) && f.f != nil {
+		_, err = f.response.WriteTo(f.f)
 		goto END
 	}
 
@@ -119,7 +112,7 @@ func (f *FastHTTPRequest) Reset() {
 	f.request = nil
 	f.response = nil
 	f.client = nil
-	f.temp = nil
+	f.f = nil
 	f.w = nil
 }
 

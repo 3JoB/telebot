@@ -3,19 +3,17 @@ package net
 import (
 	"bytes"
 	"io"
-	"os"
 
 	"github.com/3JoB/resty-ilo"
 
 	"github.com/3JoB/telebot/pkg/json"
-	"github.com/3JoB/telebot/pkg/temp"
 )
 
 type GoNetRequest struct {
 	uri    string
 	method string
 	json   json.Json
-	temp   *os.File
+	f   io.ReadWriteCloser
 	w      *bytes.Buffer
 	r      *resty.Request
 }
@@ -48,10 +46,8 @@ func (g *GoNetRequest) SetWriter(w *bytes.Buffer) {
 	g.w = w
 }
 
-func (g *GoNetRequest) SetTemp(path string) error {
-	r, err := temp.Set(path)
-	g.temp = r
-	return err
+func (g *GoNetRequest) SetTemp(v io.ReadWriteCloser) {
+	g.f = v
 }
 
 func (g *GoNetRequest) Write(b []byte) {
@@ -97,12 +93,8 @@ func (g *GoNetRequest) Do() (NetResponse, error) {
 	resp := g.acquireResponse()
 	resp.code = response.StatusCode()
 
-	if resp.IsStatusCode(200) && g.temp != nil {
-		_, err := io.Copy(g.temp, response.RawBody())
-		if err != nil {
-			return resp, err
-		}
-		g.temp.Close() //nolint:errcheck
+	if resp.IsStatusCode(200) && g.f != nil {
+		_, err = Copy(g.f, response.RawBody())
 		goto END
 	}
 	if g.w != nil {
@@ -121,7 +113,7 @@ func (g *GoNetRequest) Reset() {
 	g.method = ""
 	g.r = nil
 	g.w = nil
-	g.temp = nil
+	g.f = nil
 }
 
 func (g *GoNetRequest) Release() {

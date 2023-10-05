@@ -25,5 +25,4 @@ type Encoder interface {
 
 type Decoder interface {
 	Decode(v any) error  // Decode reads the next JSON-encoded value from its input and stores it in the value pointed to by v.
-	Buffered() io.Reader // Buffered returns a reader of the data remaining in the Decoder's buffer. The reader is valid until the next call to Decode.
 }

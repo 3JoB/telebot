@@ -13,10 +13,10 @@ import (
 	"github.com/3JoB/ulib/litefmt"
 	"github.com/3JoB/unsafeConvert"
 
+	"github.com/3JoB/telebot/pkg/fs"
 	"github.com/3JoB/telebot/pkg/json"
 	"github.com/3JoB/telebot/pkg/json/sonnet"
 	"github.com/3JoB/telebot/pkg/net"
-	"github.com/3JoB/telebot/pkg/temp"
 )
 
 var (
@@ -41,13 +41,15 @@ func NewBot(pref Settings) (*Bot, error) {
 		pref_json = defaultJson
 	}
 
-	var client net.NetFrame
+	client := pref.Client
 	if client == nil {
 		client = net.NewFastHTTPClient()
-		client.SetJsonHandle(pref_json)
-	} else {
-		client = pref.Client
-		client.SetJsonHandle(pref_json)
+	}
+	client.SetJsonHandle(pref_json)
+
+	filest := pref.FileSystem
+	if filest == nil {
+		filest = fs.Buffer{}
 	}
 
 	logger := pref.Logger
@@ -76,6 +78,7 @@ func NewBot(pref Settings) (*Bot, error) {
 		parseMode:   pref.ParseMode,
 		client:      client,
 		json:        pref_json,
+		fs:          filest,
 		logger:      logger,
 	}
 
@@ -103,6 +106,7 @@ type Bot struct {
 
 	client      net.NetFrame
 	group       *Group
+	fs          fs.FileSystem
 	json        json.Json
 	logger      Logger
 	handlers    map[string]*Handle
@@ -144,6 +148,8 @@ type Settings struct {
 	//
 	// Some methods use the default go-json because they are not under *Bot.
 	Json json.Json
+
+	FileSystem fs.FileSystem
 
 	// The idea of Logger comes from https://github.com/tucnak/telebot/issues/619.
 	//
@@ -971,20 +977,14 @@ func (b *Bot) Download(file *File, localFilename string) error {
 	}
 	defer reader.Close()
 
-	if reader.ID != "" {
-		if err := temp.Do(reader.ID, localFilename); err != nil {
-			return err
-		}
-	} else {
-		out, err := fsutil.OpenFile(localFilename, os.O_RDWR|os.O_CREATE, 0666)
-		if err != nil {
-			return wrapError(err)
-		}
-		defer out.Close()
+	out, err := fsutil.OpenFile(localFilename, os.O_RDWR|os.O_CREATE, 0666)
+	if err != nil {
+		return wrapError(err)
+	}
+	defer out.Close()
 
-		if _, err := io.Copy(out, reader.Reader); err != nil {
-			return wrapError(err)
-		}
+	if _, err := net.Copy(out, reader); err != nil {
+		return wrapError(err)
 	}
 
 	file.FileLocal = localFilename
@@ -996,11 +996,8 @@ func (b *Bot) buildFileUrl(filepath string) string {
 }
 
 // File gets a file from Telegram servers.
-func (b *Bot) File(file *File) (*FileStorage, error) {
-	var (
-		err    error
-		reader = &FileStorage{}
-	)
+func (b *Bot) File(file *File) (io.ReadWriteCloser, error) {
+	var err error
 
 	if b.local {
 		localPath := file.FilePath
@@ -1014,8 +1011,7 @@ func (b *Bot) File(file *File) (*FileStorage, error) {
 			file.FilePath = localPath
 		}
 
-		reader.Reader, err = os.Open(localPath)
-		return reader, err
+		return os.Open(localPath)
 	}
 
 	f, err := b.FileByID(file.FileID)
@@ -1028,24 +1024,21 @@ func (b *Bot) File(file *File) (*FileStorage, error) {
 	req := b.client.AcquireRequest()
 	req.MethodGET()
 	req.SetRequestURI(url)
-
-	tmp_id := fmt.Sprint(hash32p(f.fileName + f.FileID))
-	reader.ID = tmp_id
-	if err = req.SetTemp(tmp_id); err != nil {
+	w, err := b.fs.Create(f.fileName + f.FileID)
+	if err != nil {
 		return nil, wrapError(err)
 	}
+	req.SetTemp(w)
 	resp, err := req.Do()
 	if err != nil {
-		reader.Close()
 		return nil, wrapError(err)
 	}
 
 	defer resp.Release()
 	if !resp.IsStatusCode(200) {
-		reader.Close()
 		return nil, fmt.Errorf("telebot: expected status 200 but got %v", resp.StatusCode())
 	}
-	return reader, nil
+	return w, nil
 }
 
 // StopLiveLocation stops broadcasting live message location

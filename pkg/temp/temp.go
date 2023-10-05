@@ -34,11 +34,7 @@ func getDir() string {
 
 func Get(id string) (*os.File, error) {
 	file := Joi(id)
-	f, err := fsutil.OpenFile(file, os.O_RDWR|os.O_CREATE, 0666)
-	if err != nil {
-		return nil, err
-	}
-	return f, nil
+	return fsutil.OpenFile(file, os.O_RDWR|os.O_CREATE, 0666)
 }
 
 func Set(id string) (*os.File, error) {
