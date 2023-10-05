@@ -8,7 +8,7 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/sugawarayuuta/sonnet"
 
-	tele "github.com/3JoB/telebot"
+	tele "github.com/3JoB/telebot/v2"
 )
 
 // Logger returns a middleware that logs incoming updates.

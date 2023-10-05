@@ -8,10 +8,10 @@ import (
 	"io"
 	"sync"
 
-	"github.com/3JoB/telebot/pkg/json"
+	"github.com/3JoB/telebot/v2/pkg/json"
 )
 
-const UA = "Mozilla/5.0(compatible; Telebot-Expansion-Pack/v1; +https://github.com/3JoB/telebot)"
+const UA = "Mozilla/5.0(compatible; TelebotE/v2; +https://github.com/3JoB/telebot/v2)"
 
 var (
 	requestPool  sync.Pool

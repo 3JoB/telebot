@@ -15,14 +15,14 @@ This is a fork of https://github.com/tucnak/telebot . This library requires mini
 
 
 
-[![GoDoc](https://godoc.org/github.com/3JoB/telebot?status.svg)](https://godoc.org/github.com/3JoB/telebot)
+[![GoDoc](https://godoc.org/github.com/3JoB/telebot/v2?status.svg)](https://godoc.org/github.com/3JoB/telebo/v2t)
 [![GitHub Actions](https://github.com/3JoB/telebot/actions/workflows/codeql.yml/badge.svg)](https://github.com/3JoB/telebot/actions)
 [![Discuss on Telegram](https://img.shields.io/badge/telegram-discuss-0088cc.svg)](https://t.me/go_telebot)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2F3JoB%2Ftelebot.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2F3JoB%2Ftelebot?ref=badge_shield)
-[![Go Report Card](https://goreportcard.com/badge/github.com/3JoB/telebot)](https://goreportcard.com/report/github.com/3JoB/telebot)
+[![Go Report Card](https://goreportcard.com/badge/github.com/3JoB/telebot/v2)](https://goreportcard.com/report/github.com/3JoB/telebo/v2t)
 
 ```bash
-go get -u github.com/3JoB/telebot
+go get -u github.com/3JoB/telebot/v2
 ```
 
 - [Telebot](#telebot--telebot-expansion-pack)
@@ -68,7 +68,7 @@ import (
 	"os"
 	"time"
 
-	tele "github.com/3JoB/telebot"
+	tele "github.com/3JoB/telebot/v2"
 )
 
 func main() {
@@ -153,7 +153,7 @@ Telebot has a simple and recognizable way to set up middleware — chained funct
 Import a `middleware` package to get some basic out-of-box middleware
 implementations:
 ```go
-import "github.com/3JoB/telebot/middleware"
+import "github.com/3JoB/telebot/v2/middleware"
 ```
 
 ```go
@@ -307,7 +307,7 @@ b.Send(user, "text", tele.Silent, tele.NoPreview)
 ```
 
 Full list of supported option-flags you can find
-[here](https://reflects.go.dev/github.com/3JoB/telebot#Option).
+[here](https://pkg.go.dev/github.com/3JoB/telebot/v2#Option).
 
 ## Editable
 If you want to edit some existing message, you don't really need to store the
@@ -482,11 +482,11 @@ of `QueryResponse`.
 # Contributing
 
 1. Fork it
-2. Clone v3: `git clone -b github.com/3JoB/telebot`
-3. Create your feature branch: `git checkout -b v3-feature`
+2. Clone v2: `git clone -b github.com/3JoB/telebot`
+3. Create your feature branch: `git checkout -b v2`
 4. Make changes and add them: `git add .`
 5. Commit: `git commit -m "add some feature"`
-6. Push: `git push origin v3-feature`
+6. Push: `git push origin v2`
 7. Pull request
 
 # License

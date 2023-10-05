@@ -1,6 +1,6 @@
 package telebot
 
-import "github.com/3JoB/telebot/pkg/params"
+import "github.com/3JoB/telebot/v2/pkg/params"
 
 type Topic struct {
 	Name              string `json:"name"`

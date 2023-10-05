@@ -1,4 +1,4 @@
-module github.com/3JoB/telebot
+module github.com/3JoB/telebot/v2
 
 go 1.21.1
 

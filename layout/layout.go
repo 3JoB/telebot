@@ -12,7 +12,7 @@ import (
 	"github.com/goccy/go-yaml"
 	"github.com/sugawarayuuta/sonnet"
 
-	tele "github.com/3JoB/telebot"
+	tele "github.com/3JoB/telebot/v2"
 )
 
 type (

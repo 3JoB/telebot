@@ -3,7 +3,7 @@ package telebot
 import (
 	"github.com/3JoB/unsafeConvert"
 
-	"github.com/3JoB/telebot/pkg/params"
+	"github.com/3JoB/telebot/v2/pkg/params"
 )
 
 type StickerSetType = string

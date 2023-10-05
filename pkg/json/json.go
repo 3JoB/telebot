@@ -7,7 +7,7 @@ import (
 
 // The Json interface is used to customize the json handler.
 // Five wrappers are provided by default. For detailed documentation,
-// see: https://pkg.go.dev/github.com/3JoB/telebot/json.
+// see: https://pkg.go.dev/github.com/3JoB/telebot/v2/pkg/json.
 //
 // Some methods use the default sonnet because they are not under *Bot.
 type Json interface {
