@@ -25,33 +25,16 @@ import (
 // a Buffer pointer, please use the ReleaseBuffer() method to save it back to the pool.
 func (b *Bot) Raw(method string, payload ...any) (*bytes.Buffer, error) {
 	url := b.buildUrl(method)
-
-	// Cancel the request immediately without waiting for the timeout  when bot is about to stop.
-	// This may become important if doing long polling with long timeout.
-	/*exit := make(chan struct{})
-	defer close(exit)
-	ctx, cancel := context.WithCancel(context.Background())
-
-	defer cancel()
-
-	go func() {
-		select {
-		case <-b.stopClient:
-			cancel()
-		case <-exit:
-		}
-	}()*/
-	buf := pool.NewBuffer()
 	req := b.client.AcquireRequest()
-
+	buf := pool.NewBuffer()
 	req.SetRequestURI(url)
 	req.MethodPOST()
+	req.SetWriter(buf)
 
-	if len(payload) > 0 {
-		if payload[0] != nil {
-			if err := req.WriteJson(payload[0]); err != nil {
-				return nil, err
-			}
+	if len(payload) > 0 && payload[0] != nil {
+		if err := req.WriteJson(payload[0]); err != nil {
+			ReleaseBuffer(buf)
+			return nil, err
 		}
 	}
 
@@ -60,7 +43,6 @@ func (b *Bot) Raw(method string, payload ...any) (*bytes.Buffer, error) {
 		ReleaseBuffer(buf)
 		return nil, wrapError(err)
 	}
-	buf.Write(resp.Bytes())
 	defer resp.Release()
 	if b.verbose {
 		verbose(method, payload, buf)

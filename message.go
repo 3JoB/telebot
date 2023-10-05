@@ -259,16 +259,16 @@ type Message struct {
 	ReplyMarkup *ReplyMarkup `json:"reply_markup,omitempty"`
 
 	// Service message: forum topic created
-	TopicCreated *TopicCreated `json:"forum_topic_created,omitempty"`
+	TopicCreated *Topic `json:"forum_topic_created,omitempty"`
 
 	// Service message: forum topic closed
 	TopicClosed *TopicClosed `json:"forum_topic_closed,omitempty"`
 
 	// Service message: forum topic reopened
-	TopicReopened *TopicReopened `json:"forum_topic_reopened,omitempty"`
+	TopicReopened *Topic `json:"forum_topic_reopened,omitempty"`
 
 	// Service message: forum topic deleted
-	TopicEdited *TopicEdited `json:"forum_topic_edited,omitempty"`
+	TopicEdited *Topic `json:"forum_topic_edited,omitempty"`
 
 	// Service message: general forum topic hidden
 	GeneralTopicHidden *GeneralTopicHidden `json:"general_topic_hidden,omitempty"`
