@@ -9,7 +9,6 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/3JoB/ulib/fsutil"
 	"github.com/3JoB/ulib/litefmt"
 	"github.com/3JoB/ulib/pool"
 	"github.com/3JoB/unsafeConvert"
@@ -968,7 +967,7 @@ func (b *Bot) Download(file *File, localFilename string) error {
 	}
 	defer reader.Close()
 
-	out, err := fsutil.OpenFile(localFilename, os.O_RDWR|os.O_CREATE, 0666)
+	out, err := os.OpenFile(localFilename, os.O_RDWR|os.O_CREATE, 0666)
 	if err != nil {
 		return wrapError(err)
 	}
