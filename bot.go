@@ -11,9 +11,9 @@ import (
 
 	"github.com/3JoB/ulib/fsutil"
 	"github.com/3JoB/ulib/litefmt"
+	"github.com/3JoB/ulib/pool"
 	"github.com/3JoB/unsafeConvert"
 
-	"github.com/3JoB/telebot/pkg/fs"
 	"github.com/3JoB/telebot/pkg/json"
 	"github.com/3JoB/telebot/pkg/json/sonnet"
 	"github.com/3JoB/telebot/pkg/net"
@@ -47,11 +47,6 @@ func NewBot(pref Settings) (*Bot, error) {
 	}
 	client.SetJsonHandle(pref_json)
 
-	filest := pref.FileSystem
-	if filest == nil {
-		filest = fs.Buffer{}
-	}
-
 	logger := pref.Logger
 	if logger == nil {
 		logger = NewZeroLogger()
@@ -78,7 +73,6 @@ func NewBot(pref Settings) (*Bot, error) {
 		parseMode:   pref.ParseMode,
 		client:      client,
 		json:        pref_json,
-		fs:          filest,
 		logger:      logger,
 	}
 
@@ -106,7 +100,6 @@ type Bot struct {
 
 	client      net.NetFrame
 	group       *Group
-	fs          fs.FileSystem
 	json        json.Json
 	logger      Logger
 	handlers    map[string]*Handle
@@ -148,8 +141,6 @@ type Settings struct {
 	//
 	// Some methods use the default go-json because they are not under *Bot.
 	Json json.Json
-
-	FileSystem fs.FileSystem
 
 	// The idea of Logger comes from https://github.com/tucnak/telebot/issues/619.
 	//
@@ -1024,11 +1015,8 @@ func (b *Bot) File(file *File) (io.ReadWriteCloser, error) {
 	req := b.client.AcquireRequest()
 	req.MethodGET()
 	req.SetRequestURI(url)
-	w, err := b.fs.Create(f.fileName + f.FileID)
-	if err != nil {
-		return nil, wrapError(err)
-	}
-	req.SetTemp(w)
+	w := pool.NewBufferClose()
+	req.SetWriteCloser(w)
 	resp, err := req.Do()
 	if err != nil {
 		return nil, wrapError(err)

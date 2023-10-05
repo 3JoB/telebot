@@ -13,7 +13,7 @@ type GoNetRequest struct {
 	uri    string
 	method string
 	json   json.Json
-	f   io.ReadWriteCloser
+	f      io.ReadWriteCloser
 	w      *bytes.Buffer
 	r      *resty.Request
 }
@@ -46,7 +46,7 @@ func (g *GoNetRequest) SetWriter(w *bytes.Buffer) {
 	g.w = w
 }
 
-func (g *GoNetRequest) SetTemp(v io.ReadWriteCloser) {
+func (g *GoNetRequest) SetWriteCloser(v io.ReadWriteCloser) {
 	g.f = v
 }
 

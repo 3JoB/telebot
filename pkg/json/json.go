@@ -24,5 +24,5 @@ type Encoder interface {
 }
 
 type Decoder interface {
-	Decode(v any) error  // Decode reads the next JSON-encoded value from its input and stores it in the value pointed to by v.
+	Decode(v any) error // Decode reads the next JSON-encoded value from its input and stores it in the value pointed to by v.
 }

@@ -49,7 +49,7 @@ type NetRequest interface {
 	// after the request is completed instead of passing in the Response.
 	SetWriter(w *bytes.Buffer)
 
-	SetTemp(v io.ReadWriteCloser)
+	SetWriteCloser(v io.ReadWriteCloser)
 
 	Write(b []byte)
 	WriteFile(content string, r io.Reader) error

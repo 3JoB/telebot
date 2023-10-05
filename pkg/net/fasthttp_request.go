@@ -12,7 +12,7 @@ import (
 type FastHTTPRequest struct {
 	json     json.Json
 	w        *bytes.Buffer
-	f     io.ReadWriteCloser
+	f        io.ReadWriteCloser
 	client   *fasthttp.Client
 	request  *fasthttp.Request
 	response *fasthttp.Response
@@ -50,7 +50,7 @@ func (f *FastHTTPRequest) SetWriter(w *bytes.Buffer) {
 	f.w = w
 }
 
-func (f *FastHTTPRequest) SetTemp(v io.ReadWriteCloser) {
+func (f *FastHTTPRequest) SetWriteCloser(v io.ReadWriteCloser) {
 	f.f = v
 }
 
