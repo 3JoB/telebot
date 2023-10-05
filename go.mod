@@ -4,7 +4,7 @@ go 1.21.1
 
 require (
 	github.com/3JoB/resty-ilo v1.3.0
-	github.com/3JoB/ulib v1.36.3
+	github.com/3JoB/ulib v1.37.0
 	github.com/3JoB/unsafeConvert v1.6.0
 	github.com/cornelk/hashmap v1.0.8
 	github.com/goccy/go-yaml v1.11.2
@@ -13,7 +13,7 @@ require (
 	github.com/rs/zerolog v1.31.0
 	github.com/spf13/viper v1.16.0
 	github.com/stretchr/testify v1.8.3
-	github.com/sugawarayuuta/sonnet v0.0.0-20230921120721-6f097f6a7e6d
+	github.com/sugawarayuuta/sonnet v0.0.0-20231004000330-239c7b6e4ce8
 	github.com/valyala/fasthttp v1.50.0
 	golang.org/x/text v0.13.0
 )
