@@ -12,21 +12,10 @@ var (
 )
 
 func process(input string) (command, bot, payload string) {
-	/*Benchmark
-	RE2: wasm, no cgo
-	REG: github.com/grafana/regexp
-	Strings: process()
-	cpu: 12th Gen Intel(R) Core(TM) i7-12700H
-	----
-	Benchmark_RE2-20                            	  377274	      3039 ns/op	     592 B/op	      13 allocs/op
-	Benchmark_REG-20                            	 1746291	       685.1 ns/op	     436 B/op	       3 allocs/op
-	Benchmark_Strings-20                        	28667738	        43.29 ns/op	      32 B/op	       1 allocs/op*/
 	if !strings.HasPrefix(input, "/") {
 		return
 	}
-
 	atIdx := strings.Index(input, "@")
-
 	if atIdx != -1 {
 		command = input[:atIdx]
 		botPayload := input[atIdx+1:]
