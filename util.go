@@ -40,10 +40,6 @@ func process(input string) (command, bot, payload string) {
 	return
 }
 
-func hash32p(e string) uint32 {
-	return fnv.Hash32(e)
-}
-
 func hash32(e *Error) uint32 {
 	return fnv.Hash32(e.String())
 }

@@ -3,6 +3,8 @@ package telebot
 import (
 	"fmt"
 	"strings"
+
+	"github.com/jamiealquiza/fnv"
 )
 
 type (
@@ -131,7 +133,7 @@ var (
 
 // Err returns Error instance by given description.
 func Err(s string) error {
-	if r, ok := ErrMap[hash32p(s)]; ok {
+	if r, ok := ErrMap[fnv.Hash32(s)]; ok {
 		return r
 	}
 	return nil
