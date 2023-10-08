@@ -1,6 +1,6 @@
 module github.com/3JoB/telebot/v2
 
-go 1.21.1
+go 1.21.2
 
 require (
 	github.com/3JoB/resty-ilo v1.4.0
