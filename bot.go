@@ -170,6 +170,10 @@ func (b *Bot) OnError(err error, c *Context) {
 	b.logger.OnError(err, c)
 }
 
+func (b *Bot) Json() json.Json {
+	return b.json
+}
+
 func (b *Bot) debug(err error) {
 	if b.verbose {
 		b.OnError(err, nil)

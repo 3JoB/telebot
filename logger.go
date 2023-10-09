@@ -1,6 +1,8 @@
 package telebot
 
 import (
+	"io"
+
 	"github.com/3JoB/ulib/litefmt"
 	"github.com/3JoB/unsafeConvert"
 	"github.com/rs/zerolog"
@@ -20,9 +22,15 @@ type LoggerZerolog struct {
 	l zerolog.Logger
 }
 
-func NewZeroLogger() Logger {
+func NewZeroLogger(writers ...io.Writer) Logger {
+	var w io.Writer
+	if len(writers) > 0 {
+		w = zerolog.MultiLevelWriter(writers...)
+	} else {
+		w = zerolog.NewConsoleWriter()
+	}
 	return &LoggerZerolog{
-		l: zerolog.New(zerolog.NewConsoleWriter()).With().Timestamp().Logger(),
+		l: zerolog.New(w).With().Timestamp().Logger(),
 	}
 }
 

@@ -7,14 +7,6 @@ type RestrictConfig struct {
 	// Chats is a list of chats that are going to be affected
 	// by either In or Out function.
 	Chats []int64
-
-	// In defines a function that will be called if the chat
-	// of an update will be found in the Chats list.
-	In tele.HandlerFunc
-
-	// Out defines a function that will be called if the chat
-	// of an update will NOT be found in the Chats list.
-	Out tele.HandlerFunc
 }
 
 // Restrict returns a middleware that handles a list of provided
