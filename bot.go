@@ -20,7 +20,7 @@ import (
 
 var (
 	ctxPool     sync.Pool
-	defaultJson json.Json = sonnet.New()
+	defaultJson json.Json
 )
 
 // SetdefaultJSON will set a default global JSON handler
@@ -37,7 +37,10 @@ func NewBot(pref Settings) (*Bot, error) {
 
 	pref_json := pref.Json
 	if pref_json == nil {
+		SetDefaultJSON(sonnet.New())
 		pref_json = defaultJson
+	} else {
+		SetDefaultJSON(pref_json)
 	}
 
 	client := pref.Client

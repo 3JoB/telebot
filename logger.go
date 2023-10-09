@@ -11,10 +11,7 @@ import (
 // The Logger interface allows you to customize log wrappers for TEP,
 // which uses Zerolog-based wrappers by default.
 type Logger interface {
-	Debugf(format string, a ...any)
-	Infof(format string, a ...any)
-	Warnf(format string, a ...any)
-	Errorf(format string, a ...any)
+	Println(a ...any)
 	Panicf(format string, a ...any)
 	OnError(error, *Context)
 }
@@ -29,36 +26,11 @@ func NewZeroLogger() Logger {
 	}
 }
 
-func (z *LoggerZerolog) Debugf(format string, a ...any) {
-	if len(a) > 0 {
-		z.l.Debug().Msgf(format, a...)
-		return
+func (z *LoggerZerolog) Println(v ...any) {
+	if len(v) > 0 {
+		v = append(v, "\n")
 	}
-	z.l.Debug().Msg(format)
-}
-
-func (z *LoggerZerolog) Infof(format string, a ...any) {
-	if len(a) > 0 {
-		z.l.Debug().Msgf(format, a...)
-		return
-	}
-	z.l.Debug().Msg(format)
-}
-
-func (z *LoggerZerolog) Warnf(format string, a ...any) {
-	if len(a) > 0 {
-		z.l.Debug().Msgf(format, a...)
-		return
-	}
-	z.l.Debug().Msg(format)
-}
-
-func (z *LoggerZerolog) Errorf(format string, a ...any) {
-	if len(a) > 0 {
-		z.l.Debug().Msgf(format, a...)
-		return
-	}
-	z.l.Debug().Msg(format)
+	z.l.Print(v)
 }
 
 func (z *LoggerZerolog) Panicf(format string, a ...any) {
