@@ -82,16 +82,3 @@ func (f *File) OnDisk() bool {
 	_, err := os.Stat(f.FileLocal)
 	return err == nil
 }
-
-type FileStorage struct {
-	Reader *os.File
-	ID     string
-}
-
-func (s *FileStorage) Close() (err error) {
-	if s.Reader != nil {
-		err = s.Reader.Close()
-		s.Reader = nil
-	}
-	return
-}

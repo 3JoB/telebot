@@ -11,13 +11,6 @@ type CallbackEndpoint interface {
 type Callback struct {
 	ID string `json:"id"`
 
-	// For message sent to channels, Sender may be empty
-	Sender *User `json:"from"`
-
-	// Message will be set if the button that originated the query
-	// was attached to a message sent by a bot.
-	Message *Message `json:"message"`
-
 	// MessageID will be set if the button was attached to a message
 	// sent via the bot in inline mode.
 	MessageID string `json:"inline_message_id"`
@@ -30,6 +23,13 @@ type Callback struct {
 	// callback was fired. Sets immediately before the handling,
 	// while the Data field stores only with payload.
 	Unique string `json:"-"`
+
+	// For message sent to channels, Sender may be empty
+	Sender *User `json:"from"`
+
+	// Message will be set if the button that originated the query
+	// was attached to a message sent by a bot.
+	Message *Message `json:"message"`
 }
 
 // MessageSig satisfies Editable interface.
@@ -56,10 +56,6 @@ type CallbackResponse struct {
 	// shown to the user.
 	Text string `json:"text,omitempty"`
 
-	// (Optional) If true, an alert will be shown by the client instead
-	// of a notification at the top of the chat screen. Defaults to false.
-	ShowAlert bool `json:"show_alert,omitempty"`
-
 	// (Optional) URL that will be opened by the user's client.
 	// If you have created a Game and accepted the conditions via
 	// @BotFather, specify the URL that opens your game.
@@ -68,6 +64,10 @@ type CallbackResponse struct {
 	// callback button. Otherwise, you may use deep-linking:
 	// https://telegram.me/your_bot?start=XXXX
 	URL string `json:"url,omitempty"`
+
+	// (Optional) If true, an alert will be shown by the client instead
+	// of a notification at the top of the chat screen. Defaults to false.
+	ShowAlert bool `json:"show_alert,omitempty"`
 }
 
 // CallbackUnique returns ReplyButton.Text.

@@ -34,12 +34,12 @@ type ShippingOption struct {
 // Payment contains basic information about a successful payment.
 type Payment struct {
 	Currency         string `json:"currency"`
-	Total            int    `json:"total_amount"`
 	Payload          string `json:"invoice_payload"`
 	OptionID         string `json:"shipping_option_id"`
-	Order            Order  `json:"order_info"`
 	TelegramChargeID string `json:"telegram_payment_charge_id"`
 	ProviderChargeID string `json:"provider_payment_charge_id"`
+	Order            Order  `json:"order_info"`
+	Total            int    `json:"total_amount"`
 }
 
 // PreCheckoutQuery contains information about an incoming pre-checkout query.
@@ -48,8 +48,8 @@ type PreCheckoutQuery struct {
 	ID       string `json:"id"`
 	Currency string `json:"currency"`
 	Payload  string `json:"invoice_payload"`
-	Total    int    `json:"total_amount"`
 	OptionID string `json:"shipping_option_id"`
+	Total    int    `json:"total_amount"`
 	Order    Order  `json:"order_info"`
 }
 
@@ -63,20 +63,21 @@ type Order struct {
 
 // Invoice contains basic information about an invoice.
 type Invoice struct {
-	Title       string  `json:"title"`
-	Description string  `json:"description"`
-	Payload     string  `json:"payload"`
-	Currency    string  `json:"currency"`
-	Prices      []Price `json:"prices"`
-	Token       string  `json:"provider_token"`
-	Data        string  `json:"provider_data"`
-
-	Photo     *Photo `json:"photo"`
-	PhotoSize int    `json:"photo_size"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	Payload     string `json:"payload"`
+	Currency    string `json:"currency"`
+	Token       string `json:"provider_token"`
+	Data        string `json:"provider_data"`
 
 	// Unique deep-linking parameter that can be used to
 	// generate this invoice when used as a start parameter (0).
 	Start string `json:"start_parameter"`
+
+	Prices []Price `json:"prices"`
+
+	Photo     *Photo `json:"photo"`
+	PhotoSize int    `json:"photo_size"`
 
 	// Shows the total price in the smallest units of the currency.
 	// For example, for a price of US$ 1.45 pass amount = 145.

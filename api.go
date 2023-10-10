@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"log"
 	"mime/multipart"
 	"os"
 	"time"
@@ -48,7 +47,7 @@ func (b *Bot) Raw(method string, payload ...any) (*bytes.Buffer, error) {
 	}
 	defer resp.Release()
 	if b.verbose {
-		verbose(method, payload, buf)
+		b.verboses(method, payload, buf)
 	}
 
 	// returning data as well
@@ -92,18 +91,18 @@ func (b *Bot) sendFiles(method string, files map[string]File, params map[string]
 
 		for field, file := range rawFiles {
 			if err := addFileToWriter(writer, files[field].fileName, field, file); err != nil {
-				_ = pipeWriter.CloseWithError(err)
+				pipeWriter.CloseWithError(err) //nolint:errcheck
 				return
 			}
 		}
 		for field, value := range params {
 			if err := writer.WriteField(field, value.(string)); err != nil {
-				_ = pipeWriter.CloseWithError(err)
+				pipeWriter.CloseWithError(err) //nolint:errcheck
 				return
 			}
 		}
 		if err := writer.Close(); err != nil {
-			_ = pipeWriter.CloseWithError(err)
+			pipeWriter.CloseWithError(err) //nolint:errcheck
 			return
 		}
 	}()
@@ -115,7 +114,7 @@ func (b *Bot) sendFiles(method string, files map[string]File, params map[string]
 
 	if err := req.WriteFile(writer.FormDataContentType(), pipeReader); err != nil {
 		err = wrapError(err)
-		_ = pipeReader.CloseWithError(err)
+		pipeReader.CloseWithError(err) //nolint:errcheck
 		req.Release()
 		ReleaseBuffer(buf)
 		return nil, err
@@ -124,7 +123,7 @@ func (b *Bot) sendFiles(method string, files map[string]File, params map[string]
 	resp, err := req.Do()
 	if err != nil {
 		err = wrapError(err)
-		_ = pipeReader.CloseWithError(err)
+		pipeReader.CloseWithError(err) //nolint:errcheck
 		ReleaseBuffer(buf)
 		return nil, err
 	}
@@ -222,16 +221,6 @@ func (b *Bot) getUpdates(offset, limit int, timeout time.Duration, allowed []str
 		params.Limit = limit
 	}
 	defer updates.ReleaseParams(params)
-	/*params := map[string]any{
-		"offset":  offset,
-		"timeout": int(timeout / time.Second),
-	}
-	params["allowed_updates"] = allowed
-
-	if limit != 0 {
-		params["limit"] = limit
-	}*/
-
 	data, err := b.Raw("getUpdates", params)
 	if err != nil {
 		return nil, err
@@ -323,13 +312,13 @@ func indent(b []byte) string {
 	return buf.String()
 }
 
-func verbose(method string, payload any, data *bytes.Buffer) {
+func (b *Bot) verboses(method string, payload any, data *bytes.Buffer) {
 	body, _ := defaultJson.Marshal(payload)
 	body = bytes.ReplaceAll(body, unsafeConvert.BytePointer(`\"`), unsafeConvert.BytePointer(`"`))
 	body = bytes.ReplaceAll(body, unsafeConvert.BytePointer(`"{`), unsafeConvert.BytePointer(`{`))
 	body = bytes.ReplaceAll(body, unsafeConvert.BytePointer(`}"`), unsafeConvert.BytePointer(`}`))
 
-	log.Printf(
+	b.logger.Printf(
 		"[verbose] telebot: sent request\nMethod: %v\nParams: %v\nResponse: %v",
 		method, indent(body), indent(data.Bytes()),
 	)

@@ -15,6 +15,7 @@ import (
 type Logger interface {
 	Println(a ...any)
 	Panicf(format string, a ...any)
+	Printf(format string, a ...any)
 	OnError(error, *Context)
 }
 
@@ -39,6 +40,10 @@ func (z *LoggerZerolog) Println(v ...any) {
 		v = append(v, "\n")
 	}
 	z.l.Print(v)
+}
+
+func (z *LoggerZerolog) Printf(format string, a ...any) {
+	z.l.Printf(format, a...)
 }
 
 func (z *LoggerZerolog) Panicf(format string, a ...any) {
