@@ -55,20 +55,6 @@ func (b *Bot) ProcessUpdate(u Update) bool {
 				}
 			}
 
-			/*if match != nil {
-				// Syntax: "</command>@<bot> <payload>"
-				command, botName := match[0][1], match[0][3]
-
-				if botName != "" && !strings.EqualFold(b.Me.Username, botName) {
-					return false
-				}
-
-				m.Payload = match[0][5]
-				if b.handle(command, c) {
-					return true
-				}
-			}*/
-
 			// 1:1 satisfaction
 			if b.handle(m.Text, c) {
 				return true
