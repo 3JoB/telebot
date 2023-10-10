@@ -136,7 +136,3 @@ const (
 	ModeMarkdownV2 ParseMode = "MarkdownV2"
 	ModeHTML       ParseMode = "HTML"
 )
-
-// M is a shortcut for map[string]any. Use it for passing
-// arguments to the layout functions.
-type M = map[string]any

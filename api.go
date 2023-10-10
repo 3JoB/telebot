@@ -14,6 +14,8 @@ import (
 	"github.com/3JoB/unsafeConvert"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
+
+	"github.com/3JoB/telebot/v2/pkg/updates"
 )
 
 // Raw lets you call any method of Bot API manually.
@@ -34,7 +36,8 @@ func (b *Bot) Raw(method string, payload ...any) (*bytes.Buffer, error) {
 	if len(payload) > 0 && payload[0] != nil {
 		if err := req.WriteJson(payload[0]); err != nil {
 			ReleaseBuffer(buf)
-			return nil, err
+			req.Release()
+			return nil, wrapError(err)
 		}
 	}
 
@@ -53,7 +56,11 @@ func (b *Bot) Raw(method string, payload ...any) (*bytes.Buffer, error) {
 }
 
 func (b *Bot) buildUrl(method string) string {
-	return litefmt.PSprint(b.URL, "/bot", b.Token, "/", method)
+	if b.URLCache != "" {
+		return litefmt.PSprint(b.URLCache, method)
+	}
+	b.URLCache = litefmt.PSprint(b.URL, "/bot", b.Token, "/")
+	return litefmt.PSprint(b.URLCache, method)
 }
 
 func (b *Bot) sendFiles(method string, files map[string]File, params map[string]any) (*bytes.Buffer, error) {
@@ -132,16 +139,17 @@ func (b *Bot) sendFiles(method string, files map[string]File, params map[string]
 
 func addFileToWriter(writer *multipart.Writer, filename, field string, file any) error {
 	var reader io.Reader
-	if r, ok := file.(io.Reader); ok {
+	switch r := file.(type) {
+	case io.Reader:
 		reader = r
-	} else if path, ok := file.(string); ok {
-		f, err := os.Open(path)
+	case string:
+		f, err := os.Open(r)
 		if err != nil {
 			return err
 		}
 		defer f.Close()
 		reader = f
-	} else {
+	default:
 		return fmt.Errorf("telebot: file for field %v should be io.ReadCloser or string", field)
 	}
 
@@ -171,7 +179,7 @@ func (b *Bot) sendText(to Recipient, text string, opt *SendOptions) (*Message, e
 
 func (b *Bot) sendMedia(media Media, params map[string]any, files map[string]File) (*Message, error) {
 	kind := media.MediaType()
-	what := "send" + cases.Title(language.English).String(kind)
+	what := litefmt.PSprint("send", cases.Title(language.English).String(kind))
 
 	if kind == "videoNote" {
 		kind = "video_note"
@@ -206,7 +214,15 @@ func (b *Bot) getMe() (*User, error) {
 }
 
 func (b *Bot) getUpdates(offset, limit int, timeout time.Duration, allowed []string) ([]Update, error) {
-	params := map[string]any{
+	params := updates.AcquireParams()
+	params.Offset = offset
+	params.Timeout = int(timeout / time.Second)
+	params.AllowedUpdates = allowed
+	if limit != 0 {
+		params.Limit = limit
+	}
+	defer updates.ReleaseParams(params)
+	/*params := map[string]any{
 		"offset":  offset,
 		"timeout": int(timeout / time.Second),
 	}
@@ -214,7 +230,7 @@ func (b *Bot) getUpdates(offset, limit int, timeout time.Duration, allowed []str
 
 	if limit != 0 {
 		params["limit"] = limit
-	}
+	}*/
 
 	data, err := b.Raw("getUpdates", params)
 	if err != nil {
@@ -230,10 +246,10 @@ func (b *Bot) getUpdates(offset, limit int, timeout time.Duration, allowed []str
 }
 
 type extracts struct {
-	Ok          bool           `json:"ok"`
-	Code        int            `json:"error_code"`
-	Description string         `json:"description"`
-	Parameters  map[string]any `json:"parameters"`
+	Ok          bool               `json:"ok"`
+	Code        int                `json:"error_code"`
+	Description string             `json:"description"`
+	Parameters  map[string]float64 `json:"parameters"`
 }
 
 // extractOk checks given result for error. If result is ok returns nil.
@@ -259,7 +275,7 @@ func extractOk(data *bytes.Buffer) error {
 
 		return GroupError{
 			err:        err.(*Error),
-			MigratedTo: int64(migratedTo.(float64)),
+			MigratedTo: int64(migratedTo),
 		}
 	default:
 		return err
@@ -273,7 +289,7 @@ func extractOk(data *bytes.Buffer) error {
 
 		err = FloodError{
 			err:        NewError(e.Code, e.Description),
-			RetryAfter: int(retryAfter.(float64)),
+			RetryAfter: int(retryAfter),
 		}
 	} else {
 		err = fmt.Errorf("telegram: %s (%d)", e.Description, e.Code)
@@ -309,9 +325,9 @@ func indent(b []byte) string {
 
 func verbose(method string, payload any, data *bytes.Buffer) {
 	body, _ := defaultJson.Marshal(payload)
-	body = bytes.ReplaceAll(body, unsafeConvert.ByteSlice(`\"`), unsafeConvert.ByteSlice(`"`))
-	body = bytes.ReplaceAll(body, unsafeConvert.ByteSlice(`"{`), unsafeConvert.ByteSlice(`{`))
-	body = bytes.ReplaceAll(body, unsafeConvert.ByteSlice(`}"`), unsafeConvert.ByteSlice(`}`))
+	body = bytes.ReplaceAll(body, unsafeConvert.BytePointer(`\"`), unsafeConvert.BytePointer(`"`))
+	body = bytes.ReplaceAll(body, unsafeConvert.BytePointer(`"{`), unsafeConvert.BytePointer(`{`))
+	body = bytes.ReplaceAll(body, unsafeConvert.BytePointer(`}"`), unsafeConvert.BytePointer(`}`))
 
 	log.Printf(
 		"[verbose] telebot: sent request\nMethod: %v\nParams: %v\nResponse: %v",

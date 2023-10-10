@@ -19,6 +19,7 @@ type StickerSet struct {
 	Type         StickerSetType `json:"sticker_type"`
 	Name         string         `json:"name"`
 	Title        string         `json:"title"`
+	Emojis       string         `json:"emojis"`
 	Animated     bool           `json:"is_animated"`
 	Video        bool           `json:"is_video"`
 	Stickers     []Sticker      `json:"stickers"`
@@ -26,7 +27,6 @@ type StickerSet struct {
 	PNG          *File          `json:"png_sticker"`
 	TGS          *File          `json:"tgs_sticker"`
 	WebM         *File          `json:"webm_sticker"`
-	Emojis       string         `json:"emojis"`
 	MaskPosition *MaskPosition  `json:"mask_position"`
 }
 
@@ -109,7 +109,7 @@ func (b *Bot) CreateStickerSet(to Recipient, s StickerSet) error {
 
 	if s.MaskPosition != nil {
 		data, _ := b.json.Marshal(&s.MaskPosition)
-		params["mask_position"] = unsafeConvert.StringSlice(data)
+		params["mask_position"] = unsafeConvert.StringPointer(data)
 	}
 
 	r, err := b.sendFiles("createNewStickerSet", files, params)
@@ -143,7 +143,7 @@ func (b *Bot) AddSticker(to Recipient, s StickerSet) error {
 
 	if s.MaskPosition != nil {
 		data, _ := b.json.Marshal(&s.MaskPosition)
-		params["mask_position"] = unsafeConvert.StringSlice(data)
+		params["mask_position"] = unsafeConvert.StringPointer(data)
 	}
 
 	r, err := b.sendFiles("addStickerToSet", files, params)

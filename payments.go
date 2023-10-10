@@ -128,11 +128,11 @@ func (i Invoice) params() map[string]any {
 	}
 	if len(i.Prices) > 0 {
 		data, _ := defaultJson.Marshal(i.Prices)
-		params["prices"] = unsafeConvert.StringSlice(data)
+		params["prices"] = unsafeConvert.StringPointer(data)
 	}
 	if len(i.SuggestedTipAmounts) > 0 {
 		data, _ := defaultJson.Marshal(i.SuggestedTipAmounts)
-		params["suggested_tip_amounts"] = unsafeConvert.StringSlice(data)
+		params["suggested_tip_amounts"] = unsafeConvert.StringPointer(data)
 	}
 	return params
 }

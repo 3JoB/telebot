@@ -20,7 +20,7 @@ import (
 
 var (
 	ctxPool     sync.Pool
-	defaultJson json.Json
+	defaultJson json.Json = sonnet.New()
 )
 
 // SetdefaultJSON will set a default global JSON handler
@@ -94,11 +94,12 @@ func NewBot(pref Settings) (*Bot, error) {
 
 // Bot represents a separate Telegram bot instance.
 type Bot struct {
-	Me      *User
-	Token   string
-	URL     string
-	Updates chan Update
-	Poller  Poller
+	Me       *User
+	Token    string
+	URL      string
+	URLCache string
+	Updates  chan Update
+	Poller   Poller
 
 	client      net.NetFrame
 	group       *Group
@@ -454,7 +455,7 @@ func (b *Bot) SendAlbum(to Recipient, a Album, opts ...any) ([]Message, error) {
 		}
 
 		data, _ = b.json.Marshal(im)
-		media[i] = unsafeConvert.StringSlice(data)
+		media[i] = unsafeConvert.StringPointer(data)
 	}
 
 	params := map[string]any{
@@ -649,7 +650,7 @@ func (b *Bot) EditReplyMarkup(msg Editable, markup *ReplyMarkup) (*Message, erro
 
 	processButtons(markup.InlineKeyboard)
 	data, _ := b.json.Marshal(markup)
-	params["reply_markup"] = unsafeConvert.StringSlice(data)
+	params["reply_markup"] = unsafeConvert.StringPointer(data)
 
 	datas, err := b.Raw("editMessageReplyMarkup", params)
 	if err != nil {
@@ -760,7 +761,7 @@ func (b *Bot) EditMedia(msg Editable, media Inputtable, opts ...any) (*Message, 
 	}
 
 	data, _ := b.json.Marshal(im)
-	params["media"] = unsafeConvert.StringSlice(data)
+	params["media"] = unsafeConvert.StringPointer(data)
 
 	if chatID == 0 { // if inline message
 		params["inline_message_id"] = msgID
@@ -857,7 +858,7 @@ func (b *Bot) Ship(query *ShippingQuery, what ...any) error {
 
 		params["ok"] = true
 		data, _ := b.json.Marshal(opts)
-		params["shipping_options"] = unsafeConvert.StringSlice(data)
+		params["shipping_options"] = unsafeConvert.StringPointer(data)
 	}
 
 	_, err := b.Raw("answerShippingQuery", params)

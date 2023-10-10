@@ -17,28 +17,20 @@ const (
 
 // Poll contains information about a poll.
 type Poll struct {
-	ID         string       `json:"id"`
-	Type       PollType     `json:"type"`
-	Question   string       `json:"question"`
-	Options    []PollOption `json:"options"`
-	VoterCount int          `json:"total_voter_count"`
-
-	// (Optional)
-	Closed bool `json:"is_closed,omitempty"`
-
-	CorrectOption   int             `json:"correct_option_id,omitempty"`
-	MultipleAnswers bool            `json:"allows_multiple_answers,omitempty"`
+	ID              string          `json:"id"`
+	Question        string          `json:"question"`
 	Explanation     string          `json:"explanation,omitempty"`
+	Type            PollType        `json:"type"`
+	Options         []PollOption    `json:"options"`
+	VoterCount      int             `json:"total_voter_count"`
+	CorrectOption   int             `json:"correct_option_id,omitempty"`
+	OpenPeriod      int             `json:"open_period,omitempty"` // (Mutually exclusive)
+	CloseUnixdate   int64           `json:"close_date,omitempty"`
+	Closed          bool            `json:"is_closed,omitempty"` // (Optional)
+	Anonymous       bool            `json:"is_anonymous"`        // True by default, shouldn't be omitted.
+	MultipleAnswers bool            `json:"allows_multiple_answers,omitempty"`
 	ParseMode       ParseMode       `json:"explanation_parse_mode,omitempty"`
 	Entities        []MessageEntity `json:"explanation_entities"`
-
-	// True by default, shouldn't be omitted.
-	Anonymous bool `json:"is_anonymous"`
-
-	// (Mutually exclusive)
-	OpenPeriod int `json:"open_period,omitempty"`
-
-	CloseUnixdate int64 `json:"close_date,omitempty"`
 }
 
 // PollOption contains information about one answer option in a poll.

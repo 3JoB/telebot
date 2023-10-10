@@ -91,7 +91,7 @@ func (h *Webhook) getParams() map[string]any {
 	}
 	if len(h.AllowedUpdates) > 0 {
 		data, _ := h.bot.json.Marshal(h.AllowedUpdates)
-		params["allowed_updates"] = unsafeConvert.StringSlice(data)
+		params["allowed_updates"] = unsafeConvert.StringPointer(data)
 	}
 	if h.IP != "" {
 		params["ip_address"] = h.IP
@@ -190,7 +190,8 @@ func (b *Bot) Webhook() (*Webhook, error) {
 // SetWebhook configures a bot to receive incoming
 // updates via an outgoing webhook.
 func (b *Bot) SetWebhook(w *Webhook) error {
-	_, err := b.sendFiles("setWebhook", w.getFiles(), w.getParams())
+	d, err := b.sendFiles("setWebhook", w.getFiles(), w.getParams())
+	ReleaseBuffer(d)
 	return err
 }
 
@@ -200,8 +201,9 @@ func (b *Bot) RemoveWebhook(dropPending ...bool) error {
 	if len(dropPending) > 0 {
 		drop = dropPending[0]
 	}
-	_, err := b.Raw("deleteWebhook", map[string]bool{
+	d, err := b.Raw("deleteWebhook", map[string]bool{
 		"drop_pending_updates": drop,
 	})
+	ReleaseBuffer(d)
 	return err
 }

@@ -11,12 +11,6 @@ type Query struct {
 	// Unique identifier for this query. 1-64 bytes.
 	ID string `json:"id"`
 
-	// Sender.
-	Sender *User `json:"from"`
-
-	// Sender location, only for bots that request user location.
-	Location *Location `json:"location"`
-
 	// Text of the query (up to 512 characters).
 	Text string `json:"query"`
 
@@ -25,6 +19,12 @@ type Query struct {
 
 	// ChatType of the type of the chat, from which the inline query was sent.
 	ChatType string `json:"chat_type"`
+
+	// Sender.
+	Sender *User `json:"from"`
+
+	// Sender location, only for bots that request user location.
+	Location *Location `json:"location"`
 }
 
 // QueryResponse builds a response to an inline Query.
@@ -33,18 +33,6 @@ type QueryResponse struct {
 	//
 	// Note: Telebot sets this field automatically!
 	QueryID string `json:"inline_query_id"`
-
-	// The results for the inline query.
-	Results Results `json:"results"`
-
-	// (Optional) The maximum amount of time in seconds that the result
-	// of the inline query may be cached on the server.
-	CacheTime int `json:"cache_time,omitempty"`
-
-	// (Optional) Pass True, if results may be cached on the server side
-	// only for the user that sent the query. By default, results may
-	// be returned to any user who sends the same query.
-	IsPersonal bool `json:"is_personal"`
 
 	// (Optional) Pass the offset that a client should send in the next
 	// query with the same text to receive more results. Pass an empty
@@ -60,6 +48,18 @@ type QueryResponse struct {
 	// (Optional) Parameter for the start message sent to the bot when user
 	// presses the switch button.
 	SwitchPMParameter string `json:"switch_pm_parameter,omitempty"`
+
+	// The results for the inline query.
+	Results Results `json:"results"`
+
+	// (Optional) The maximum amount of time in seconds that the result
+	// of the inline query may be cached on the server.
+	CacheTime int `json:"cache_time,omitempty"`
+
+	// (Optional) Pass True, if results may be cached on the server side
+	// only for the user that sent the query. By default, results may
+	// be returned to any user who sends the same query.
+	IsPersonal bool `json:"is_personal"`
 }
 
 // InlineResult represents a result of an inline query that was chosen
