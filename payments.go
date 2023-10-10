@@ -167,17 +167,16 @@ func (c Currency) ToTotal(total float64) int {
 	return int(total) * int(math.Pow(10, float64(c.Exp)))
 }
 
-// CreateInvoiceLink creates a link for a payment invoice.
-func (b *Bot) CreateInvoiceLink(i Invoice) (string, error) {
-	data, err := b.Raw("createInvoiceLink", i.params())
-	defer ReleaseBuffer(data)
+// Send delivers invoice through bot b to recipient.
+func (i *Invoice) Send(b *Bot, to Recipient, opt *SendOptions) (*Message, error) {
+	params := i.params()
+	params["chat_id"] = to.Recipient()
+	b.embedSendOptions(params, opt)
+
+	data, err := b.Raw("sendInvoice", params)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	var resp Response[string]
-	if err := b.json.NewDecoder(data).Decode(&resp); err != nil {
-		return "", wrapError(err)
-	}
-	return resp.Result, nil
+	return extractMessage(data)
 }

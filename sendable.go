@@ -328,20 +328,6 @@ func (v *Venue) Send(b *Bot, to Recipient, opt *SendOptions) (*Message, error) {
 	return extractMessage(data)
 }
 
-// Send delivers invoice through bot b to recipient.
-func (i *Invoice) Send(b *Bot, to Recipient, opt *SendOptions) (*Message, error) {
-	params := i.params()
-	params["chat_id"] = to.Recipient()
-	b.embedSendOptions(params, opt)
-
-	data, err := b.Raw("sendInvoice", params)
-	if err != nil {
-		return nil, err
-	}
-
-	return extractMessage(data)
-}
-
 // Send delivers poll through bot b to recipient.
 func (p *Poll) Send(b *Bot, to Recipient, opt *SendOptions) (*Message, error) {
 	params := map[string]any{

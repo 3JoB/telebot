@@ -1264,6 +1264,21 @@ func (b *Bot) SetMenuButton(chat *User, mb any) error {
 	return err
 }
 
+// CreateInvoiceLink creates a link for a payment invoice.
+func (b *Bot) CreateInvoiceLink(i Invoice) (string, error) {
+	data, err := b.Raw("createInvoiceLink", i.params())
+	defer ReleaseBuffer(data)
+	if err != nil {
+		return "", err
+	}
+
+	var resp Response[string]
+	if err := b.json.NewDecoder(data).Decode(&resp); err != nil {
+		return "", wrapError(err)
+	}
+	return resp.Result, nil
+}
+
 // Logout logs out from the cloud Bot API server before launching the bot locally.
 func (b *Bot) Logout() (bool, error) {
 	data, err := b.Raw("logOut")
