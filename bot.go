@@ -37,7 +37,6 @@ func NewBot(pref Settings) (*Bot, error) {
 
 	pref_json := pref.Json
 	if pref_json == nil {
-		SetDefaultJSON(sonnet.New())
 		pref_json = defaultJson
 	} else {
 		SetDefaultJSON(pref_json)
