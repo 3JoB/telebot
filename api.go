@@ -294,6 +294,8 @@ func extractOk(data *bytes.Buffer) error {
 
 // extractMessage extracts common Message result from given data.
 // Should be called after extractOk or b.Raw() to handle possible errors.
+//
+// This method will automatically release the incoming Buffer
 func extractMessage(data *bytes.Buffer) (*Message, error) {
 	defer ReleaseBuffer(data)
 	var resp Response[*Message]
