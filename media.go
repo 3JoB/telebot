@@ -17,12 +17,12 @@ type InputMedia struct {
 	Caption              string   `json:"caption"`
 	Thumbnail            string   `json:"thumb,omitempty"`
 	ParseMode            string   `json:"parse_mode,omitempty"`
+	Title                string   `json:"title,omitempty"`
+	Performer            string   `json:"performer,omitempty"`
 	Entities             Entities `json:"caption_entities,omitempty"`
 	Width                int      `json:"width,omitempty"`
 	Height               int      `json:"height,omitempty"`
 	Duration             int      `json:"duration,omitempty"`
-	Title                string   `json:"title,omitempty"`
-	Performer            string   `json:"performer,omitempty"`
 	Streaming            bool     `json:"supports_streaming,omitempty"`
 	HasSpoiler           bool     `json:"has_spoiler,omitempty"`
 	DisableTypeDetection bool     `json:"disable_content_type_detection,omitempty"`
@@ -110,9 +110,8 @@ type Audio struct {
 	Duration int `json:"duration,omitempty"`
 
 	// (Optional)
-	Caption string `json:"caption,omitempty"`
-
 	Thumbnail *Photo `json:"thumb,omitempty"`
+	Caption   string `json:"caption,omitempty"`
 	Title     string `json:"title,omitempty"`
 	Performer string `json:"performer,omitempty"`
 	MIME      string `json:"mime_type,omitempty"`
@@ -178,13 +177,13 @@ type Video struct {
 	Duration int `json:"duration,omitempty"`
 
 	// (Optional)
-	Caption string `json:"caption,omitempty"`
-
-	Thumbnail  *Photo `json:"thumb,omitempty"`
-	Streaming  bool   `json:"supports_streaming,omitempty"`
+	Caption    string `json:"caption,omitempty"`
 	MIME       string `json:"mime_type,omitempty"`
 	FileName   string `json:"file_name,omitempty"`
+	Streaming  bool   `json:"supports_streaming,omitempty"`
 	HasSpoiler bool   `json:"has_spoiler,omitempty"`
+
+	Thumbnail *Photo `json:"thumb,omitempty"`
 }
 
 func (v *Video) MediaType() string {
@@ -217,9 +216,9 @@ type Animation struct {
 	Duration int `json:"duration,omitempty"`
 
 	// (Optional)
-	Caption string `json:"caption,omitempty"`
+	Thumbnail *Photo `json:"thumb,omitempty"`
 
-	Thumbnail  *Photo `json:"thumb,omitempty"`
+	Caption    string `json:"caption,omitempty"`
 	MIME       string `json:"mime_type,omitempty"`
 	FileName   string `json:"file_name,omitempty"`
 	HasSpoiler bool   `json:"has_spoiler,omitempty"`
@@ -253,8 +252,7 @@ type Voice struct {
 
 	// (Optional)
 	Caption string `json:"caption,omitempty"`
-
-	MIME string `json:"mime_type,omitempty"`
+	MIME    string `json:"mime_type,omitempty"`
 }
 
 func (v *Voice) MediaType() string {
@@ -272,9 +270,9 @@ type VideoNote struct {
 	Duration int `json:"duration"`
 
 	// (Optional)
-	Thumbnail *Photo `json:"thumb,omitempty"`
-
 	Length int `json:"length,omitempty"`
+
+	Thumbnail *Photo `json:"thumb,omitempty"`
 }
 
 func (v *VideoNote) MediaType() string {

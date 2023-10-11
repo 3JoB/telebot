@@ -19,6 +19,9 @@ type ReplyMarkup struct {
 	// Note: you don't need to set HideCustomKeyboard field to show custom keyboard.
 	ReplyKeyboard [][]ReplyButton `json:"keyboard,omitempty"`
 
+	// Placeholder will be shown in the input field when the reply is active.
+	Placeholder string `json:"input_field_placeholder,omitempty"`
+
 	// ForceReply forces Telegram clients to display
 	// a reply interface to the user (act as if the user
 	// has selected the bot‘s message and tapped "Reply").
@@ -49,9 +52,6 @@ type ReplyMarkup struct {
 	// 2) If the bot's message is a reply (has SendOptions.ReplyTo),
 	//       sender of the original message.
 	Selective bool `json:"selective,omitempty"`
-
-	// Placeholder will be shown in the input field when the reply is active.
-	Placeholder string `json:"input_field_placeholder,omitempty"`
 
 	// IsPersistent allows to control when the keyboard is shown.
 	IsPersistent bool `json:"is_persistent,omitempty"`

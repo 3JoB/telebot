@@ -3,15 +3,12 @@ package telebot
 // Game object represents a game.
 // Their short names acts as unique identifiers.
 type Game struct {
-	Name string `json:"game_short_name"`
-
+	Name        string `json:"game_short_name"`
 	Title       string `json:"title"`
 	Description string `json:"description"`
-	Photo       *Photo `json:"photo"`
+	Text        string `json:"text"` // (Optional)
 
-	// (Optional)
-	Text string `json:"text"`
-
+	Photo     *Photo          `json:"photo"`
 	Entities  []MessageEntity `json:"text_entities"`
 	Animation *Animation      `json:"animation"`
 }
@@ -21,10 +18,9 @@ type Game struct {
 type GameHighScore struct {
 	User     *User `json:"user"`
 	Position int   `json:"position"`
-
-	Score  int  `json:"score"`
-	Force  bool `json:"force"`
-	NoEdit bool `json:"disable_edit_message"`
+	Score    int   `json:"score"`
+	Force    bool  `json:"force"`
+	NoEdit   bool  `json:"disable_edit_message"`
 }
 
 // GameScores returns the score of the specified user
