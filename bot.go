@@ -347,8 +347,10 @@ func (b *Bot) GetMyDescription(lang string) (string, error) {
 	} else {
 		defer ReleaseBuffer(r)
 		var resp Response[Description]
-		err := b.json.NewDecoder(r).Decode(&resp)
-		return resp.Result.Description, err
+		if err := b.json.NewDecoder(r).Decode(&resp); err != nil {
+			return "", err
+		}
+		return resp.Result.Description, nil
 	}
 }
 
@@ -928,10 +930,10 @@ func (b *Bot) AnswerWebApp(query *Query, r Result) (*WebAppMessage, error) {
 	}
 
 	data, err := b.Raw("answerWebAppQuery", params)
-	defer ReleaseBuffer(data)
 	if err != nil {
 		return nil, err
 	}
+	defer ReleaseBuffer(data)
 
 	var resp Response[*WebAppMessage]
 	if err := b.json.NewDecoder(data).Decode(&resp); err != nil {
@@ -952,10 +954,10 @@ func (b *Bot) FileByID(fileID string) (File, error) {
 	}
 
 	data, err := b.Raw("getFile", params)
-	defer ReleaseBuffer(data)
 	if err != nil {
 		return File{}, err
 	}
+	defer ReleaseBuffer(data)
 
 	var resp Response[File]
 	if err := b.json.NewDecoder(data).Decode(&resp); err != nil {
@@ -1056,7 +1058,6 @@ func (b *Bot) StopLiveLocation(msg Editable, opts ...any) (*Message, error) {
 
 	data, err := b.Raw("stopMessageLiveLocation", params)
 	if err != nil {
-		ReleaseBuffer(data)
 		return nil, err
 	}
 
@@ -1080,10 +1081,10 @@ func (b *Bot) StopPoll(msg Editable, opts ...any) (*Poll, error) {
 	b.embedSendOptions(params, sendOpts)
 
 	data, err := b.Raw("stopPoll", params)
-	defer ReleaseBuffer(data)
 	if err != nil {
 		return nil, err
 	}
+	defer ReleaseBuffer(data)
 
 	var resp Response[*Poll]
 	if err := b.json.NewDecoder(data).Decode(&resp); err != nil {
@@ -1165,10 +1166,10 @@ func (b *Bot) ChatByUsername(name string) (*Chat, error) {
 	}
 
 	data, err := b.Raw("getChat", params)
-	defer ReleaseBuffer(data)
 	if err != nil {
 		return nil, err
 	}
+	defer ReleaseBuffer(data)
 
 	var resp Response[*Chat]
 	if err := b.json.NewDecoder(data).Decode(&resp); err != nil {
@@ -1187,10 +1188,10 @@ func (b *Bot) ProfilePhotosOf(user *User) ([]Photo, error) {
 	}
 
 	data, err := b.Raw("getUserProfilePhotos", params)
-	defer ReleaseBuffer(data)
 	if err != nil {
 		return nil, err
 	}
+	defer ReleaseBuffer(data)
 
 	var resp Response[ProfileStr]
 	if err := b.json.NewDecoder(data).Decode(&resp); err != nil {
@@ -1207,10 +1208,10 @@ func (b *Bot) ChatMemberOf(chat, user Recipient) (*ChatMember, error) {
 	}
 
 	data, err := b.Raw("getChatMember", params)
-	defer ReleaseBuffer(data)
 	if err != nil {
 		return nil, err
 	}
+	defer ReleaseBuffer(data)
 
 	var resp Response[*ChatMember]
 	if err := b.json.NewDecoder(data).Decode(&resp); err != nil {
@@ -1227,10 +1228,10 @@ func (b *Bot) MenuButton(chat *User) (*MenuButton, error) {
 	}
 
 	data, err := b.Raw("getChatMenuButton", params)
-	defer ReleaseBuffer(data)
 	if err != nil {
 		return nil, err
 	}
+	defer ReleaseBuffer(data)
 
 	var resp Response[*MenuButton]
 	if err := b.json.NewDecoder(data).Decode(&resp); err != nil {
@@ -1266,10 +1267,10 @@ func (b *Bot) SetMenuButton(chat *User, mb any) error {
 // CreateInvoiceLink creates a link for a payment invoice.
 func (b *Bot) CreateInvoiceLink(i Invoice) (string, error) {
 	data, err := b.Raw("createInvoiceLink", i.params())
-	defer ReleaseBuffer(data)
 	if err != nil {
 		return "", err
 	}
+	defer ReleaseBuffer(data)
 
 	var resp Response[string]
 	if err := b.json.NewDecoder(data).Decode(&resp); err != nil {
@@ -1281,10 +1282,10 @@ func (b *Bot) CreateInvoiceLink(i Invoice) (string, error) {
 // Logout logs out from the cloud Bot API server before launching the bot locally.
 func (b *Bot) Logout() (bool, error) {
 	data, err := b.Raw("logOut")
-	defer ReleaseBuffer(data)
 	if err != nil {
 		return false, err
 	}
+	defer ReleaseBuffer(data)
 
 	var resp Response[bool]
 	if err := b.json.NewDecoder(data).Decode(&resp); err != nil {
@@ -1297,10 +1298,10 @@ func (b *Bot) Logout() (bool, error) {
 // Close closes the bot instance before moving it from one local server to another.
 func (b *Bot) Close() (bool, error) {
 	data, err := b.Raw("close")
-	defer ReleaseBuffer(data)
 	if err != nil {
 		return false, err
 	}
+	defer ReleaseBuffer(data)
 
 	var resp Response[bool]
 	if err := b.json.NewDecoder(data).Decode(&resp); err != nil {

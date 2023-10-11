@@ -40,10 +40,10 @@ type CommandScope struct {
 func (b *Bot) Commands(opts ...any) ([]Command, error) {
 	params := extractCommandsParams(opts...)
 	data, err := b.Raw("getMyCommands", params)
-	defer ReleaseBuffer(data)
 	if err != nil {
 		return nil, err
 	}
+	defer ReleaseBuffer(data)
 
 	var resp Response[[]Command]
 	if err := b.json.NewDecoder(data).Decode(&resp); err != nil {

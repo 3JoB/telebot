@@ -4,7 +4,7 @@ go 1.21.3
 
 require (
 	github.com/3JoB/resty-ilo v1.4.1
-	github.com/3JoB/ulib v1.38.0
+	github.com/3JoB/ulib v1.38.1
 	github.com/3JoB/unsafeConvert v1.6.0
 	github.com/cornelk/hashmap v1.0.8
 	github.com/goccy/go-yaml v1.11.2

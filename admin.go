@@ -190,10 +190,10 @@ func (b *Bot) AdminsOf(chat *Chat) ([]ChatMember, error) {
 	}
 
 	data, err := b.Raw("getChatAdministrators", params)
-	defer ReleaseBuffer(data)
 	if err != nil {
 		return nil, err
 	}
+	defer ReleaseBuffer(data)
 
 	var resp Response[[]ChatMember]
 	if err := b.json.NewDecoder(data).Decode(&resp); err != nil {
@@ -209,10 +209,10 @@ func (b *Bot) Len(chat *Chat) (int, error) {
 	}
 
 	data, err := b.Raw("getChatMembersCount", params)
-	defer ReleaseBuffer(data)
 	if err != nil {
 		return 0, err
 	}
+	defer ReleaseBuffer(data)
 
 	var resp Response[int]
 	if err := b.json.NewDecoder(data).Decode(&resp); err != nil {
@@ -269,10 +269,10 @@ func (b *Bot) DefaultRights(forChannels bool) (*Rights, error) {
 	}
 
 	data, err := b.Raw("getMyDefaultAdministratorRights", params)
-	defer ReleaseBuffer(data)
 	if err != nil {
 		return nil, err
 	}
+	defer ReleaseBuffer(data)
 
 	var resp Response[*Rights]
 	if err := b.json.NewDecoder(data).Decode(&resp); err != nil {

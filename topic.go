@@ -111,10 +111,10 @@ func (b *Bot) UnpinAllTopicMessages(chat *Chat, forum *Topic) error {
 // TopicIconStickers gets custom emoji stickers, which can be used as a forum topic icon by any user.
 func (b *Bot) TopicIconStickers() ([]Sticker, error) {
 	data, err := b.Raw("getForumTopicIconStickers")
-	defer ReleaseBuffer(data)
 	if err != nil {
 		return nil, err
 	}
+	defer ReleaseBuffer(data)
 
 	var resp Response[[]Sticker]
 	if err := b.json.NewDecoder(data).Decode(&resp); err != nil {

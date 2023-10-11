@@ -59,10 +59,10 @@ func (b *Bot) UploadSticker(to Recipient, png *File) (*File, error) {
 	}
 
 	data, err := b.sendFiles("uploadStickerFile", files, params)
-	defer ReleaseBuffer(data)
 	if err != nil {
 		return nil, err
 	}
+	defer ReleaseBuffer(data)
 
 	var resp Response[File]
 	if err := b.json.NewDecoder(data).Decode(&resp); err != nil {
@@ -74,10 +74,10 @@ func (b *Bot) UploadSticker(to Recipient, png *File) (*File, error) {
 // StickerSet returns a sticker set on success.
 func (b *Bot) StickerSet(name string) (*StickerSet, error) {
 	data, err := b.Raw("getStickerSet", map[string]string{"name": name})
-	defer ReleaseBuffer(data)
 	if err != nil {
 		return nil, err
 	}
+	defer ReleaseBuffer(data)
 
 	var resp Response[*StickerSet]
 	if err := b.json.NewDecoder(data).Decode(&resp); err != nil {
@@ -200,10 +200,10 @@ func (b *Bot) CustomEmojiStickers(ids []string) ([]Sticker, error) {
 	}
 
 	data, err := b.Raw("getCustomEmojiStickers", params)
-	defer ReleaseBuffer(data)
 	if err != nil {
 		return nil, err
 	}
+	defer ReleaseBuffer(data)
 
 	var resp Response[[]Sticker]
 	if err := b.json.NewDecoder(data).Decode(&resp); err != nil {

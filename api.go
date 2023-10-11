@@ -24,6 +24,9 @@ import (
 // It now returns a *bytes.Buffer, which will be automatically returned to the
 // pool most of the time, but if you call a method such as Raw alone that returns
 // a Buffer pointer, please use the ReleaseBuffer() method to save it back to the pool.
+//
+// It will be automatically released when err != nil, so there is no need to release it
+// again. At the same time, additional judgment is made on the null pointer in the pool.
 func (b *Bot) Raw(method string, payload ...any) (*bytes.Buffer, error) {
 	url := b.buildUrl(method)
 	req := b.client.AcquireRequest()
@@ -199,10 +202,10 @@ func (b *Bot) sendMedia(media Media, params map[string]any, files map[string]Fil
 
 func (b *Bot) getMe() (*User, error) {
 	data, err := b.Raw("getMe")
-	defer ReleaseBuffer(data)
 	if err != nil {
 		return nil, err
 	}
+	defer ReleaseBuffer(data)
 
 	var resp Response[*User]
 	if err := b.json.NewEncoder(data).Encode(resp); err != nil {
@@ -247,11 +250,13 @@ type extracts struct {
 func extractOk(data *bytes.Buffer) error {
 	var e extracts
 	if err := defaultJson.Unmarshal(data.Bytes(), &e); err != nil {
+		ReleaseBuffer(data)
 		return err
 	}
 	if e.Ok {
 		return nil
 	}
+	ReleaseBuffer(data)
 
 	err := Err(e.Description)
 	switch err {
@@ -290,7 +295,7 @@ func extractOk(data *bytes.Buffer) error {
 // extractMessage extracts common Message result from given data.
 // Should be called after extractOk or b.Raw() to handle possible errors.
 func extractMessage(data *bytes.Buffer) (*Message, error) {
-	defer pool.ReleaseBuffer(data)
+	defer ReleaseBuffer(data)
 	var resp Response[*Message]
 	if err := defaultJson.Unmarshal(data.Bytes(), &resp); err != nil {
 		var resp Response[bool]

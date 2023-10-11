@@ -260,10 +260,10 @@ func (b *Bot) InviteLink(chat *Chat) (string, error) {
 	}
 
 	data, err := b.Raw("exportChatInviteLink", params)
-	defer ReleaseBuffer(data)
 	if err != nil {
 		return "", err
 	}
+	defer ReleaseBuffer(data)
 
 	var resp Response[string]
 	if err := b.json.NewDecoder(data).Decode(&resp); err != nil {
@@ -291,10 +291,10 @@ func (b *Bot) CreateInviteLink(chat Recipient, link *ChatInviteLink) (*ChatInvit
 	}
 
 	data, err := b.Raw("createChatInviteLink", params)
-	defer ReleaseBuffer(data)
 	if err != nil {
 		return nil, err
 	}
+	defer ReleaseBuffer(data)
 
 	var resp Response[ChatInviteLink]
 	if err := b.json.NewDecoder(data).Decode(&resp); err != nil {
@@ -327,6 +327,7 @@ func (b *Bot) EditInviteLink(chat Recipient, link *ChatInviteLink) (*ChatInviteL
 	if err != nil {
 		return nil, err
 	}
+	defer ReleaseBuffer(data)
 
 	var resp Response[ChatInviteLink]
 	if err := b.json.NewDecoder(data).Decode(&resp); err != nil {
@@ -344,10 +345,10 @@ func (b *Bot) RevokeInviteLink(chat Recipient, link string) (*ChatInviteLink, er
 	}
 
 	data, err := b.Raw("revokeChatInviteLink", params)
-	defer ReleaseBuffer(data)
 	if err != nil {
 		return nil, err
 	}
+	defer ReleaseBuffer(data)
 
 	var resp Response[ChatInviteLink]
 	if err := b.json.NewDecoder(data).Decode(&resp); err != nil {
@@ -365,10 +366,10 @@ func (b *Bot) ApproveJoinRequest(chat Recipient, user *User) error {
 	}
 
 	data, err := b.Raw("approveChatJoinRequest", params)
-	defer ReleaseBuffer(data)
 	if err != nil {
 		return err
 	}
+	defer ReleaseBuffer(data)
 
 	return extractOk(data)
 }
@@ -381,10 +382,10 @@ func (b *Bot) DeclineJoinRequest(chat Recipient, user *User) error {
 	}
 
 	data, err := b.Raw("declineChatJoinRequest", params)
-	defer ReleaseBuffer(data)
 	if err != nil {
 		return err
 	}
+	defer ReleaseBuffer(data)
 
 	return extractOk(data)
 }
