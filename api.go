@@ -205,7 +205,7 @@ func (b *Bot) getMe() (*User, error) {
 	}
 
 	var resp Response[*User]
-	if err := b.json.Unmarshal(data.Bytes(), &resp); err != nil {
+	if err := b.json.NewEncoder(data).Encode(resp); err != nil {
 		return nil, wrapError(err)
 	}
 

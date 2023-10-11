@@ -74,9 +74,6 @@ type ArticleResult struct {
 	// Optional. URL of the result.
 	URL string `json:"url,omitempty"`
 
-	// Optional. Pass True, if you don't want the URL to be shown in the message.
-	HideURL bool `json:"hide_url,omitempty"`
-
 	// Optional. Short description of the result.
 	Description string `json:"description,omitempty"`
 
@@ -88,6 +85,9 @@ type ArticleResult struct {
 
 	// Optional. Height of the thumbnail for the result.
 	ThumbHeight int `json:"thumbnail_height,omitempty"`
+
+	// Optional. Pass True, if you don't want the URL to be shown in the message.
+	HideURL bool `json:"hide_url,omitempty"`
 }
 
 // AudioResult represents a link to an mp3 audio file.
@@ -103,14 +103,14 @@ type AudioResult struct {
 	// Optional. Performer.
 	Performer string `json:"performer,omitempty"`
 
-	// Optional. Audio duration in seconds.
-	Duration int `json:"audio_duration,omitempty"`
-
 	// Optional. Caption, 0-1024 characters.
 	Caption string `json:"caption,omitempty"`
 
 	// If Cache != "", it'll be used instead
 	Cache string `json:"audio_file_id,omitempty"`
+
+	// Optional. Audio duration in seconds.
+	Duration int `json:"audio_duration,omitempty"`
 }
 
 // ContactResult represents a contact with a phone number.
@@ -162,14 +162,14 @@ type DocumentResult struct {
 	// Optional. URL of the thumbnail (jpeg only) for the file.
 	ThumbURL string `json:"thumbnail_url,omitempty"`
 
+	// If Cache != "", it'll be used instead
+	Cache string `json:"document_file_id,omitempty"`
+
 	// Optional. Width of the thumbnail for the result.
 	ThumbWidth int `json:"thumbnail_width,omitempty"`
 
 	// Optional. Height of the thumbnail for the result.
 	ThumbHeight int `json:"thumbnail_height,omitempty"`
-
-	// If Cache != "", it'll be used instead
-	Cache string `json:"document_file_id,omitempty"`
 }
 
 // GifResult represents a link to an animated GIF file.
@@ -178,15 +178,6 @@ type GifResult struct {
 
 	// A valid URL for the GIF file. File size must not exceed 1MB.
 	URL string `json:"gif_url"`
-
-	// Optional. Width of the GIF.
-	Width int `json:"gif_width,omitempty"`
-
-	// Optional. Height of the GIF.
-	Height int `json:"gif_height,omitempty"`
-
-	// Optional. Duration of the GIF.
-	Duration int `json:"gif_duration,omitempty"`
 
 	// URL of the static thumbnail for the result (jpeg or gif).
 	ThumbURL string `json:"thumbnail_url"`
@@ -203,6 +194,15 @@ type GifResult struct {
 
 	// If Cache != "", it'll be used instead
 	Cache string `json:"gif_file_id,omitempty"`
+
+	// Optional. Width of the GIF.
+	Width int `json:"gif_width,omitempty"`
+
+	// Optional. Height of the GIF.
+	Height int `json:"gif_height,omitempty"`
+
+	// Optional. Duration of the GIF.
+	Duration int `json:"gif_duration,omitempty"`
 }
 
 // LocationResult represents a location on a map.
@@ -226,15 +226,6 @@ type Mpeg4GifResult struct {
 	// A valid URL for the MP4 file.
 	URL string `json:"mpeg4_url"`
 
-	// Optional. Video width.
-	Width int `json:"mpeg4_width,omitempty"`
-
-	// Optional. Video height.
-	Height int `json:"mpeg4_height,omitempty"`
-
-	// Optional. Video duration.
-	Duration int `json:"mpeg4_duration,omitempty"`
-
 	// URL of the static thumbnail (jpeg or gif) for the result.
 	ThumbURL string `json:"thumbnail_url,omitempty"`
 
@@ -250,6 +241,15 @@ type Mpeg4GifResult struct {
 
 	// If Cache != "", it'll be used instead
 	Cache string `json:"mpeg4_file_id,omitempty"`
+
+	// Optional. Video width.
+	Width int `json:"mpeg4_width,omitempty"`
+
+	// Optional. Video height.
+	Height int `json:"mpeg4_height,omitempty"`
+
+	// Optional. Video duration.
+	Duration int `json:"mpeg4_duration,omitempty"`
 }
 
 // PhotoResult represents a link to a photo.

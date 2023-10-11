@@ -8,6 +8,7 @@ import (
 	"sync"
 	"text/template"
 
+	"github.com/3JoB/ulib/pool"
 	"github.com/3JoB/unsafeConvert"
 	"github.com/goccy/go-yaml"
 	"github.com/sugawarayuuta/sonnet"
@@ -467,8 +468,9 @@ func (lt *Layout) ResultLocale(locale, k string, args ...any) tele.Result {
 		arg = args[0]
 	}
 
-	var buf bytes.Buffer
-	if err := lt.template(result.result, locale).Execute(&buf, arg); err != nil {
+	buf := pool.NewBuffer()
+	defer pool.ReleaseBuffer(buf)
+	if err := lt.template(result.result, locale).Execute(buf, arg); err != nil {
 		log.Println("telebot/layout:", err)
 	}
 
