@@ -363,6 +363,7 @@ func TestBotOnError(t *testing.T) {
 
 	b.runHandler(&Handle{
 		Do: func(c *Context) error {
+			ok = true
 			return errors.New("not nil")
 		},
 	}, &Context{b: b})
