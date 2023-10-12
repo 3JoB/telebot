@@ -223,11 +223,12 @@ func (b *Bot) getUpdates(offset, limit int, timeout time.Duration, allowed []str
 	if limit != 0 {
 		params.Limit = limit
 	}
-	defer updates.ReleaseParams(params)
 	data, err := b.Raw("getUpdates", params)
 	if err != nil {
+		updates.ReleaseParams(params)
 		return nil, err
 	}
+	updates.ReleaseParams(params)
 	defer ReleaseBuffer(data)
 
 	var resp Response[[]Update]
