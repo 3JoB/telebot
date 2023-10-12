@@ -936,7 +936,7 @@ func (b *Bot) AnswerWebApp(query *Query, r Result) (*WebAppMessage, error) {
 	defer ReleaseBuffer(data)
 
 	var resp Response[*WebAppMessage]
-	if err := b.json.NewDecoder(data).Decode(resp); err != nil {
+	if err := b.json.NewDecoder(data).Decode(&resp); err != nil {
 		return nil, wrapError(err)
 	}
 
@@ -1087,7 +1087,7 @@ func (b *Bot) StopPoll(msg Editable, opts ...any) (*Poll, error) {
 	defer ReleaseBuffer(data)
 
 	var resp Response[*Poll]
-	if err := b.json.NewDecoder(data).Decode(resp); err != nil {
+	if err := b.json.NewDecoder(data).Decode(&resp); err != nil {
 		return nil, wrapError(err)
 	}
 	return resp.Result, nil
@@ -1172,7 +1172,7 @@ func (b *Bot) ChatByUsername(name string) (*Chat, error) {
 	defer ReleaseBuffer(data)
 
 	var resp Response[*Chat]
-	if err := b.json.NewDecoder(data).Decode(resp); err != nil {
+	if err := b.json.NewDecoder(data).Decode(&resp); err != nil {
 		return nil, wrapError(err)
 	}
 	if resp.Result.Type == ChatChannel && resp.Result.Username == "" {
@@ -1214,7 +1214,7 @@ func (b *Bot) ChatMemberOf(chat, user Recipient) (*ChatMember, error) {
 	defer ReleaseBuffer(data)
 
 	var resp Response[*ChatMember]
-	if err := b.json.NewDecoder(data).Decode(resp); err != nil {
+	if err := b.json.NewDecoder(data).Decode(&resp); err != nil {
 		return nil, wrapError(err)
 	}
 	return resp.Result, nil
@@ -1234,7 +1234,7 @@ func (b *Bot) MenuButton(chat *User) (*MenuButton, error) {
 	defer ReleaseBuffer(data)
 
 	var resp Response[*MenuButton]
-	if err := b.json.NewDecoder(data).Decode(resp); err != nil {
+	if err := b.json.NewDecoder(data).Decode(&resp); err != nil {
 		return nil, wrapError(err)
 	}
 	return resp.Result, nil

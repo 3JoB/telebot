@@ -80,7 +80,7 @@ func (b *Bot) StickerSet(name string) (*StickerSet, error) {
 	defer ReleaseBuffer(data)
 
 	var resp Response[*StickerSet]
-	if err := b.json.NewDecoder(data).Decode(resp); err != nil {
+	if err := b.json.NewDecoder(data).Decode(&resp); err != nil {
 		return nil, wrapError(err)
 	}
 	return resp.Result, nil

@@ -208,7 +208,7 @@ func (b *Bot) getMe() (*User, error) {
 	defer ReleaseBuffer(data)
 
 	var resp Response[*User]
-	if err := b.json.NewEncoder(data).Encode(resp); err != nil {
+	if err := b.json.NewEncoder(data).Encode(&resp); err != nil {
 		return nil, wrapError(err)
 	}
 
@@ -300,7 +300,7 @@ func extractOk(data *bytes.Buffer) error {
 func extractMessage(data *bytes.Buffer) (*Message, error) {
 	defer ReleaseBuffer(data)
 	var resp Response[*Message]
-	if err := defaultJson.Unmarshal(data.Bytes(), resp); err != nil {
+	if err := defaultJson.Unmarshal(data.Bytes(), &resp); err != nil {
 		var resp Response[bool]
 		if err := defaultJson.NewDecoder(data).Decode(&resp); err != nil {
 			return nil, wrapError(err)

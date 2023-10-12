@@ -275,7 +275,7 @@ func (b *Bot) DefaultRights(forChannels bool) (*Rights, error) {
 	defer ReleaseBuffer(data)
 
 	var resp Response[*Rights]
-	if err := b.json.NewDecoder(data).Decode(resp); err != nil {
+	if err := b.json.NewDecoder(data).Decode(&resp); err != nil {
 		return nil, err
 	}
 	return resp.Result, nil

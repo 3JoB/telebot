@@ -111,6 +111,7 @@ type Audio struct {
 
 	// (Optional)
 	Thumbnail *Photo `json:"thumb,omitempty"`
+
 	Caption   string `json:"caption,omitempty"`
 	Title     string `json:"title,omitempty"`
 	Performer string `json:"performer,omitempty"`
@@ -177,7 +178,8 @@ type Video struct {
 	Duration int `json:"duration,omitempty"`
 
 	// (Optional)
-	Caption    string `json:"caption,omitempty"`
+	Caption string `json:"caption,omitempty"`
+
 	MIME       string `json:"mime_type,omitempty"`
 	FileName   string `json:"file_name,omitempty"`
 	Streaming  bool   `json:"supports_streaming,omitempty"`
@@ -252,7 +254,8 @@ type Voice struct {
 
 	// (Optional)
 	Caption string `json:"caption,omitempty"`
-	MIME    string `json:"mime_type,omitempty"`
+
+	MIME string `json:"mime_type,omitempty"`
 }
 
 func (v *Voice) MediaType() string {

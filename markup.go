@@ -212,14 +212,17 @@ type ReplyButton struct {
 	WebApp   *WebApp  `json:"web_app,omitempty"`
 }
 
+type Type struct {
+	Type string `json:"type"`
+}
+
 // MarshalJSON implements json.Marshaler. It allows passing PollType as a
 // keyboard's poll type instead of KeyboardButtonPollType object.
 func (pt PollType) MarshalJSON() ([]byte, error) {
-	return defaultJson.Marshal(&struct {
-		Type string `json:"type"`
-	}{
+	t := Type{
 		Type: string(pt),
-	})
+	}
+	return defaultJson.Marshal(&t)
 }
 
 // InlineButton represents a button displayed in the message.
