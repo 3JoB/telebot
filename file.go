@@ -9,7 +9,6 @@ import (
 type File struct {
 	FileID   string `json:"file_id"`
 	UniqueID string `json:"file_unique_id"`
-	FileSize int64  `json:"file_size"`
 
 	// FilePath is used for files on Telegram server.
 	FilePath string `json:"file_path"`
@@ -19,6 +18,8 @@ type File struct {
 
 	// FileURL is used for file on the internet.
 	FileURL string `json:"file_url"`
+
+	FileSize int64  `json:"file_size"`
 
 	// FileReader is used for file backed with io.Reader.
 	FileReader io.Reader `json:"-"`
