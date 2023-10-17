@@ -1,6 +1,8 @@
 package net
 
 import (
+	"sync"
+
 	"github.com/valyala/fasthttp"
 	"github.com/valyala/fasthttp/fasthttpproxy"
 
@@ -8,8 +10,10 @@ import (
 )
 
 type FastHTTP struct {
-	client *fasthttp.Client
-	json   json.Json
+	client       *fasthttp.Client
+	json         json.Json
+	requestPool  *sync.Pool
+	responsePool *sync.Pool
 }
 
 func NewFastHTTPClient() NetFrame {
@@ -19,6 +23,8 @@ func NewFastHTTPClient() NetFrame {
 			DisableHeaderNamesNormalizing: false,
 			Dial:                          fasthttpproxy.FasthttpProxyHTTPDialer(),
 		},
+		requestPool: &sync.Pool{},
+		responsePool: &sync.Pool{},
 	}
 	return f
 }
@@ -30,7 +36,7 @@ func (f *FastHTTP) SetJsonHandle(v json.Json) {
 func (f *FastHTTP) AcquireRequest() NetRequest {
 	var r *FastHTTPRequest
 
-	if v := requestPool.Get(); v == nil {
+	if v := f.requestPool.Get(); v == nil {
 		r = &FastHTTPRequest{}
 		r.json = f.json
 	} else {
@@ -38,6 +44,17 @@ func (f *FastHTTP) AcquireRequest() NetRequest {
 	}
 
 	r.client = f.client
+	r.responsePool = f.responsePool
 	r.acquire()
 	return r
+}
+
+func (f *FastHTTP) ReleaseRequest(r NetRequest) {
+	r.Reset()
+	f.requestPool.Put(r)
+}
+
+func (f *FastHTTP) ReleaseResponse(r NetResponse) {
+	r.Reset()
+	f.responsePool.Put(r)
 }

@@ -38,7 +38,7 @@ func (b *Bot) Raw(method string, payload ...any) (*bytes.Buffer, error) {
 	if len(payload) > 0 && payload[0] != nil {
 		if err := req.WriteJson(payload[0]); err != nil {
 			ReleaseBuffer(buf)
-			req.Release()
+			b.client.ReleaseRequest(req)
 			return nil, wrapError(err)
 		}
 	}
@@ -48,7 +48,7 @@ func (b *Bot) Raw(method string, payload ...any) (*bytes.Buffer, error) {
 		ReleaseBuffer(buf)
 		return nil, wrapError(err)
 	}
-	defer resp.Release()
+	defer b.client.ReleaseResponse(resp)
 	if b.verbose {
 		b.verboses(method, payload, buf)
 	}
@@ -118,7 +118,7 @@ func (b *Bot) sendFiles(method string, files map[string]File, params map[string]
 	if err := req.WriteFile(writer.FormDataContentType(), pipeReader); err != nil {
 		err = wrapError(err)
 		pipeReader.CloseWithError(err) //nolint:errcheck
-		req.Release()
+		b.client.ReleaseRequest(req)
 		ReleaseBuffer(buf)
 		return nil, err
 	}
@@ -130,7 +130,7 @@ func (b *Bot) sendFiles(method string, files map[string]File, params map[string]
 		ReleaseBuffer(buf)
 		return nil, err
 	}
-	defer resp.Release()
+	defer b.client.ReleaseResponse(resp)
 
 	if resp.IsStatusCode(500) {
 		return nil, ErrInternal

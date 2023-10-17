@@ -26,6 +26,10 @@ type NetFrame interface {
 
 	// Create a new request object
 	AcquireRequest() NetRequest
+
+	ReleaseRequest(r NetRequest)
+
+	ReleaseResponse(r NetResponse)
 }
 
 type NetRequest interface {
@@ -41,7 +45,7 @@ type NetRequest interface {
 	// Set Content-Type
 	SetContentType(v string)
 
-	// Set the requested URI address。
+	// Set the requested URI address
 	SetRequestURI(v string)
 
 	// Set a Writer. When this Writer is passed in,
@@ -49,9 +53,15 @@ type NetRequest interface {
 	// after the request is completed instead of passing in the Response.
 	SetWriter(w *bytes.Buffer)
 
+	// Set a Writer. When this Writer is passed in,
+	// the data will be written directly to the Writer
+	// after the request is completed instead of passing in the Response.
 	SetWriteCloser(v io.ReadWriteCloser)
 
+	// Write data to the Body.
 	Write(b []byte)
+
+	// Write files to Body.
 	WriteFile(content string, r io.Reader) error
 
 	// Write the structure directly to the Body as json,
@@ -65,18 +75,20 @@ type NetRequest interface {
 	// It is recommended to call it within the Release() method instead
 	// of calling it externally.
 	Reset()
-
-	// This method is generally not recommended because the built-in methods
-	// have automatically called Release() at the end of the Do() method,
-	// and only Response needs to be called manually.
-	//
-	// Release() will clear the data in the current pointer and put it back
-	// into the pool. After release, the corresponding pointer should not be used anymore.
-	Release()
 }
 
 type NetResponse interface {
+	// StatusCode method returns the HTTP status code for the executed request.
+	//
+	//	Example: 200
 	StatusCode() int
+
+	// Example:
+	//
+	//	Raw: 200
+	//	fmt.Println(resp.IsStatusCode(444))
+	//
+	//	Output: false
 	IsStatusCode(v int) bool
 
 	// If SetWriter() is called in req, this method will
@@ -87,8 +99,4 @@ type NetResponse interface {
 	// It is recommended to call it within the Release() method instead
 	// of calling it externally.
 	Reset()
-
-	// Release() will clear the data in the current pointer and put it back
-	// into the pool. After release, the corresponding pointer should not be used anymore.
-	Release()
 }

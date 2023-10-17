@@ -1021,6 +1021,7 @@ func (b *Bot) File(file *File) (io.ReadWriteCloser, error) {
 	url := b.buildFileUrl(f.FilePath)
 	file.FilePath = f.FilePath // saving file path
 	req := b.client.AcquireRequest()
+	defer b.client.ReleaseRequest(req)
 	req.MethodGET()
 	req.SetRequestURI(url)
 	w := pool.NewBufferClose()
@@ -1030,7 +1031,7 @@ func (b *Bot) File(file *File) (io.ReadWriteCloser, error) {
 		return nil, wrapError(err)
 	}
 
-	defer resp.Release()
+	defer b.client.ReleaseResponse(resp)
 	if !resp.IsStatusCode(200) {
 		return nil, fmt.Errorf("telebot: expected status 200 but got %v", resp.StatusCode())
 	}

@@ -2,6 +2,7 @@ package net
 
 import (
 	"os"
+	"sync"
 
 	"github.com/3JoB/resty-ilo"
 
@@ -9,13 +10,17 @@ import (
 )
 
 type GoNet struct {
-	client *resty.Client
-	json   json.Json
+	client       *resty.Client
+	json         json.Json
+	requestPool  *sync.Pool
+	responsePool *sync.Pool
 }
 
 func NewHTTPClient() NetFrame {
 	g := &GoNet{
 		client: resty.New(),
+		requestPool: &sync.Pool{},
+		responsePool: &sync.Pool{},
 	}
 	g.lookProxyEnv()
 	return g
@@ -37,6 +42,16 @@ func (g *GoNet) AcquireRequest() NetRequest {
 	}
 	r.r = g.client.R()
 	return r
+}
+
+func (g *GoNet) ReleaseRequest(r NetRequest) {
+	r.Reset()
+	g.requestPool.Put(r)
+}
+
+func (g *GoNet) ReleaseResponse(r NetResponse) {
+	r.Reset()
+	g.responsePool.Put(r)
 }
 
 func (g *GoNet) lookProxyEnv() {

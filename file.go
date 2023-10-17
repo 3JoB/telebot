@@ -19,7 +19,7 @@ type File struct {
 	// FileURL is used for file on the internet.
 	FileURL string `json:"file_url"`
 
-	FileSize int64  `json:"file_size"`
+	FileSize int64 `json:"file_size"`
 
 	// FileReader is used for file backed with io.Reader.
 	FileReader io.Reader `json:"-"`

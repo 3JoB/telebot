@@ -73,7 +73,6 @@ func (g *GoNetRequest) Body() io.Writer {
 }
 
 func (g *GoNetRequest) Do() (NetResponse, error) {
-	defer g.Release()
 	var (
 		err      error
 		response *resty.Response
@@ -114,9 +113,4 @@ func (g *GoNetRequest) Reset() {
 	g.r = nil
 	g.w = nil
 	g.f = nil
-}
-
-func (g *GoNetRequest) Release() {
-	g.Reset()
-	requestPool.Put(g)
 }

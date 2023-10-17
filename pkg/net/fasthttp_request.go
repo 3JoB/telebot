@@ -3,6 +3,7 @@ package net
 import (
 	"bytes"
 	"io"
+	"sync"
 
 	"github.com/valyala/fasthttp"
 
@@ -10,12 +11,13 @@ import (
 )
 
 type FastHTTPRequest struct {
-	json     json.Json
-	w        *bytes.Buffer
-	f        io.ReadWriteCloser
-	client   *fasthttp.Client
-	request  *fasthttp.Request
-	response *fasthttp.Response
+	json         json.Json
+	w            *bytes.Buffer
+	f            io.ReadWriteCloser
+	client       *fasthttp.Client
+	request      *fasthttp.Request
+	response     *fasthttp.Response
+	responsePool *sync.Pool
 }
 
 func (f *FastHTTPRequest) acquire() {
@@ -79,7 +81,6 @@ func (f *FastHTTPRequest) Body() io.Writer {
 }
 
 func (f *FastHTTPRequest) Do() (NetResponse, error) {
-	defer f.Release()
 	var err error
 	f.request.Header.Set("User-Agent", UA)
 
@@ -114,9 +115,4 @@ func (f *FastHTTPRequest) Reset() {
 	f.client = nil
 	f.f = nil
 	f.w = nil
-}
-
-func (f *FastHTTPRequest) Release() {
-	f.Reset()
-	requestPool.Put(f)
 }

@@ -1,6 +1,9 @@
 package net
 
+import "sync"
+
 type FastHTTPResponse struct {
+	pool *sync.Pool
 	code int
 	body []byte
 }
@@ -24,5 +27,5 @@ func (r *FastHTTPResponse) Reset() {
 
 func (r *FastHTTPResponse) Release() {
 	r.Reset()
-	responsePool.Put(r)
+	r.pool.Put(r)
 }
