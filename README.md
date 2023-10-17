@@ -11,7 +11,7 @@ If you're after stability, then use the [original project](https://github.com/tu
 If you need some examples, I'll put them in this [organization](https://github.com/gotelebot/).
 
 
-This is a fork of https://github.com/tucnak/telebot . This library requires minimum go1.21.1
+This is a fork of https://github.com/tucnak/telebot . This library requires minimum go1.21.3
 
 
 
