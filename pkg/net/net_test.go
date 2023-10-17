@@ -2,7 +2,7 @@ package net
 
 import "testing"
 
-func TestNilRelease(m *testing.M) {
+func Test_NilRelease(m *testing.T) {
 	cli := NewFastHTTPClient()
 	cli.Release(nil, nil)
 }
