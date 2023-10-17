@@ -16,14 +16,7 @@ type GoNetRequest struct {
 	f      io.ReadWriteCloser
 	w      *bytes.Buffer
 	r      *resty.Request
-}
-
-func (g *GoNetRequest) acquireResponse() *GoNetResponse {
-	v := responsePool.Get()
-	if v == nil {
-		return &GoNetResponse{}
-	}
-	return v.(*GoNetResponse)
+	resp   *Response
 }
 
 func (g *GoNetRequest) MethodGET() {
@@ -72,7 +65,7 @@ func (g *GoNetRequest) Body() io.Writer {
 	return nil
 }
 
-func (g *GoNetRequest) Do() (NetResponse, error) {
+func (g *GoNetRequest) Do() error {
 	var (
 		err      error
 		response *resty.Response
@@ -86,25 +79,24 @@ func (g *GoNetRequest) Do() (NetResponse, error) {
 	}
 
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	resp := g.acquireResponse()
-	resp.code = response.StatusCode()
+	g.resp.code = response.StatusCode()
 
-	if resp.IsStatusCode(200) && g.f != nil {
+	if g.resp.IsStatusCode(200) && g.f != nil {
 		_, err = Copy(g.f, response.RawBody())
 		goto END
 	}
 	if g.w != nil {
 		g.w.Write(response.Body()) //nolint:errcheck
 	} else {
-		resp.body = response.Body()
+		g.resp.body = response.Body()
 	}
 
 END:
 	response.RawBody().Close() //nolint:errcheck
-	return resp, err
+	return err
 }
 
 func (g *GoNetRequest) Reset() {
@@ -113,4 +105,5 @@ func (g *GoNetRequest) Reset() {
 	g.r = nil
 	g.w = nil
 	g.f = nil
+	g.resp = nil
 }

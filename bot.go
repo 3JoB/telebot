@@ -1020,16 +1020,20 @@ func (b *Bot) File(file *File) (io.ReadWriteCloser, error) {
 
 	url := b.buildFileUrl(f.FilePath)
 	file.FilePath = f.FilePath // saving file path
-	req := b.client.AcquireRequest()
-	defer b.client.ReleaseRequest(req)
-	req.MethodGET()
-	req.SetRequestURI(url)
+
+	req, resp := b.client.Acquire()
+	defer b.client.Release(req, resp)
+
 	w := pool.NewBufferClose()
 	req.SetWriteCloser(w)
-	resp, err := req.Do()
-	if err != nil {
+	req.MethodGET()
+	req.SetRequestURI(url)
+
+	if err := req.Do(); err != nil {
+		b.client.ReleaseRequest(req)
 		return nil, wrapError(err)
 	}
+	b.client.ReleaseRequest(req)
 
 	defer b.client.ReleaseResponse(resp)
 	if !resp.IsStatusCode(200) {

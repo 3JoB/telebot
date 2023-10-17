@@ -3,7 +3,6 @@ package net
 import (
 	"bytes"
 	"io"
-	"sync"
 
 	"github.com/valyala/fasthttp"
 
@@ -11,25 +10,17 @@ import (
 )
 
 type FastHTTPRequest struct {
-	json         json.Json
-	w            *bytes.Buffer
-	f            io.ReadWriteCloser
-	client       *fasthttp.Client
-	request      *fasthttp.Request
-	response     *fasthttp.Response
-	responsePool *sync.Pool
+	json     json.Json
+	w        *bytes.Buffer
+	f        io.ReadWriteCloser
+	client   *fasthttp.Client
+	request  *fasthttp.Request
+	response *fasthttp.Response
+	resp     *Response
 }
 
 func (f *FastHTTPRequest) acquire() {
 	f.request, f.response = fasthttp.AcquireRequest(), fasthttp.AcquireResponse()
-}
-
-func (f *FastHTTPRequest) acquireResponse() *FastHTTPResponse {
-	v := responsePool.Get()
-	if v == nil {
-		return &FastHTTPResponse{}
-	}
-	return v.(*FastHTTPResponse)
 }
 
 func (f *FastHTTPRequest) MethodGET() {
@@ -80,18 +71,17 @@ func (f *FastHTTPRequest) Body() io.Writer {
 	return f.request.BodyWriter()
 }
 
-func (f *FastHTTPRequest) Do() (NetResponse, error) {
+func (f *FastHTTPRequest) Do() error {
 	var err error
 	f.request.Header.Set("User-Agent", UA)
 
 	if err := f.client.Do(f.request, f.response); err != nil {
-		return nil, err
+		return err
 	}
 
-	resp := f.acquireResponse()
-	resp.code = f.response.StatusCode()
+	f.resp.code = f.response.StatusCode()
 
-	if resp.IsStatusCode(200) && f.f != nil {
+	if f.resp.IsStatusCode(200) && f.f != nil {
 		_, err = f.response.WriteTo(f.f)
 		goto END
 	}
@@ -99,12 +89,12 @@ func (f *FastHTTPRequest) Do() (NetResponse, error) {
 	if f.w != nil {
 		f.w.Write(f.response.Body()) //nolint:errcheck
 	} else {
-		resp.body = f.response.Body()
+		f.resp.body = f.response.Body()
 	}
 
 END:
 
-	return resp, err
+	return err
 }
 
 func (f *FastHTTPRequest) Reset() {
@@ -115,4 +105,5 @@ func (f *FastHTTPRequest) Reset() {
 	f.client = nil
 	f.f = nil
 	f.w = nil
+	f.resp = nil
 }

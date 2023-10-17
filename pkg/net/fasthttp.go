@@ -23,7 +23,7 @@ func NewFastHTTPClient() NetFrame {
 			DisableHeaderNamesNormalizing: false,
 			Dial:                          fasthttpproxy.FasthttpProxyHTTPDialer(),
 		},
-		requestPool: &sync.Pool{},
+		requestPool:  &sync.Pool{},
 		responsePool: &sync.Pool{},
 	}
 	return f
@@ -33,7 +33,7 @@ func (f *FastHTTP) SetJsonHandle(v json.Json) {
 	f.json = v
 }
 
-func (f *FastHTTP) AcquireRequest() NetRequest {
+func (f *FastHTTP) Acquire() (NetRequest, NetResponse) {
 	var r *FastHTTPRequest
 
 	if v := f.requestPool.Get(); v == nil {
@@ -43,18 +43,39 @@ func (f *FastHTTP) AcquireRequest() NetRequest {
 		r = v.(*FastHTTPRequest)
 	}
 
+	r.resp = f.acquireResponse()
 	r.client = f.client
-	r.responsePool = f.responsePool
 	r.acquire()
-	return r
+	return r, r.resp
+}
+
+func (f *FastHTTP) acquireResponse() *Response {
+	r := f.responsePool.Get()
+	if r == nil {
+		return &Response{}
+	}
+	return r.(*Response)
+}
+
+func (f *FastHTTP) Release(req NetRequest, resp NetResponse) {
+	f.ReleaseRequest(req)
+	f.ReleaseResponse(resp)
 }
 
 func (f *FastHTTP) ReleaseRequest(r NetRequest) {
-	r.Reset()
-	f.requestPool.Put(r)
+	v, ok := r.(*FastHTTPRequest)
+	if !ok {
+		return
+	}
+	v.Reset()
+	f.requestPool.Put(v)
 }
 
 func (f *FastHTTP) ReleaseResponse(r NetResponse) {
-	r.Reset()
-	f.responsePool.Put(r)
+	v, ok := r.(*Response)
+	if !ok {
+		return
+	}
+	v.Reset()
+	f.responsePool.Put(v)
 }

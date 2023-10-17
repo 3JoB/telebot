@@ -18,8 +18,8 @@ type GoNet struct {
 
 func NewHTTPClient() NetFrame {
 	g := &GoNet{
-		client: resty.New(),
-		requestPool: &sync.Pool{},
+		client:       resty.New(),
+		requestPool:  &sync.Pool{},
 		responsePool: &sync.Pool{},
 	}
 	g.lookProxyEnv()
@@ -32,7 +32,7 @@ func (g *GoNet) SetJsonHandle(v json.Json) {
 	g.json = v
 }
 
-func (g *GoNet) AcquireRequest() NetRequest {
+func (g *GoNet) Acquire() (NetRequest, NetResponse) {
 	var r *GoNetRequest
 	if v := requestPool.Get(); v == nil {
 		r = &GoNetRequest{}
@@ -41,17 +41,39 @@ func (g *GoNet) AcquireRequest() NetRequest {
 		r = v.(*GoNetRequest)
 	}
 	r.r = g.client.R()
-	return r
+	r.resp = g.acquireResponse()
+	return r, r.resp
+}
+
+func (g *GoNet) acquireResponse() *Response {
+	v := g.responsePool.Get()
+	if v == nil {
+		return &Response{}
+	}
+	return v.(*Response)
+}
+
+func (g *GoNet) Release(req NetRequest, resp NetResponse) {
+	g.ReleaseRequest(req)
+	g.ReleaseResponse(resp)
 }
 
 func (g *GoNet) ReleaseRequest(r NetRequest) {
-	r.Reset()
-	g.requestPool.Put(r)
+	v, ok := r.(*GoNetRequest)
+	if !ok {
+		return
+	}
+	v.Reset()
+	g.requestPool.Put(v)
 }
 
 func (g *GoNet) ReleaseResponse(r NetResponse) {
-	r.Reset()
-	g.responsePool.Put(r)
+	v, ok := r.(*Response)
+	if !ok {
+		return
+	}
+	v.Reset()
+	g.responsePool.Put(v)
 }
 
 func (g *GoNet) lookProxyEnv() {

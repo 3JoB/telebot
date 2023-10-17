@@ -25,11 +25,13 @@ type NetFrame interface {
 	SetJsonHandle(v json.Json)
 
 	// Create a new request object
-	AcquireRequest() NetRequest
+	Acquire() (NetRequest, NetResponse)
 
 	ReleaseRequest(r NetRequest)
 
 	ReleaseResponse(r NetResponse)
+
+	Release(req NetRequest, resp NetResponse)
 }
 
 type NetRequest interface {
@@ -69,7 +71,7 @@ type NetRequest interface {
 	WriteJson(v any) error
 
 	// Execute request.
-	Do() (NetResponse, error)
+	Do() error
 
 	// Release() will clear the data in the current pointer.
 	// It is recommended to call it within the Release() method instead
