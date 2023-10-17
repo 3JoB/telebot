@@ -33,7 +33,7 @@ jobs:
       with:
        # The Go version to download (if necessary) and use. Supports semver spec and ranges.
         go-version: '1.21.3' # optional
-        skip-pkg-cache: true
+        cache: false
 
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
