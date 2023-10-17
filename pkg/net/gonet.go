@@ -34,7 +34,7 @@ func (g *GoNet) SetJsonHandle(v json.Json) {
 
 func (g *GoNet) Acquire() (NetRequest, NetResponse) {
 	var r *GoNetRequest
-	if v := requestPool.Get(); v == nil {
+	if v := g.requestPool.Get(); v == nil {
 		r = &GoNetRequest{}
 		r.json = g.json
 	} else {

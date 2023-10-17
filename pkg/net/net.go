@@ -6,17 +6,11 @@ package net
 import (
 	"bytes"
 	"io"
-	"sync"
 
 	"github.com/3JoB/telebot/v2/pkg/json"
 )
 
 const UA = "Mozilla/5.0(compatible; TelebotE/v2; +https://github.com/3JoB/telebot/v2)"
-
-var (
-	requestPool  sync.Pool
-	responsePool sync.Pool
-)
 
 // It is forbidden to use multiple Netframe at the same time!
 // It will cause programs to appear Panic!
