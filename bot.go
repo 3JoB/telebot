@@ -166,12 +166,12 @@ func (b *Bot) Logger() Logger {
 	return b.logger
 }
 
-func (b *Bot) OnError(err error, c *Context) {
-	b.logger.OnError(err, c)
-}
-
 func (b *Bot) Json() json.Json {
 	return b.json
+}
+
+func (b *Bot) OnError(err error, c *Context) {
+	b.logger.OnError(err, c)
 }
 
 func (b *Bot) debug(err error) {
