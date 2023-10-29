@@ -19,12 +19,12 @@ type File struct {
 	// FileURL is used for file on the internet.
 	FileURL string `json:"file_url"`
 
-	// FileReader is used for file backed with io.Reader.
-	FileReader io.Reader `json:"-"`
-
 	fileName string
 
 	FileSize int64 `json:"file_size"`
+
+	// FileReader is used for file backed with io.Reader.
+	FileReader io.Reader `json:"-"`
 }
 
 // FromDisk constructs a new local (on-disk) file object.
