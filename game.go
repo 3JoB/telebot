@@ -1,4 +1,4 @@
-package crare
+package telebot
 
 // Game object represents a game.
 // Their short names acts as unique identifiers.

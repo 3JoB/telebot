@@ -1,4 +1,4 @@
-package crare
+package telebot
 
 type Response[T any] struct {
 	Result T `json:"result"`

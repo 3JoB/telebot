@@ -1,4 +1,4 @@
-package crare
+package telebot
 
 import (
 	"time"

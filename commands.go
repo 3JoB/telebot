@@ -1,4 +1,4 @@
-package crare
+package telebot
 
 // Command represents a bot command.
 type Command struct {

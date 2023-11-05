@@ -1,4 +1,4 @@
-package crare
+package telebot
 
 import (
 	"context"
@@ -47,7 +47,7 @@ type WebhookEndpoint struct {
 // You can also leave the Listen field empty. In this case it is up to the caller to
 // add the Webhook to a http-mux.
 type Webhook struct {
-	Host            string   `json:"url"`
+	Host           string   `json:"url"`
 	Listen         string   `json:"-"`
 	SecretToken    string   `json:"secret_token"`
 	IP             string   `json:"ip_address"`

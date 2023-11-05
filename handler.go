@@ -1,4 +1,4 @@
-package crare
+package telebot
 
 // Handle stores each handler and its corresponding middleware,
 // which may be optimized in the future.

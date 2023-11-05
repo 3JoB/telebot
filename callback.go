@@ -1,4 +1,4 @@
-package crare
+package telebot
 
 // CallbackEndpoint is an interface any element capable
 // of responding to a callback `\f<unique>`.

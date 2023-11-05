@@ -1,4 +1,4 @@
-// package crare is a framework for Telegram bots.
+// telebot is a framework for Telegram bots.
 //
 // Example:
 //
@@ -25,7 +25,13 @@
 //
 //		b.Start()
 //	}
-package crare
+//
+// Deprecated: Telebote has been renamed Crare and
+// migrated to the new address. Now gopkg.in/crare
+// should be used to import new packages and discard
+// the old package. For more details,
+// please visit https://crare.pkg.one/guide/migration/crare
+package telebot
 
 import "errors"
 
