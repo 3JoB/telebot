@@ -1,6 +1,4 @@
-# Telebot • Expansion Pack
->"I never knew creating Telegram bots could be so _sexy_!"
-
+# Crare
 Provides fasthttp and net/http dual network libraries at the same time!
 
 
@@ -30,7 +28,7 @@ go get -u github.com/3JoB/telebot/v2
 - [License](#license)
 
 # Docs
-Read the documentation [here](https://telebot.pkg.one), it's still a work in progress but will be ready soon.
+Read the documentation [here](https://crare.pkg.one), it's still a work in progress but will be ready soon.
 
 # Contributing
 
@@ -44,7 +42,7 @@ Read the documentation [here](https://telebot.pkg.one), it's still a work in pro
 
 # License
 
-Telebot is distributed under MIT.
+Crare is distributed under MIT.
 
 
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2F3JoB%2Ftelebot.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2F3JoB%2Ftelebot?ref=badge_large)

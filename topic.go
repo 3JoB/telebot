@@ -1,4 +1,4 @@
-package telebot
+package crare
 
 import "github.com/3JoB/telebot/v2/pkg/params"
 

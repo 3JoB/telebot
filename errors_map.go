@@ -1,4 +1,4 @@
-package telebot
+package crare
 
 var ErrMap map[uint32]*Error = map[uint32]*Error{
 	hash32(ErrTooLarge):     ErrTooLarge,

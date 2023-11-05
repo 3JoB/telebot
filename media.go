@@ -1,4 +1,4 @@
-package telebot
+package crare
 
 // Media is a generic type for all kinds of media that includes File.
 type Media interface {

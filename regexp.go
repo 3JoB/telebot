@@ -1,4 +1,4 @@
-package telebot
+package crare
 
 import "github.com/grafana/regexp"
 

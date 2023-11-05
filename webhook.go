@@ -1,19 +1,27 @@
-package telebot
+package crare
 
 import (
 	"context"
-	"errors"
 	"fmt"
-	"net/http"
+	"net"
 
+	realip "github.com/3JoB/atreugo-realip"
+	mmdb "github.com/3JoB/maxminddb-golang"
 	"github.com/3JoB/unsafeConvert"
+	"github.com/savsgio/atreugo/v11"
 )
+
+type MMDB_ASN struct {
+	AutonomousSystemNumber       uint   `maxminddb:"autonomous_system_number"`
+	AutonomousSystemOrganization string `maxminddb:"autonomous_system_organization"`
+}
 
 // A WebhookTLS specifies the path to a key and a cert so the poller can open
 // a TLS listener.
 type WebhookTLS struct {
-	Key  string `json:"key"`
-	Cert string `json:"cert"`
+	NoLocal bool   `json:"-"`
+	Key     string `json:"key"`
+	Cert    string `json:"cert"`
 }
 
 // A WebhookEndpoint describes the endpoint to which telegram will send its requests.
@@ -39,7 +47,8 @@ type WebhookEndpoint struct {
 // You can also leave the Listen field empty. In this case it is up to the caller to
 // add the Webhook to a http-mux.
 type Webhook struct {
-	Listen         string   `json:"url"`
+	Host            string   `json:"url"`
+	Listen         string   `json:"-"`
 	SecretToken    string   `json:"secret_token"`
 	IP             string   `json:"ip_address"`
 	MaxConnections int      `json:"max_connections"`
@@ -54,6 +63,8 @@ type Webhook struct {
 	SyncErrorUnixtime int64  `json:"last_synchronization_error_date"`
 	ErrorUnixtime     int64  `json:"last_error_date"`
 
+	Verify *WebhookVerify `json:"-"`
+
 	TLS      *WebhookTLS
 	Endpoint *WebhookEndpoint
 
@@ -61,11 +72,30 @@ type Webhook struct {
 	bot  *Bot
 }
 
+type WebhookVerify struct {
+	DB     string // maxmind mmdb path
+	reader *mmdb.Reader
+}
+
+func (v *WebhookVerify) Verify(ip string) (is bool) {
+	var asn MMDB_ASN
+	nip := net.ParseIP(ip)
+	if v.reader.Lookup(nip, &asn) != nil {
+		return
+	}
+	if asn.AutonomousSystemNumber == 62041 {
+		is = true
+	}
+	return
+}
+
 func (h *Webhook) getFiles() map[string]File {
 	m := make(map[string]File)
 
 	if h.TLS != nil {
-		m["certificate"] = FromDisk(h.TLS.Cert)
+		if !h.TLS.NoLocal {
+			m["certificate"] = FromDisk(h.TLS.Cert)
+		}
 	}
 	// check if it is overwritten by an endpoint
 	if h.Endpoint != nil {
@@ -104,13 +134,13 @@ func (h *Webhook) getParams() map[string]any {
 	}
 
 	if h.TLS != nil {
-		params["url"] = "https://" + h.Listen
+		params["url"] = "https://" + h.Host
 	} else {
 		// this will not work with telegram, they want TLS
 		// but i allow this because telegram will send an error
 		// when you register this hook. in their docs they write
 		// that port 80/http is allowed ...
-		params["url"] = "http://" + h.Listen
+		params["url"] = "http://" + h.Host
 	}
 	if h.Endpoint != nil {
 		params["url"] = h.Endpoint.PublicURL
@@ -129,25 +159,42 @@ func (h *Webhook) Poll(b *Bot, dest chan Update, stop chan struct{}) {
 	h.dest = dest
 	h.bot = b
 
-	if h.Listen == "" {
+	if h.Listen == "" || h.Host == "" {
 		h.waitForStop(stop)
 		return
 	}
 
-	s := &http.Server{
-		Addr:    h.Listen,
-		Handler: h,
+	conf := &atreugo.Config{
+		Addr: h.Listen,
+		Name: "Crare/2",
 	}
+	if h.TLS != nil {
+		conf.CertFile = h.TLS.Cert
+		conf.CertKey = h.TLS.Key
+	}
+	server := atreugo.New(*conf)
+
+	if h.Verify != nil && h.Verify.DB != "" {
+		r, err := mmdb.Open(h.Verify.DB)
+		if err != nil {
+			b.OnError(err, nil)
+			close(stop)
+			return
+		}
+		h.Verify.reader = r
+		server.UseBefore(h.IPValidation)
+	}
+
+	server.UseBefore(h.TokenValidation)
+	server.ANY("/", h.Serve)
 
 	go func(stop chan struct{}) {
 		h.waitForStop(stop)
-		_ = s.Shutdown(context.Background())
+		_ = server.ShutdownWithContext(context.Background())
 	}(stop)
 
-	if h.TLS != nil {
-		_ = s.ListenAndServeTLS(h.TLS.Cert, h.TLS.Key)
-	} else {
-		_ = s.ListenAndServe()
+	if err := server.ListenAndServe(); err != nil {
+		b.OnError(err, nil)
 	}
 }
 
@@ -156,20 +203,32 @@ func (h *Webhook) waitForStop(stop chan struct{}) {
 	close(stop)
 }
 
+func (h *Webhook) IPValidation(rc *atreugo.RequestCtx) error {
+	if h.Verify.Verify(realip.FromRequest(rc)) {
+		return rc.Next()
+	}
+	_ = rc.Conn().Close()
+	return nil
+}
+
+func (h *Webhook) TokenValidation(rc *atreugo.RequestCtx) error {
+	if h.SecretToken != "" && unsafeConvert.StringPointer(rc.Request.Header.Peek("X-Telegram-Bot-Api-Secret-Token")) != h.SecretToken {
+		return rc.TextResponse("invalid secret token in request", 401)
+	}
+	return rc.Next()
+}
+
 // The handler simply reads the update from the body of the requests
 // and writes them to the update channel.
-func (h *Webhook) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	if h.SecretToken != "" && r.Header.Get("X-Telegram-Bot-Api-Secret-Token") != h.SecretToken {
-		h.bot.debug(errors.New("invalid secret token in request"))
-		return
-	}
-
+func (h *Webhook) Serve(rc *atreugo.RequestCtx) error {
 	var update Update
-	if err := h.bot.json.NewDecoder(r.Body).Decode(update); err != nil {
-		h.bot.debug(fmt.Errorf("cannot decode update: %v", err))
-		return
+	if err := h.bot.json.Unmarshal(rc.Request.Body(), &update); err != nil {
+		err = fmt.Errorf("cannot decode update: %v", err)
+		h.bot.debug(err)
+		return err
 	}
 	h.dest <- update
+	return nil
 }
 
 // Webhook returns the current webhook status.

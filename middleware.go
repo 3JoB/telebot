@@ -1,4 +1,4 @@
-package telebot
+package crare
 
 // Group is a separated group of handlers, united by the general middleware.
 type Group struct {

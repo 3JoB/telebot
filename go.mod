@@ -3,6 +3,8 @@ module github.com/3JoB/telebot/v2
 go 1.21.3
 
 require (
+	github.com/3JoB/atreugo-realip v0.0.2
+	github.com/3JoB/maxminddb-golang v0.0.2
 	github.com/3JoB/resty-ilo v1.5.0
 	github.com/3JoB/ulib v1.38.1
 	github.com/3JoB/unsafeConvert v1.6.0
@@ -11,6 +13,7 @@ require (
 	github.com/grafana/regexp v0.0.0-20221122212121-6b5c0a4cb7fd
 	github.com/jamiealquiza/fnv v1.0.0
 	github.com/rs/zerolog v1.31.0
+	github.com/savsgio/atreugo/v11 v11.11.0
 	github.com/spf13/viper v1.17.0
 	github.com/stretchr/testify v1.8.4
 	github.com/sugawarayuuta/sonnet v0.0.0-20231004000330-239c7b6e4ce8
@@ -20,9 +23,11 @@ require (
 
 require (
 	github.com/3JoB/brotli v0.0.1 // indirect
+	github.com/3JoB/go-reflect v1.0.2 // indirect
 	github.com/aead/chacha20 v0.0.0-20180709150244-8b13a72661da // indirect
 	github.com/andybalholm/brotli v1.0.6 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
+	github.com/fasthttp/router v1.4.21 // indirect
 	github.com/fatih/color v1.15.0 // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
 	github.com/go-task/slim-sprig v0.0.0-20230315185526-52ccab3ef572 // indirect
@@ -42,12 +47,14 @@ require (
 	github.com/quic-go/quic-go v0.40.0 // indirect
 	github.com/sagikazarmark/locafero v0.3.0 // indirect
 	github.com/sagikazarmark/slog-shim v0.1.0 // indirect
+	github.com/savsgio/gotils v0.0.0-20230208104028-c358bd845dee // indirect
 	github.com/sourcegraph/conc v0.3.0 // indirect
 	github.com/spf13/afero v1.10.0 // indirect
 	github.com/spf13/cast v1.5.1 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/subosito/gotenv v1.6.0 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
+	github.com/valyala/tcplisten v1.0.0 // indirect
 	go.uber.org/mock v0.3.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/crypto v0.14.0 // indirect

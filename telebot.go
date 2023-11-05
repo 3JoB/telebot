@@ -1,4 +1,4 @@
-// Package telebot is a framework for Telegram bots.
+// package crare is a framework for Telegram bots.
 //
 // Example:
 //
@@ -25,7 +25,7 @@
 //
 //		b.Start()
 //	}
-package telebot
+package crare
 
 import "errors"
 
