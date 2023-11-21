@@ -6,7 +6,7 @@ require (
 	github.com/3JoB/atreugo-realip v0.0.2
 	github.com/3JoB/maxminddb-golang v0.0.2
 	github.com/3JoB/resty-ilo v1.5.0
-	github.com/3JoB/ulib v1.38.1
+	github.com/3JoB/ulib v1.39.0
 	github.com/3JoB/unsafeConvert v1.6.0
 	github.com/cornelk/hashmap v1.0.8
 	github.com/goccy/go-yaml v1.11.2
@@ -34,7 +34,7 @@ require (
 	github.com/goccy/go-reflect v1.2.0 // indirect
 	github.com/google/pprof v0.0.0-20231101202521-4ca4178f5c7a // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
-	github.com/klauspost/compress v1.17.2 // indirect
+	github.com/klauspost/compress v1.17.3 // indirect
 	github.com/magiconair/properties v1.8.7 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
@@ -57,7 +57,7 @@ require (
 	github.com/valyala/tcplisten v1.0.0 // indirect
 	go.uber.org/mock v0.3.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
-	golang.org/x/crypto v0.14.0 // indirect
+	golang.org/x/crypto v0.15.0 // indirect
 	golang.org/x/exp v0.0.0-20231006140011-7918f672742d // indirect
 	golang.org/x/mod v0.14.0 // indirect
 	golang.org/x/net v0.17.0 // indirect
